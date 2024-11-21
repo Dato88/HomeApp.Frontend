@@ -13,12 +13,15 @@ import { PasswordConfirmationValidatorService } from '../../shared/custom-valida
   styleUrl: './register-user.component.scss',
 })
 export class RegisterUserComponent implements OnInit {
-  registerForm: FormGroup = new FormGroup({});
+  public registerForm: FormGroup = new FormGroup({});
+  public errorMessage: string = '';
+  public showError: boolean = false;
 
   constructor(
     private authService: AuthenticationService,
     private passConfValidator: PasswordConfirmationValidatorService
   ) {}
+
   ngOnInit(): void {
     this.registerForm = new FormGroup({
       firstName: new FormControl(''),
@@ -27,11 +30,12 @@ export class RegisterUserComponent implements OnInit {
       password: new FormControl('', [Validators.required]),
       confirmPassword: new FormControl(''),
     });
+
     this.registerForm
-      .get('confirm')!
+      .get('password')!
       .setValidators([
         Validators.required,
-        this.passConfValidator.validateConfirmPassword(this.registerForm.get('password')!),
+        this.passConfValidator.validateConfirmPassword(this.registerForm.get('confirmPassword')!),
       ]);
   }
 
@@ -46,6 +50,8 @@ export class RegisterUserComponent implements OnInit {
   };
 
   public registerUser = (registerFormValue: UserForRegistrationDto) => {
+    this.showError = false;
+
     const formValues = { ...registerFormValue };
     const user: UserForRegistrationDto = {
       firstName: formValues.firstName,
@@ -55,9 +61,12 @@ export class RegisterUserComponent implements OnInit {
       confirmPassword: formValues.confirmPassword,
     };
 
-    this.authService.registerUser('api/authentication/register', user).subscribe({
+    this.authService.registerUser('authentication/register', user).subscribe({
       next: (_) => console.log('Successful registration'),
-      error: (err: HttpErrorResponse) => console.log(err),
+      error: (err: HttpErrorResponse) => {
+        this.errorMessage = err.message;
+        this.showError = true;
+      },
     });
   };
 }
