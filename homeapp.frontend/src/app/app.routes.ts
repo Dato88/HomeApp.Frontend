@@ -16,7 +16,7 @@ export const routes: Routes = [
     title: 'Registration',
     loadComponent: () =>
       import('./authentication/register-user/register-user.component').then(
-        (m) => m.RegisterUserComponent,
+        (m) => m.RegisterUserComponent
       ),
   },
   {

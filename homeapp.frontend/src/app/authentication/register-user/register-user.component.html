@@ -5,10 +5,11 @@
       [formGroup]="registerForm"
       autocomplete="off"
       novalidate
-      (ngSubmit)="registerUser(registerForm.value)"
-    >
+      (ngSubmit)="registerUser(registerForm.value)">
       <div class="mb-3 row">
-        <label for="firstName" class="col-form-label col-sm-2"
+        <label
+          for="firstName"
+          class="col-form-label col-sm-2"
           >First Name:</label
         >
         <div class="col-md-5">
@@ -16,62 +17,73 @@
             type="text"
             id="firstName"
             formControlName="firstName"
-            class="form-control"
-          />
+            class="form-control" />
         </div>
       </div>
       <div class="mb-3 row">
-        <label for="lastName" class="col-form-label col-sm-2">Last Name:</label>
+        <label
+          for="lastName"
+          class="col-form-label col-sm-2"
+          >Last Name:</label
+        >
         <div class="col-md-5">
           <input
             type="text"
             id="lastName"
             formControlName="lastName"
-            class="form-control"
-          />
+            class="form-control" />
         </div>
       </div>
       <div class="mb-3 row">
-        <label for="email" class="col-form-label col-sm-2">Email:</label>
+        <label
+          for="email"
+          class="col-form-label col-sm-2"
+          >Email:</label
+        >
         <div class="col-md-5">
           <input
             type="email"
             id="email"
             formControlName="email"
-            class="form-control"
-          />
+            class="form-control" />
         </div>
         <div class="col-md-5">
-          @if (validateControl("email")) {
-            @if (hasError("email", "email")) {
+          @if (validateControl('email')) {
+            @if (hasError('email', 'email')) {
               <em>Please provide a valid email</em>
             }
-            @if (hasError("email", "required")) {
+            @if (hasError('email', 'required')) {
               <em>Email is required</em>
             }
           }
         </div>
       </div>
       <div class="mb-3 row">
-        <label for="password" class="col-form-label col-sm-2">Password:</label>
+        <label
+          for="password"
+          class="col-form-label col-sm-2"
+          >Password:</label
+        >
         <div class="col-md-5">
           <input
             type="password"
             id="password"
             formControlName="password"
-            class="form-control"
-          />
+            class="form-control" />
         </div>
         <div class="col-md-5">
-          @if (
-            validateControl("password") && hasError("password", "required")
-          ) {
+          @if (validateControl('password') && hasError('password', 'required')) {
             <em>Password is required</em>
+          }
+          @if (hasError('confirm', 'mustMatch')) {
+            <em>Passwords must match</em>
           }
         </div>
       </div>
       <div class="mb-3 row">
-        <label for="confirmPassword" class="col-form-label col-sm-2"
+        <label
+          for="confirmPassword"
+          class="col-form-label col-sm-2"
           >Confirm Password:</label
         >
         <div class="col-md-5">
@@ -79,8 +91,7 @@
             type="password"
             id="confirmPassword"
             formControlName="confirmPassword"
-            class="form-control"
-          />
+            class="form-control" />
         </div>
       </div>
       <br />
@@ -89,8 +100,7 @@
           <button
             type="submit"
             class="btn btn-info"
-            [disabled]="!registerForm.valid"
-          >
+            [disabled]="!registerForm.valid">
             Register
           </button>
         </div>
