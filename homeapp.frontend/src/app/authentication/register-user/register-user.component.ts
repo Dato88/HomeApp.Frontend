@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthenticationService } from '../../shared/services/authentication.service';
-import { UserForRegistrationDto } from '../../shared/models/user-for-registration-dto';
+import { UserForRegistrationDto } from '../../shared/models/authentication/register/user-for-registration-dto';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PasswordConfirmationValidatorService } from '../../shared/custom-validators/password-confirmation-validator.service';
 
@@ -13,14 +13,18 @@ import { PasswordConfirmationValidatorService } from '../../shared/custom-valida
   styleUrl: './register-user.component.scss',
 })
 export class RegisterUserComponent implements OnInit {
-  public registerForm: FormGroup = new FormGroup({});
-  public errorMessage: string = '';
-  public showError: boolean = false;
+  public registerForm: FormGroup;
+  public errorMessage: string;
+  public showError: boolean;
 
   constructor(
     private authService: AuthenticationService,
     private passConfValidator: PasswordConfirmationValidatorService
-  ) {}
+  ) {
+    this.registerForm = new FormGroup({});
+    this.errorMessage = '';
+    this.showError = false;
+  }
 
   ngOnInit(): void {
     this.registerForm = new FormGroup({
