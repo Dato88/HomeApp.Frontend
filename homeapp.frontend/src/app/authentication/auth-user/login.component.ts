@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { AuthenticationService } from '../../../shared/services/authentication.service';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AuthenticationService } from '../../shared/services/authentication.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UserForAuthenticationDto } from '../../../shared/models/authentication/auth/user-for-authentication-dto';
-import { AuthResponseDto } from '../../../shared/models/authentication/auth/auth-response-dto';
+import { UserForAuthenticationDto } from '../../shared/models/authentication/auth/user-for-authentication-dto';
+import { AuthResponseDto } from '../../shared/models/authentication/auth/auth-response-dto';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'hoa-login',
   standalone: true,
-  imports: [],
+  imports: [ReactiveFormsModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
@@ -47,15 +47,16 @@ export class LoginComponent implements OnInit {
     return this.loginForm.get(controlName)?.hasError(errorName);
   };
 
-  loginUser = (loginFormValue: UserForAuthenticationDto) => {
+  loginUser = (loginFormValue: FormGroup) => {
     this.showError = false;
+
     const login = { ...loginFormValue };
     const userForAuth: UserForAuthenticationDto = {
-      email: login.email,
-      password: login.password,
+      email: login.value.username,
+      password: login.value.password,
     };
 
-    this.authService.loginUser('/login', userForAuth).subscribe({
+    this.authService.loginUser('login', userForAuth).subscribe({
       next: (res: AuthResponseDto) => {
         localStorage.setItem('token', res.token);
         this.router.navigate([this.returnUrl]);

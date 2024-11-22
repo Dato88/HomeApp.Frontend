@@ -20,6 +20,12 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'authentication',
+    title: 'Authentication',
+    loadComponent: () =>
+      import('./authentication/auth-user/login.component').then((m) => m.LoginComponent),
+  },
+  {
     path: '**',
     redirectTo: '/',
   },

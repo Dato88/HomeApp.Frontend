@@ -53,16 +53,16 @@ export class RegisterUserComponent implements OnInit {
     return this.registerForm.get(controlName)?.hasError(errorName);
   };
 
-  public registerUser = (registerFormValue: UserForRegistrationDto) => {
+  public registerUser = (registerFormValue: FormGroup) => {
     this.showError = false;
 
     const formValues = { ...registerFormValue };
     const user: UserForRegistrationDto = {
-      firstName: formValues.firstName,
-      lastName: formValues.lastName,
-      email: formValues.email,
-      password: formValues.password,
-      confirmPassword: formValues.confirmPassword,
+      firstName: formValues.value.firstName,
+      lastName: formValues.value.lastName,
+      email: formValues.value.email,
+      password: formValues.value.password,
+      confirmPassword: formValues.value.confirmPassword,
     };
 
     this.authService.registerUser('authentication/register', user).subscribe({
