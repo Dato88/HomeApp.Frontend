@@ -1,10 +1,17 @@
-import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, inject, Inject, OnInit } from '@angular/core';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { AuthenticationService } from '../../shared/services/authentication.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserForAuthenticationDto } from '../../shared/models/authentication/auth/user-for-authentication-dto';
 import { AuthResponseDto } from '../../shared/models/authentication/auth/auth-response-dto';
 import { HttpErrorResponse } from '@angular/common/http';
+import { FormHelperService } from '../../shared/services/helper/form-helper.service';
 
 @Component({
   selector: 'hoa-login',
@@ -20,8 +27,11 @@ export class LoginComponent implements OnInit {
   public errorMessage: string;
   public showError: boolean;
 
+  private fb = inject(FormBuilder);
+
   constructor(
     private authService: AuthenticationService,
+    private formHelperService: FormHelperService,
     private router: Router,
     private route: ActivatedRoute
   ) {
@@ -32,28 +42,29 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loginForm = new FormGroup({
-      username: new FormControl('', [Validators.required]),
-      password: new FormControl('', [Validators.required]),
+    this.loginForm = this.fb.group<UserForAuthenticationDto>({
+      email: this.fb.control('', { validators: [Validators.required], nonNullable: true }),
+      password: this.fb.control('', { validators: [Validators.required], nonNullable: true }),
     });
+
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
 
-  validateControl = (controlName: string) => {
-    return this.loginForm.get(controlName)?.invalid && this.loginForm.get(controlName)?.touched;
+  public validateControl = (controlName: string) => {
+    return this.formHelperService.defaultValidateControl(controlName, this.loginForm);
   };
 
-  hasError = (controlName: string, errorName: string) => {
-    return this.loginForm.get(controlName)?.hasError(errorName);
+  public hasError = (controlName: string, errorName: string) => {
+    return this.formHelperService.defaultErroControl(controlName, errorName, this.loginForm);
   };
 
-  loginUser = (loginFormValue: FormGroup) => {
+  loginUser = (loginFormValue: UserForAuthenticationDto) => {
     this.showError = false;
 
     const login = { ...loginFormValue };
     const userForAuth: UserForAuthenticationDto = {
-      email: login.value.username,
-      password: login.value.password,
+      email: login.email,
+      password: login.password,
     };
 
     this.authService.loginUser('login', userForAuth).subscribe({

@@ -1,7 +1,9 @@
+import { FormControl } from '@angular/forms';
+
 export interface UserForRegistrationDto {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
+  firstName: FormControl<string>;
+  lastName: FormControl<string>;
+  email: FormControl<string>;
+  password: FormControl<string>;
+  confirmPassword: FormControl<string>;
 }

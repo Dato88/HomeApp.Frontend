@@ -1,9 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, inject, OnInit } from '@angular/core';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { AuthenticationService } from '../../shared/services/authentication.service';
 import { UserForRegistrationDto } from '../../shared/models/authentication/register/user-for-registration-dto';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PasswordConfirmationValidatorService } from '../../shared/custom-validators/password-confirmation-validator.service';
+import { FormHelperService } from '../../shared/services/helper/form-helper.service';
 
 @Component({
   selector: 'hoa-register-user',
@@ -17,8 +24,11 @@ export class RegisterUserComponent implements OnInit {
   public errorMessage: string;
   public showError: boolean;
 
+  private fb = inject(FormBuilder);
+
   constructor(
     private authService: AuthenticationService,
+    private formHelperService: FormHelperService,
     private passConfValidator: PasswordConfirmationValidatorService
   ) {
     this.registerForm = new FormGroup({});
@@ -27,12 +37,18 @@ export class RegisterUserComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.registerForm = new FormGroup({
-      firstName: new FormControl(''),
-      lastName: new FormControl(''),
-      email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', [Validators.required]),
-      confirmPassword: new FormControl(''),
+    this.registerForm = this.fb.group<UserForRegistrationDto>({
+      firstName: this.fb.control('', { nonNullable: true }),
+      lastName: this.fb.control('', { nonNullable: true }),
+      email: this.fb.control('', {
+        validators: [Validators.required, Validators.email],
+        nonNullable: true,
+      }),
+      password: this.fb.control('', {
+        validators: [Validators.required],
+        nonNullable: true,
+      }),
+      confirmPassword: this.fb.control('', { nonNullable: true }),
     });
 
     this.registerForm
@@ -44,25 +60,23 @@ export class RegisterUserComponent implements OnInit {
   }
 
   public validateControl = (controlName: string) => {
-    return (
-      this.registerForm.get(controlName)?.invalid && this.registerForm.get(controlName)?.touched
-    );
+    return this.formHelperService.defaultValidateControl(controlName, this.registerForm);
   };
 
   public hasError = (controlName: string, errorName: string) => {
-    return this.registerForm.get(controlName)?.hasError(errorName);
+    return this.formHelperService.defaultErroControl(controlName, errorName, this.registerForm);
   };
 
-  public registerUser = (registerFormValue: FormGroup) => {
+  public registerUser = (registerFormValue: UserForRegistrationDto) => {
     this.showError = false;
 
     const formValues = { ...registerFormValue };
     const user: UserForRegistrationDto = {
-      firstName: formValues.value.firstName,
-      lastName: formValues.value.lastName,
-      email: formValues.value.email,
-      password: formValues.value.password,
-      confirmPassword: formValues.value.confirmPassword,
+      firstName: formValues.firstName,
+      lastName: formValues.lastName,
+      email: formValues.email,
+      password: formValues.password,
+      confirmPassword: formValues.confirmPassword,
     };
 
     this.authService.registerUser('authentication/register', user).subscribe({
