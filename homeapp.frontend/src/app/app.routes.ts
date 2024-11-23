@@ -9,21 +9,17 @@ export const routes: Routes = [
   {
     path: 'home',
     title: 'Home',
-    loadComponent: () => import('./app.component').then((m) => m.AppComponent),
+    loadComponent: () => import('./dashboard/dashboard.component').then((m) => m.DashboardComponent),
   },
   {
     path: 'registration',
     title: 'Registration',
-    loadComponent: () =>
-      import('./authentication/register-user/register-user.component').then(
-        (m) => m.RegisterUserComponent
-      ),
+    loadComponent: () => import('./authentication/register-user/register-user.component').then((m) => m.RegisterUserComponent),
   },
   {
     path: 'authentication',
     title: 'Authentication',
-    loadComponent: () =>
-      import('./authentication/auth-user/login.component').then((m) => m.LoginComponent),
+    loadComponent: () => import('./authentication/auth-user/login.component').then((m) => m.LoginComponent),
   },
   {
     path: '**',
