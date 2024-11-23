@@ -1,13 +1,14 @@
 {
   "singleQuote": true,
-  "printWidth": 100,
+  "printWidth": 200,
   "proseWrap": "always",
   "tabWidth": 2,
   "useTabs": false,
   "trailingComma": "es5",
   "semi": true,
+  "htmlWhitespaceSensitivity": "ignore",
   "bracketSameLine": true,
-  "singleAttributePerLine": true,
+  "singleAttributePerLine": false,
   "quoteProps": "preserve",
   "bracketSpacing": true
 }

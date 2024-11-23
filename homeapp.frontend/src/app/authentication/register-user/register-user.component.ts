@@ -1,16 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthenticationService } from '../../shared/services/authentication.service';
 import { UserForRegistrationDto } from '../../shared/models/authentication/register/user-for-registration-dto';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PasswordConfirmationValidatorService } from '../../shared/custom-validators/password-confirmation-validator.service';
 import { FormHelperService } from '../../shared/services/helper/form-helper.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'hoa-register-user',
@@ -29,7 +24,8 @@ export class RegisterUserComponent implements OnInit {
   constructor(
     private authService: AuthenticationService,
     private formHelperService: FormHelperService,
-    private passConfValidator: PasswordConfirmationValidatorService
+    private passConfValidator: PasswordConfirmationValidatorService,
+    private router: Router
   ) {
     this.registerForm = new FormGroup({});
     this.errorMessage = '';
@@ -51,12 +47,7 @@ export class RegisterUserComponent implements OnInit {
       confirmPassword: this.fb.control('', { nonNullable: true }),
     });
 
-    this.registerForm
-      .get('password')!
-      .setValidators([
-        Validators.required,
-        this.passConfValidator.validateConfirmPassword(this.registerForm.get('confirmPassword')!),
-      ]);
+    this.registerForm.get('password')!.setValidators([Validators.required, this.passConfValidator.validateConfirmPassword(this.registerForm.get('confirmPassword')!)]);
   }
 
   public validateControl = (controlName: string) => {
@@ -80,7 +71,7 @@ export class RegisterUserComponent implements OnInit {
     };
 
     this.authService.registerUser('authentication/register', user).subscribe({
-      next: (_) => console.log('Successful registration'),
+      next: (_) => this.router.navigate(['/authentication']),
       error: (err: HttpErrorResponse) => {
         this.errorMessage = err.message;
         this.showError = true;

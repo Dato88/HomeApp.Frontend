@@ -1,4 +1,9 @@
 {
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "prettier.configPath": ".prettierrc.json",
+  "prettier.bracketSameLine": true,
+  "eslint.format.enable": false,
+  "prettier.singleAttributePerLine": false,
+  "prettier.useEditorConfig": false
 }

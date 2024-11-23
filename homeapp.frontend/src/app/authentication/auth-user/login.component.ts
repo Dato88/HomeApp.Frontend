@@ -1,11 +1,5 @@
 import { Component, inject, Inject, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthenticationService } from '../../shared/services/authentication.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserForAuthenticationDto } from '../../shared/models/authentication/auth/user-for-authentication-dto';
@@ -70,6 +64,7 @@ export class LoginComponent implements OnInit {
     this.authService.loginUser('login', userForAuth).subscribe({
       next: (res: AuthResponseDto) => {
         localStorage.setItem('token', res.token);
+        this.authService.sendAuthStateChangeNotification(res.isAuthSuccessful);
         this.router.navigate([this.returnUrl]);
       },
       error: (err: HttpErrorResponse) => {

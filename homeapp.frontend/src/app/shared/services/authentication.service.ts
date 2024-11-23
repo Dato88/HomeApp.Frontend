@@ -5,21 +5,26 @@ import { RegistrationResponseDto } from '../models/authentication/register/regis
 import { EnvironmentUrlService } from './environment-url.service';
 import { UserForAuthenticationDto } from '../models/authentication/auth/user-for-authentication-dto';
 import { AuthResponseDto } from '../models/authentication/auth/auth-response-dto';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthenticationService {
+  private authChangeSub = new Subject<boolean>();
+  public authChanged = this.authChangeSub.asObservable();
+
   constructor(
     private http: HttpClient,
     private envUrl: EnvironmentUrlService
   ) {}
 
   public registerUser = (route: string, body: UserForRegistrationDto) => {
-    return this.http.post<RegistrationResponseDto>(
-      this.createCompleteRoute(route, this.envUrl.urlAdress),
-      body
-    );
+    return this.http.post<RegistrationResponseDto>(this.createCompleteRoute(route, this.envUrl.urlAdress), body);
+  };
+
+  public sendAuthStateChangeNotification = (isAuthenticated: boolean) => {
+    this.authChangeSub.next(isAuthenticated);
   };
 
   public createCompleteRoute = (route: string, envAdress: string) => {
@@ -27,9 +32,11 @@ export class AuthenticationService {
   };
 
   public loginUser = (route: string, body: UserForAuthenticationDto) => {
-    return this.http.post<AuthResponseDto>(
-      this.createCompleteRoute(route, this.envUrl.urlAdress),
-      body
-    );
+    return this.http.post<AuthResponseDto>(this.createCompleteRoute(route, this.envUrl.urlAdress), body);
+  };
+
+  public logout = () => {
+    localStorage.removeItem('token');
+    this.sendAuthStateChangeNotification(false);
   };
 }
