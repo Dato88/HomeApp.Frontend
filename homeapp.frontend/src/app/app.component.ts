@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { MenuComponent } from './shared/menu/menu.component';
+import { AuthenticationService } from './shared/services/authentication.service';
 
 @Component({
   selector: 'hoa-root',
@@ -9,4 +10,12 @@ import { MenuComponent } from './shared/menu/menu.component';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent {}
+export class AppComponent implements OnInit {
+  constructor(private authService: AuthenticationService) {}
+
+  ngOnInit(): void {
+    if (this.authService.isUserAuthenticated()) {
+      this.authService.sendAuthStateChangeNotification(true);
+    }
+  }
+}

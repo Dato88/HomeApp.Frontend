@@ -6,6 +6,7 @@ import { EnvironmentUrlService } from './environment-url.service';
 import { UserForAuthenticationDto } from '../models/authentication/auth/user-for-authentication-dto';
 import { AuthResponseDto } from '../models/authentication/auth/auth-response-dto';
 import { Subject } from 'rxjs';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +17,8 @@ export class AuthenticationService {
 
   constructor(
     private http: HttpClient,
-    private envUrl: EnvironmentUrlService
+    private envUrl: EnvironmentUrlService,
+    private jwtHelper: JwtHelperService
   ) {}
 
   public registerUser = (route: string, body: UserForRegistrationDto) => {
@@ -25,6 +27,14 @@ export class AuthenticationService {
 
   public sendAuthStateChangeNotification = (isAuthenticated: boolean) => {
     this.authChangeSub.next(isAuthenticated);
+  };
+
+  public isUserAuthenticated = (): boolean => {
+    const token = localStorage.getItem('token');
+
+    const isAuthenticated: boolean = !!token && !this.jwtHelper.isTokenExpired(token);
+
+    return isAuthenticated;
   };
 
   public createCompleteRoute = (route: string, envAdress: string) => {
