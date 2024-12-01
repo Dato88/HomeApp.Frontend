@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthenticationService } from '../../shared/services/authentication.service';
 import { UserForRegistrationDto } from '../../shared/models/authentication/register/user-for-registration-dto';
 import { HttpErrorResponse } from '@angular/common/http';

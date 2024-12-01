@@ -19,7 +19,17 @@ export const routes: Routes = [
   {
     path: 'authentication',
     title: 'Authentication',
-    loadComponent: () => import('./authentication/auth-user/login.component').then((m) => m.LoginComponent),
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./authentication/auth-user/login.component').then((m) => m.LoginComponent),
+      },
+      {
+        path: 'forgotpassword',
+        title: 'ForgotPassword',
+        loadComponent: () => import('./authentication/resetPassword/forgot-password.component').then((m) => m.ForgotPasswordComponent),
+      },
+    ],
   },
   {
     path: '**',

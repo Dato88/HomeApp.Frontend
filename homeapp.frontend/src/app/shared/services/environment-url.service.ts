@@ -5,6 +5,6 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root',
 })
 export class EnvironmentUrlService {
-  public urlAdress: string = environment.urlAddress;
+  public urlAdress: string = environment.backendUrl;
   constructor() {}
 }

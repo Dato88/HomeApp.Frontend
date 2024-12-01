@@ -1,7 +1,7 @@
 import { Component, inject, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthenticationService } from '../../shared/services/authentication.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { UserForAuthenticationDto } from '../../shared/models/authentication/auth/user-for-authentication-dto';
 import { AuthResponseDto } from '../../shared/models/authentication/auth/auth-response-dto';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -10,7 +10,7 @@ import { FormHelperService } from '../../shared/services/helper/form-helper.serv
 @Component({
   selector: 'hoa-login',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
