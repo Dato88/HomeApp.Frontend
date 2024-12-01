@@ -6,6 +6,7 @@ import { UserForAuthenticationDto } from '../../shared/models/authentication/aut
 import { AuthResponseDto } from '../../shared/models/authentication/auth/auth-response-dto';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormHelperService } from '../../shared/services/helper/form-helper.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'hoa-login',
@@ -39,6 +40,7 @@ export class LoginComponent implements OnInit {
     this.loginForm = this.fb.group<UserForAuthenticationDto>({
       email: this.fb.control('', { validators: [Validators.required], nonNullable: true }),
       password: this.fb.control('', { validators: [Validators.required], nonNullable: true }),
+      clientURI: '',
     });
 
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
@@ -59,6 +61,7 @@ export class LoginComponent implements OnInit {
     const userForAuth: UserForAuthenticationDto = {
       email: login.email,
       password: login.password,
+      clientURI: `${environment.baseUrl}/authentication/forgotpassword`,
     };
 
     this.authService.loginUser('login', userForAuth).subscribe({
