@@ -70,6 +70,7 @@ export class RegisterUserComponent implements OnInit {
       email: formValues.email,
       password: formValues.password,
       confirmPassword: formValues.confirmPassword,
+      clientURI: '',
     };
 
     this.authService.registerUser('authentication/register', user).subscribe({

@@ -34,6 +34,11 @@ export const routes: Routes = [
         title: 'ResetPassword',
         loadComponent: () => import('./authentication/resetPassword/reset-password.component').then((m) => m.ResetPasswordComponent),
       },
+      {
+        path: 'emailconfirmation',
+        title: 'EmailConfirmation',
+        loadComponent: () => import('./authentication/email-confirmation/email-confirmation.component').then((m) => m.EmailConfirmationComponent),
+      },
     ],
   },
   {
