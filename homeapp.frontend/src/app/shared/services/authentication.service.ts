@@ -8,6 +8,7 @@ import { AuthResponseDto } from '../models/authentication/auth/auth-response-dto
 import { Subject } from 'rxjs';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { ForgotPasswordDto } from '../models/authentication/resetPassword/forgot-password-dto';
+import { ResetPasswordDto } from '../models/authentication/resetPassword/reset-password-dto';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +24,7 @@ export class AuthenticationService {
   ) {}
 
   public registerUser = (route: string, body: UserForRegistrationDto) => {
-    return this.http.post<RegistrationResponseDto>(this.createCompleteRoute(route, this.envUrl.urlAdress), body);
+    return this.http.post<RegistrationResponseDto>(this.createCompleteRoute(route, this.envUrl.urlAddress), body);
   };
 
   public sendAuthStateChangeNotification = (isAuthenticated: boolean) => {
@@ -43,11 +44,15 @@ export class AuthenticationService {
   };
 
   public loginUser = (route: string, body: UserForAuthenticationDto) => {
-    return this.http.post<AuthResponseDto>(this.createCompleteRoute(route, this.envUrl.urlAdress), body);
+    return this.http.post<AuthResponseDto>(this.createCompleteRoute(route, this.envUrl.urlAddress), body);
   };
 
   public forgotPassword = (route: string, body: ForgotPasswordDto) => {
-    return this.http.post(this.createCompleteRoute(route, this.envUrl.urlAdress), body);
+    return this.http.post(this.createCompleteRoute(route, this.envUrl.urlAddress), body);
+  };
+
+  public resetPassword = (route: string, body: ResetPasswordDto) => {
+    return this.http.post(this.createCompleteRoute(route, this.envUrl.urlAddress), body);
   };
 
   public logout = () => {
