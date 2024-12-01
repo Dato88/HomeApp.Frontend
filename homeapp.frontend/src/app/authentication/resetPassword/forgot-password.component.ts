@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthenticationService } from '../../shared/services/authentication.service';
-import { ForgotPasswordDto } from '../../shared/models/authentication/resetPassword/forgot-password-dto';
+import { ForgotPasswordDto } from '../../shared/_interfaces/authentication/auth/resetPassword/forgot-password-dto';
 import { FormHelperService } from '../../shared/services/helper/form-helper.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment';

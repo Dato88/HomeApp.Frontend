@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthenticationService } from '../../shared/services/authentication.service';
-import { UserForRegistrationDto } from '../../shared/models/authentication/register/user-for-registration-dto';
+import { UserForRegistrationDto } from '../../shared/_interfaces/authentication/auth/register/user-for-registration-dto';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PasswordConfirmationValidatorService } from '../../shared/custom-validators/password-confirmation-validator.service';
 import { FormHelperService } from '../../shared/services/helper/form-helper.service';
@@ -49,7 +49,12 @@ export class RegisterUserComponent implements OnInit {
       clientURI: `${environment.baseUrl}/authentication/emailconfirmation`,
     });
 
-    this.registerForm.get('password')!.setValidators([Validators.required, this.passConfValidator.validateConfirmPassword(this.registerForm.get('confirmPassword')!)]);
+    this.registerForm
+      .get('password')!
+      .setValidators([
+        Validators.required,
+        this.passConfValidator.validateConfirmPassword(this.registerForm.get('confirmPassword')!),
+      ]);
   }
 
   public validateControl = (controlName: string) => {

@@ -2,8 +2,8 @@ import { Component, inject, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthenticationService } from '../../shared/services/authentication.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { UserForAuthenticationDto } from '../../shared/models/authentication/auth/user-for-authentication-dto';
-import { AuthResponseDto } from '../../shared/models/authentication/auth/auth-response-dto';
+import { UserForAuthenticationDto } from '../../shared/_interfaces/authentication/auth/user-for-authentication-dto';
+import { AuthResponseDto } from '../../shared/_interfaces/authentication/auth/auth-response-dto';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormHelperService } from '../../shared/services/helper/form-helper.service';
 import { environment } from '../../../environments/environment';
@@ -66,9 +66,15 @@ export class LoginComponent implements OnInit {
 
     this.authService.loginUser('login', userForAuth).subscribe({
       next: (res: AuthResponseDto) => {
-        localStorage.setItem('token', res.token);
-        this.authService.sendAuthStateChangeNotification(res.isAuthSuccessful);
-        this.router.navigate([this.returnUrl]);
+        if (res.is2StepVerificationRequired) {
+          this.router.navigate(['/authentication/twostepverification'], {
+            queryParams: { returnUrl: this.returnUrl, provider: res.provider, email: userForAuth.email },
+          });
+        } else {
+          localStorage.setItem('token', res.token);
+          this.authService.sendAuthStateChangeNotification(res.isAuthSuccessful);
+          this.router.navigate([this.returnUrl]);
+        }
       },
       error: (err: HttpErrorResponse) => {
         this.errorMessage = err.message;

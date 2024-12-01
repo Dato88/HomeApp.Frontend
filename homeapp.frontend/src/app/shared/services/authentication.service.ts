@@ -1,15 +1,16 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { UserForRegistrationDto } from '../models/authentication/register/user-for-registration-dto';
-import { RegistrationResponseDto } from '../models/authentication/register/registration-response-dto';
+import { UserForRegistrationDto } from '../_interfaces/authentication/auth/register/user-for-registration-dto';
+import { RegistrationResponseDto } from '../_interfaces/authentication/auth/register/registration-response-dto';
 import { EnvironmentUrlService } from './environment-url.service';
-import { UserForAuthenticationDto } from '../models/authentication/auth/user-for-authentication-dto';
-import { AuthResponseDto } from '../models/authentication/auth/auth-response-dto';
+import { UserForAuthenticationDto } from '../_interfaces/authentication/auth/user-for-authentication-dto';
+import { AuthResponseDto } from '../_interfaces/authentication/auth/auth-response-dto';
 import { Subject } from 'rxjs';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { ForgotPasswordDto } from '../models/authentication/resetPassword/forgot-password-dto';
-import { ResetPasswordDto } from '../models/authentication/resetPassword/reset-password-dto';
+import { ForgotPasswordDto } from '../_interfaces/authentication/auth/resetPassword/forgot-password-dto';
+import { ResetPasswordDto } from '../_interfaces/authentication/auth/resetPassword/reset-password-dto';
 import { CustomEncoder } from '../custom-encoder';
+import { TwoFactorDto } from '../_interfaces/authentication/auth/twoFactor/two-factor-dto';
 
 @Injectable({
   providedIn: 'root',
@@ -45,6 +46,10 @@ export class AuthenticationService {
   };
 
   public loginUser = (route: string, body: UserForAuthenticationDto) => {
+    return this.http.post<AuthResponseDto>(this.createCompleteRoute(route, this.envUrl.urlAddress), body);
+  };
+
+  public twoStepLogin = (route: string, body: TwoFactorDto) => {
     return this.http.post<AuthResponseDto>(this.createCompleteRoute(route, this.envUrl.urlAddress), body);
   };
 

@@ -39,6 +39,11 @@ export const routes: Routes = [
         title: 'EmailConfirmation',
         loadComponent: () => import('./authentication/email-confirmation/email-confirmation.component').then((m) => m.EmailConfirmationComponent),
       },
+      {
+        path: 'twostepverification',
+        title: 'EmailConfirmation',
+        loadComponent: () => import('./authentication/two-step-verification/two-step-verification.component').then((m) => m.TwoStepVerificationComponent),
+      },
     ],
   },
   {

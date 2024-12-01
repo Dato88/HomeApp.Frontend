@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { AuthenticationService } from '../../shared/services/authentication.service';
 import { PasswordConfirmationValidatorService } from '../../shared/custom-validators/password-confirmation-validator.service';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { ResetPasswordDto } from '../../shared/models/authentication/resetPassword/reset-password-dto';
+import { ResetPasswordDto } from '../../shared/_interfaces/authentication/auth/resetPassword/reset-password-dto';
 import { FormHelperService } from '../../shared/services/helper/form-helper.service';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -46,7 +46,12 @@ export class ResetPasswordComponent implements OnInit {
       token: this.fb.control('', { validators: [Validators.required], nonNullable: true }),
     });
 
-    this.resetPasswordForm.get('password')!.setValidators([Validators.required, this.passConfValidator.validateConfirmPassword(this.resetPasswordForm.get('confirmPassword')!)]);
+    this.resetPasswordForm
+      .get('password')!
+      .setValidators([
+        Validators.required,
+        this.passConfValidator.validateConfirmPassword(this.resetPasswordForm.get('confirmPassword')!),
+      ]);
 
     this.token = this.route.snapshot.queryParams['token'];
     this.email = this.route.snapshot.queryParams['email'];
