@@ -6,4 +6,5 @@ export interface UserForRegistrationDto {
   email: FormControl<string>;
   password: FormControl<string>;
   confirmPassword: FormControl<string>;
+  clientURI: string;
 }

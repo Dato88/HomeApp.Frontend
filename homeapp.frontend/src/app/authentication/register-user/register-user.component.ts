@@ -6,6 +6,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { PasswordConfirmationValidatorService } from '../../shared/custom-validators/password-confirmation-validator.service';
 import { FormHelperService } from '../../shared/services/helper/form-helper.service';
 import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'hoa-register-user',
@@ -45,6 +46,7 @@ export class RegisterUserComponent implements OnInit {
         nonNullable: true,
       }),
       confirmPassword: this.fb.control('', { nonNullable: true }),
+      clientURI: `${environment.baseUrl}/authentication/emailconfirmation`,
     });
 
     this.registerForm.get('password')!.setValidators([Validators.required, this.passConfValidator.validateConfirmPassword(this.registerForm.get('confirmPassword')!)]);
