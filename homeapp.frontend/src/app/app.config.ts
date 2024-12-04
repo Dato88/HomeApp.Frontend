@@ -1,5 +1,10 @@
 import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
-import { PreloadAllModules, provideRouter, withDebugTracing, withPreloading } from '@angular/router';
+import {
+  PreloadAllModules,
+  provideRouter,
+  withDebugTracing,
+  withPreloading,
+} from '@angular/router';
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { httpInterceptorProviders } from './shared/http-interceptors';

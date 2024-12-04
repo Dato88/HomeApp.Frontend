@@ -1,5 +1,11 @@
 import { Component, inject, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { AuthenticationService } from '../../shared/services/authentication.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { UserForAuthenticationDto } from '../../shared/_interfaces/authentication/auth/user-for-authentication-dto';
@@ -68,7 +74,11 @@ export class LoginComponent implements OnInit {
       next: (res: AuthResponseDto) => {
         if (res.is2StepVerificationRequired) {
           this.router.navigate(['/authentication/twostepverification'], {
-            queryParams: { returnUrl: this.returnUrl, provider: res.provider, email: userForAuth.email },
+            queryParams: {
+              returnUrl: this.returnUrl,
+              provider: res.provider,
+              email: userForAuth.email,
+            },
           });
         } else {
           localStorage.setItem('token', res.token);

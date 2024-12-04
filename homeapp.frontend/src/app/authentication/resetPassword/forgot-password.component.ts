@@ -48,7 +48,11 @@ export class ForgotPasswordComponent implements OnInit {
   };
 
   public hasError = (controlName: string, errorName: string) => {
-    return this.formHelperService.defaultErroControl(controlName, errorName, this.forgotPasswordForm);
+    return this.formHelperService.defaultErroControl(
+      controlName,
+      errorName,
+      this.forgotPasswordForm
+    );
   };
 
   public forgotPassword = (forgotPasswordFormValue: ForgotPasswordDto) => {
@@ -64,7 +68,8 @@ export class ForgotPasswordComponent implements OnInit {
     this.authService.forgotPassword('accounts/forgotpassword', forgotPassDto).subscribe({
       next: (_) => {
         this.showSuccess = true;
-        this.successMessage = 'The link has been sent, please check your email to reset your password.';
+        this.successMessage =
+          'The link has been sent, please check your email to reset your password.';
       },
       error: (err: HttpErrorResponse) => {
         this.showError = true;
