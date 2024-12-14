@@ -1,7 +1,9 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Inject, Input } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { NavbarService } from '../services/navbar/navbar.service';
 import { NavbarItem } from '../_interfaces/navbar/navbar-item';
+import { AuthenticationService } from '../services/authentication.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'am-navbar',
@@ -12,6 +14,8 @@ import { NavbarItem } from '../_interfaces/navbar/navbar-item';
 })
 export class NavbarComponent {
   @Input() navbarItem: NavbarItem;
+  readonly #authService = inject(AuthenticationService);
+  readonly #router = inject(Router);
 
   constructor(private service: NavbarService) {
     this.navbarItem = this.service.getAll();
@@ -19,12 +23,16 @@ export class NavbarComponent {
 
   clickNav(event: any) {
     let arrow = event;
-    arrow.target.parentElement.parentElement.parentElement.classList.toggle(
-      'showMenu'
-    );
+    arrow.target.parentElement.parentElement.parentElement.classList.toggle('showMenu');
   }
+
   clickNavBtn() {
     let sidebar = document.querySelector('.sidebar');
     sidebar?.classList.toggle('close');
   }
+
+  public logout = () => {
+    this.#authService.logout();
+    this.#router.navigate(['authentication']);
+  };
 }

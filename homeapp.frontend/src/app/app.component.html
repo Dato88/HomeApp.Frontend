@@ -1,5 +1,6 @@
 <main>
-  <router-outlet>
+  @if (isUserAuthenticated) {
     <am-navbar></am-navbar>
-  </router-outlet>
+  }
+  <router-outlet></router-outlet>
 </main>

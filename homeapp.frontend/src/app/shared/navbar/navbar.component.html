@@ -52,7 +52,9 @@
             alt="PS" />
         </div>
         <div class="profile-name">{{ navbarItem.user.username }}</div>
-        <mat-icon>logout</mat-icon>
+        <a (click)="logout()">
+          <mat-icon>logout</mat-icon>
+        </a>
       </div>
     </li>
   </ul>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { AuthenticationService } from './shared/services/authentication.service';
 import { NavbarComponent } from './shared/navbar/navbar.component';
@@ -11,11 +11,20 @@ import { NavbarComponent } from './shared/navbar/navbar.component';
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
-  constructor(private authService: AuthenticationService) {}
+  readonly #authService = inject(AuthenticationService);
+
+  public isUserAuthenticated: boolean;
+
+  constructor() {
+    this.isUserAuthenticated = false;
+    this.#authService.authChanged.subscribe((res) => {
+      this.isUserAuthenticated = res;
+    });
+  }
 
   ngOnInit(): void {
-    if (this.authService.isUserAuthenticated()) {
-      this.authService.sendAuthStateChangeNotification(true);
+    if (this.#authService.isUserAuthenticated()) {
+      this.#authService.sendAuthStateChangeNotification(true);
     }
   }
 }

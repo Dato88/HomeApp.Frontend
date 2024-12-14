@@ -1,5 +1,11 @@
 import { Component, inject, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { AuthenticationService } from '../../shared/services/authentication.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { UserForAuthenticationDto } from '../../shared/_interfaces/authentication/auth/user-for-authentication-dto';
@@ -23,13 +29,12 @@ export class LoginComponent implements OnInit {
   public showError: boolean;
 
   private fb = inject(FormBuilder);
+  readonly #authService = inject(AuthenticationService);
+  readonly #formHelperService = inject(FormHelperService);
+  readonly #router = inject(Router);
+  readonly #route = inject(ActivatedRoute);
 
-  constructor(
-    private authService: AuthenticationService,
-    private formHelperService: FormHelperService,
-    private router: Router,
-    private route: ActivatedRoute
-  ) {
+  constructor() {
     this.returnUrl = '';
     this.loginForm = new FormGroup({});
     this.errorMessage = '';
@@ -43,15 +48,15 @@ export class LoginComponent implements OnInit {
       clientURI: '',
     });
 
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+    this.returnUrl = this.#route.snapshot.queryParams['returnUrl'] || '/';
   }
 
   public validateControl = (controlName: string) => {
-    return this.formHelperService.defaultValidateControl(controlName, this.loginForm);
+    return this.#formHelperService.defaultValidateControl(controlName, this.loginForm);
   };
 
   public hasError = (controlName: string, errorName: string) => {
-    return this.formHelperService.defaultErroControl(controlName, errorName, this.loginForm);
+    return this.#formHelperService.defaultErroControl(controlName, errorName, this.loginForm);
   };
 
   loginUser = (loginFormValue: UserForAuthenticationDto) => {
@@ -64,16 +69,20 @@ export class LoginComponent implements OnInit {
       clientURI: `${environment.baseUrl}/authentication/forgotpassword`,
     };
 
-    this.authService.loginUser('authentication/login', userForAuth).subscribe({
+    this.#authService.loginUser('authentication/login', userForAuth).subscribe({
       next: (res: AuthResponseDto) => {
         if (res.is2StepVerificationRequired) {
-          this.router.navigate(['/authentication/twostepverification'], {
-            queryParams: { returnUrl: this.returnUrl, provider: res.provider, email: userForAuth.email },
+          this.#router.navigate(['/authentication/twostepverification'], {
+            queryParams: {
+              returnUrl: this.returnUrl,
+              provider: res.provider,
+              email: userForAuth.email,
+            },
           });
         } else {
           localStorage.setItem('token', res.token);
-          this.authService.sendAuthStateChangeNotification(res.isAuthSuccessful);
-          this.router.navigate([this.returnUrl]);
+          this.#authService.sendAuthStateChangeNotification(res.isAuthSuccessful);
+          this.#router.navigate([this.returnUrl]);
         }
       },
       error: (err: HttpErrorResponse) => {
