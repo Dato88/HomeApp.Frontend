@@ -9,16 +9,12 @@ export const routes: Routes = [
   {
     path: 'home',
     title: 'Home',
-    loadComponent: () =>
-      import('./dashboard/dashboard.component').then((m) => m.DashboardComponent),
+    loadComponent: () => import('./dashboard/dashboard.component').then((m) => m.DashboardComponent),
   },
   {
     path: 'registration',
     title: 'Registration',
-    loadComponent: () =>
-      import('./authentication/register-user/register-user.component').then(
-        (m) => m.RegisterUserComponent
-      ),
+    loadComponent: () => import('./authentication/register-user/register-user.component').then((m) => m.RegisterUserComponent),
   },
   {
     path: 'authentication',
@@ -26,40 +22,27 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        loadComponent: () =>
-          import('./authentication/auth-user/login.component').then((m) => m.LoginComponent),
+        loadComponent: () => import('./authentication/auth-user/login.component').then((m) => m.LoginComponent),
       },
       {
         path: 'forgotpassword',
         title: 'ForgotPassword',
-        loadComponent: () =>
-          import('./authentication/resetPassword/forgot-password.component').then(
-            (m) => m.ForgotPasswordComponent
-          ),
+        loadComponent: () => import('./authentication/resetPassword/forgot-password.component').then((m) => m.ForgotPasswordComponent),
       },
       {
         path: 'resetpassword',
         title: 'ResetPassword',
-        loadComponent: () =>
-          import('./authentication/resetPassword/reset-password.component').then(
-            (m) => m.ResetPasswordComponent
-          ),
+        loadComponent: () => import('./authentication/resetPassword/reset-password.component').then((m) => m.ResetPasswordComponent),
       },
       {
         path: 'emailconfirmation',
         title: 'EmailConfirmation',
-        loadComponent: () =>
-          import('./authentication/email-confirmation/email-confirmation.component').then(
-            (m) => m.EmailConfirmationComponent
-          ),
+        loadComponent: () => import('./authentication/email-confirmation/email-confirmation.component').then((m) => m.EmailConfirmationComponent),
       },
       {
         path: 'twostepverification',
         title: 'EmailConfirmation',
-        loadComponent: () =>
-          import('./authentication/two-step-verification/two-step-verification.component').then(
-            (m) => m.TwoStepVerificationComponent
-          ),
+        loadComponent: () => import('./authentication/two-step-verification/two-step-verification.component').then((m) => m.TwoStepVerificationComponent),
       },
     ],
   },

@@ -1,11 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  HttpInterceptor,
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpErrorResponse,
-} from '@angular/common/http';
+import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
@@ -41,10 +35,7 @@ export class ErrorHandlerService implements HttpInterceptor {
   };
 
   private handleUnauthorized = (error: HttpErrorResponse) => {
-    if (
-      this.router.url === '/authentication' ||
-      this.router.url.startsWith('/authentication/resetpassword')
-    ) {
+    if (this.router.url === '/authentication' || this.router.url.startsWith('/authentication/resetpassword')) {
       return error.error.errorMessage;
     } else {
       this.router.navigate(['/authentication']);

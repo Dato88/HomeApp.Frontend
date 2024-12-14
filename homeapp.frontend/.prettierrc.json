@@ -1,6 +1,6 @@
 {
   "singleQuote": true,
-  "printWidth": 100,
+  "printWidth": 120,
   "proseWrap": "always",
   "tabWidth": 2,
   "useTabs": false,
@@ -8,5 +8,7 @@
   "semi": true,
   "htmlWhitespaceSensitivity": "ignore",
   "bracketSameLine": true,
-  "singleAttributePerLine": true
+  "singleAttributePerLine": false,
+  "quoteProps": "preserve",
+  "bracketSpacing": true
 }

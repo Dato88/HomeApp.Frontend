@@ -26,10 +26,7 @@ export class AuthenticationService {
   ) {}
 
   public registerUser = (route: string, body: UserForRegistrationDto) => {
-    return this.http.post<RegistrationResponseDto>(
-      this.createCompleteRoute(route, this.envUrl.urlAddress),
-      body
-    );
+    return this.http.post<RegistrationResponseDto>(this.createCompleteRoute(route, this.envUrl.urlAddress), body);
   };
 
   public sendAuthStateChangeNotification = (isAuthenticated: boolean) => {
@@ -49,17 +46,11 @@ export class AuthenticationService {
   };
 
   public loginUser = (route: string, body: UserForAuthenticationDto) => {
-    return this.http.post<AuthResponseDto>(
-      this.createCompleteRoute(route, this.envUrl.urlAddress),
-      body
-    );
+    return this.http.post<AuthResponseDto>(this.createCompleteRoute(route, this.envUrl.urlAddress), body);
   };
 
   public twoStepLogin = (route: string, body: TwoFactorDto) => {
-    return this.http.post<AuthResponseDto>(
-      this.createCompleteRoute(route, this.envUrl.urlAddress),
-      body
-    );
+    return this.http.post<AuthResponseDto>(this.createCompleteRoute(route, this.envUrl.urlAddress), body);
   };
 
   public forgotPassword = (route: string, body: ForgotPasswordDto) => {
@@ -75,9 +66,7 @@ export class AuthenticationService {
     params = params.append('token', token);
     params = params.append('email', email);
 
-    return this.http.get(this.createCompleteRoute(route, this.envUrl.urlAddress), {
-      params: params,
-    });
+    return this.http.get(this.createCompleteRoute(route, this.envUrl.urlAddress), { params: params });
   };
 
   public logout = () => {

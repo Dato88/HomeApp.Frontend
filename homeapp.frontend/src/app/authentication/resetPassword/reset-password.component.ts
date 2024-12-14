@@ -50,9 +50,7 @@ export class ResetPasswordComponent implements OnInit {
       .get('password')!
       .setValidators([
         Validators.required,
-        this.passConfValidator.validateConfirmPassword(
-          this.resetPasswordForm.get('confirmPassword')!
-        ),
+        this.passConfValidator.validateConfirmPassword(this.resetPasswordForm.get('confirmPassword')!),
       ]);
 
     this.token = this.route.snapshot.queryParams['token'];
@@ -64,11 +62,7 @@ export class ResetPasswordComponent implements OnInit {
   };
 
   public hasError = (controlName: string, errorName: string) => {
-    return this.formHelperService.defaultErroControl(
-      controlName,
-      errorName,
-      this.resetPasswordForm
-    );
+    return this.formHelperService.defaultErroControl(controlName, errorName, this.resetPasswordForm);
   };
 
   public resetPassword = (resetPasswordFormValue: ResetPasswordDto) => {

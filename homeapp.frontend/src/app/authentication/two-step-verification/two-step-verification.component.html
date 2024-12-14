@@ -2,29 +2,15 @@
   <div class="card-body">
     <h1 class="card-title">Two Step Verification</h1>
     @if (showError) {
-      <div
-        class="alert alert-danger"
-        role="alert">
+      <div class="alert alert-danger" role="alert">
         {{ errorMessage }}
       </div>
     }
-    <form
-      [formGroup]="twoStepForm"
-      autocomplete="off"
-      novalidate
-      (ngSubmit)="loginUser(twoStepForm.value)">
+    <form [formGroup]="twoStepForm" autocomplete="off" novalidate (ngSubmit)="loginUser(twoStepForm.value)">
       <div class="mb-3 row">
-        <label
-          for="twoFactorCode"
-          class="col-form-label col-sm-2">
-          Code:
-        </label>
+        <label for="twoFactorCode" class="col-form-label col-sm-2">Code:</label>
         <div class="col-md-5">
-          <input
-            type="text"
-            id="twoFactorCode"
-            formControlName="twoFactorCode"
-            class="form-control" />
+          <input type="text" id="twoFactorCode" formControlName="twoFactorCode" class="form-control" />
         </div>
         <div class="col-md-5">
           @if (validateControl('twoFactorCode') && hasError('twoFactorCode', 'required')) {
@@ -35,12 +21,7 @@
       <br />
       <div class="mb-3 row">
         <div class="col-md-1">
-          <button
-            type="submit"
-            class="btn btn-info"
-            [disabled]="!twoStepForm.valid">
-            Submit
-          </button>
+          <button type="submit" class="btn btn-info" [disabled]="!twoStepForm.valid">Submit</button>
         </div>
       </div>
     </form>
