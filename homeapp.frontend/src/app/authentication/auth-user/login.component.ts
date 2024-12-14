@@ -64,7 +64,7 @@ export class LoginComponent implements OnInit {
       clientURI: `${environment.baseUrl}/authentication/forgotpassword`,
     };
 
-    this.authService.loginUser('login', userForAuth).subscribe({
+    this.authService.loginUser('authentication/login', userForAuth).subscribe({
       next: (res: AuthResponseDto) => {
         if (res.is2StepVerificationRequired) {
           this.router.navigate(['/authentication/twostepverification'], {
