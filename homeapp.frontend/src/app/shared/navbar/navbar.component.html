@@ -1,0 +1,59 @@
+<div class="sidebar close">
+  <div class="logo-details">
+    <div>
+      <mat-icon>settings</mat-icon>
+      <span class="logo-name">CodingLab</span>
+    </div>
+    <mat-icon
+      class="bx-menu"
+      (click)="clickNavBtn()"
+      >double_arrow</mat-icon
+    >
+  </div>
+  <ul class="nav-links">
+    @for(item of navbarItem.navbarListItems; track $index){
+    <li>
+      <ng-container>
+        <div
+          class="icon-link"
+          (click)="item?.link && item?.sublist ? clickNav($event) : null">
+          <a [attr.href]="item?.link && !item?.sublist ? item.link : undefined">
+            <mat-icon>{{ item?.icon }}</mat-icon>
+            <span class="link-name">{{ item?.name }}</span>
+          </a>
+          @if(item?.sublist){
+          <mat-icon>keyboard_arrow_down</mat-icon>
+          }
+        </div>
+      </ng-container>
+      <ng-container>
+        <ul class="sub-menu">
+          <li>
+            <a
+              class="link-name"
+              href="{{ item.link }}"
+              >{{ item.name }}</a
+            >
+          </li>
+          @if(item?.sublist){ @for(subItem of item.sublist; track subItem){
+          <li>
+            <a href="{{ subItem.link }}">{{ subItem.name }}</a>
+          </li>
+          } }
+        </ul>
+      </ng-container>
+    </li>
+    }
+    <li>
+      <div class="profile-details">
+        <div class="profile-content">
+          <img
+            src="image/profile.jpg"
+            alt="PS" />
+        </div>
+        <div class="profile-name">{{ navbarItem.user.username }}</div>
+        <mat-icon>logout</mat-icon>
+      </div>
+    </li>
+  </ul>
+</div>
