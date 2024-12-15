@@ -5,14 +5,23 @@ export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'home',
+    redirectTo: 'dashboard',
   },
   {
-    path: 'home',
-    title: 'Home',
+    path: 'dashboard',
+    title: 'Dashboard',
     canActivate: [AuthGuard],
     loadComponent: () =>
       import('./dashboard/dashboard.component').then((m) => m.DashboardComponent),
+  },
+  {
+    path: 'settings',
+    title: 'Settings',
+    canActivate: [AuthGuard],
+    loadComponent: () =>
+      import('./settings/settings-menu/settings-menu.component').then(
+        (m) => m.SettingsMenuComponent
+      ),
   },
   {
     path: 'registration',

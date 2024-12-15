@@ -10,72 +10,68 @@ export class NavbarService {
   private navbarListItems: NavbarListItem[] = [
     {
       name: 'Dashboard',
-      link: '/home',
+      link: '/dashboard',
       icon: 'dashboard',
     },
     {
-      name: 'Web Design',
-      link: '/webdesign',
-      icon: 'library_books',
-      sublist: [
-        { name: 'Card Design', link: '/bla' },
-        { name: 'Login Form', link: '/bla' },
-        { name: 'Card Design', link: '/bla' },
-      ],
+      name: 'Todo',
+      link: '/todo',
+      icon: 'task',
     },
     {
-      name: 'Posts',
-      link: '/webdesign',
-      icon: 'library_books',
-      sublist: [
-        { name: 'HTML & CSS', link: '/bla' },
-        { name: 'JavaScript', link: '/bla' },
-        { name: 'PHP & MySQL', link: '/bla' },
-      ],
-    },
-    {
-      name: 'Analytics',
-      link: '/webdesign',
+      name: 'Budget',
+      link: '/budget',
       icon: 'analytics',
     },
+    // {
+    //   name: 'Posts',
+    //   link: '/webdesign',
+    //   icon: 'library_books',
+    //   sublist: [
+    //     { name: 'HTML & CSS', link: '/bla' },
+    //     { name: 'JavaScript', link: '/bla' },
+    //     { name: 'PHP & MySQL', link: '/bla' },
+    //   ],
+    // },
+
+    // {
+    //   name: 'Chart',
+    //   link: '/webdesign',
+    //   icon: 'bar_chart',
+    // },
+    // {
+    //   name: 'Category',
+    //   link: '/webdesign',
+    //   icon: 'library_books',
+    //   sublist: [
+    //     { name: 'Card Design', link: '/bla' },
+    //     { name: 'Login Form', link: '/bla' },
+    //     { name: 'Card Design', link: '/bla' },
+    //   ],
+    // },
+    // {
+    //   name: 'Plug',
+    //   link: '/webdesign',
+    //   icon: 'power',
+    //   sublist: [
+    //     { name: 'UI Face', link: '/bla' },
+    //     { name: 'Pigments', link: '/bla' },
+    //     { name: 'Box Icons', link: '/bla' },
+    //   ],
+    // },
+    // {
+    //   name: 'Explore',
+    //   link: '/webdesign',
+    //   icon: 'explore',
+    // },
+    // {
+    //   name: 'History',
+    //   link: '/webdesign',
+    //   icon: 'history',
+    // },
     {
-      name: 'Chart',
-      link: '/webdesign',
-      icon: 'bar_chart',
-    },
-    {
-      name: 'Category',
-      link: '/webdesign',
-      icon: 'library_books',
-      sublist: [
-        { name: 'Card Design', link: '/bla' },
-        { name: 'Login Form', link: '/bla' },
-        { name: 'Card Design', link: '/bla' },
-      ],
-    },
-    {
-      name: 'Plug',
-      link: '/webdesign',
-      icon: 'power',
-      sublist: [
-        { name: 'UI Face', link: '/bla' },
-        { name: 'Pigments', link: '/bla' },
-        { name: 'Box Icons', link: '/bla' },
-      ],
-    },
-    {
-      name: 'Explore',
-      link: '/webdesign',
-      icon: 'explore',
-    },
-    {
-      name: 'History',
-      link: '/webdesign',
-      icon: 'history',
-    },
-    {
-      name: 'Setting',
-      link: '/webdesign',
+      name: 'Settings',
+      link: '/settings',
       icon: 'settings',
     },
   ];

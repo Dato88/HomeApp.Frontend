@@ -15,11 +15,7 @@ $navbar-desktop-closed-width: 78px;
 %blurBackground {
   background: transparent;
   backdrop-filter: blur(20px);
-  background-image: linear-gradient(
-    120deg,
-    rgba(255, 255, 255, 0.3),
-    rgba(0, 0, 0, 0.2)
-  );
+  background-image: linear-gradient(120deg, rgba(255, 255, 255, 0.3), rgba(0, 0, 0, 0.2));
 }
 
 * {
@@ -254,7 +250,8 @@ $navbar-desktop-closed-width: 78px;
 
 @media only screen and (min-width: 768px) {
   .sidebar {
-    height: 100%;
+    position: relative;
+    height: 100vh;
     width: $navbar-desktop-width;
 
     .logo-details {
@@ -309,7 +306,7 @@ $navbar-desktop-closed-width: 78px;
 
     &.close {
       width: $navbar-desktop-closed-width;
-      height: 100%;
+      height: 100vh;
 
       .logo-details {
         div {
