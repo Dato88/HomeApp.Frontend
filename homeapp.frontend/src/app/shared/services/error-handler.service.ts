@@ -1,12 +1,18 @@
-import { Injectable } from '@angular/core';
-import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import {
+  HttpInterceptor,
+  HttpRequest,
+  HttpHandler,
+  HttpEvent,
+  HttpErrorResponse,
+} from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
 @Injectable()
 export class ErrorHandlerService implements HttpInterceptor {
-  constructor(private router: Router) {}
+  readonly #router = inject(Router);
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(req).pipe(
@@ -35,22 +41,25 @@ export class ErrorHandlerService implements HttpInterceptor {
   };
 
   private handleUnauthorized = (error: HttpErrorResponse) => {
-    if (this.router.url === '/authentication' || this.router.url.startsWith('/authentication/resetpassword')) {
+    if (
+      this.#router.url === '/authentication' ||
+      this.#router.url.startsWith('/authentication/resetpassword')
+    ) {
       return error.error.errorMessage;
     } else {
-      this.router.navigate(['/authentication']);
+      this.#router.navigate(['/authentication']);
       return error.message;
     }
   };
 
   private handleNotFound = (error: HttpErrorResponse): string => {
-    this.router.navigate(['/404']);
+    this.#router.navigate(['/404']);
 
     return error.message;
   };
 
   private handleBadRequest = (error: HttpErrorResponse): string => {
-    if (this.router.url === '/registration') {
+    if (this.#router.url === '/registration') {
       let message = '';
       const values: any = Object.values(error?.error?.errors);
 

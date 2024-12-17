@@ -15,6 +15,11 @@ import { FormHelperService } from '../../shared/services/helper/form-helper.serv
   styleUrl: './two-step-verification.component.scss',
 })
 export class TwoStepVerificationComponent implements OnInit {
+  readonly #authService = inject(AuthenticationService);
+  readonly #route = inject(ActivatedRoute);
+  readonly #formHelperService = inject(FormHelperService);
+  readonly #router = inject(Router);
+
   private provider: string;
   private email: string;
   private returnUrl: string;
@@ -25,12 +30,7 @@ export class TwoStepVerificationComponent implements OnInit {
 
   private fb = inject(FormBuilder);
 
-  constructor(
-    private authService: AuthenticationService,
-    private route: ActivatedRoute,
-    private formHelperService: FormHelperService,
-    private router: Router
-  ) {
+  constructor() {
     this.provider = '';
     this.email = '';
     this.returnUrl = '';
@@ -44,17 +44,17 @@ export class TwoStepVerificationComponent implements OnInit {
       twoFactorCode: this.fb.control('', { validators: [Validators.required], nonNullable: true }),
     });
 
-    this.provider = this.route.snapshot.queryParams['provider'];
-    this.email = this.route.snapshot.queryParams['email'];
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'];
+    this.provider = this.#route.snapshot.queryParams['provider'];
+    this.email = this.#route.snapshot.queryParams['email'];
+    this.returnUrl = this.#route.snapshot.queryParams['returnUrl'];
   }
 
   public validateControl = (controlName: string) => {
-    return this.formHelperService.defaultValidateControl(controlName, this.twoStepForm);
+    return this.#formHelperService.defaultValidateControl(controlName, this.twoStepForm);
   };
 
   public hasError = (controlName: string, errorName: string) => {
-    return this.formHelperService.defaultErroControl(controlName, errorName, this.twoStepForm);
+    return this.#formHelperService.defaultErroControl(controlName, errorName, this.twoStepForm);
   };
 
   loginUser = (twoStepFromValue: any) => {
@@ -66,11 +66,11 @@ export class TwoStepVerificationComponent implements OnInit {
       provider: this.provider,
       token: formValue.twoFactorCode,
     };
-    this.authService.twoStepLogin('accounts/twostepverification', twoFactorDto).subscribe({
+    this.#authService.twoStepLogin(twoFactorDto).subscribe({
       next: (res: AuthResponseDto) => {
         localStorage.setItem('token', res.token);
-        this.authService.sendAuthStateChangeNotification(res.isAuthSuccessful);
-        this.router.navigate([this.returnUrl]);
+        this.#authService.sendAuthStateChangeNotification(res.isAuthSuccessful);
+        this.#router.navigate([this.returnUrl]);
       },
       error: (err: HttpErrorResponse) => {
         this.errorMessage = err.message;

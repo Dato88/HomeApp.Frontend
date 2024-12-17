@@ -5,6 +5,7 @@ import { ForgotPasswordDto } from '../../shared/_interfaces/authentication/auth/
 import { FormHelperService } from '../../shared/services/helper/form-helper.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { API_AUTHENTICATION_ENDPOINTS } from '../../../api-endpoints/api-authentication-endpoints';
 
 @Component({
   selector: 'hoa-forgot-password',
@@ -14,6 +15,9 @@ import { environment } from '../../../environments/environment';
   styleUrl: './forgot-password.component.scss',
 })
 export class ForgotPasswordComponent implements OnInit {
+  readonly #authService = inject(AuthenticationService);
+  readonly #formHelperService = inject(FormHelperService);
+
   public forgotPasswordForm: FormGroup;
   public successMessage: string;
   public errorMessage: string;
@@ -22,10 +26,7 @@ export class ForgotPasswordComponent implements OnInit {
 
   private fb = inject(FormBuilder);
 
-  constructor(
-    private authService: AuthenticationService,
-    private formHelperService: FormHelperService
-  ) {
+  constructor() {
     this.forgotPasswordForm = new FormGroup({});
     this.successMessage = '';
     this.errorMessage = '';
@@ -44,27 +45,32 @@ export class ForgotPasswordComponent implements OnInit {
   }
 
   public validateControl = (controlName: string) => {
-    return this.formHelperService.defaultValidateControl(controlName, this.forgotPasswordForm);
+    return this.#formHelperService.defaultValidateControl(controlName, this.forgotPasswordForm);
   };
 
   public hasError = (controlName: string, errorName: string) => {
-    return this.formHelperService.defaultErroControl(controlName, errorName, this.forgotPasswordForm);
+    return this.#formHelperService.defaultErroControl(
+      controlName,
+      errorName,
+      this.forgotPasswordForm
+    );
   };
 
   public forgotPassword = (forgotPasswordFormValue: ForgotPasswordDto) => {
     this.showError = this.showSuccess = false;
 
-    const clientURI = `${environment.baseUrl}/authentication/resetpassword`;
+    const clientURI = `${environment.baseUrl}/${API_AUTHENTICATION_ENDPOINTS.resetPassword}`;
 
     const forgotPassDto: ForgotPasswordDto = {
       email: forgotPasswordFormValue.email,
       clientURI: clientURI,
     };
 
-    this.authService.forgotPassword('accounts/forgotpassword', forgotPassDto).subscribe({
+    this.#authService.forgotPassword(forgotPassDto).subscribe({
       next: (_) => {
         this.showSuccess = true;
-        this.successMessage = 'The link has been sent, please check your email to reset your password.';
+        this.successMessage =
+          'The link has been sent, please check your email to reset your password.';
       },
       error: (err: HttpErrorResponse) => {
         this.showError = true;

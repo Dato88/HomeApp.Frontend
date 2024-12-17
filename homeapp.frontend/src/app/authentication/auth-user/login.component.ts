@@ -13,6 +13,8 @@ import { AuthResponseDto } from '../../shared/_interfaces/authentication/auth/au
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormHelperService } from '../../shared/services/helper/form-helper.service';
 import { environment } from '../../../environments/environment';
+import { API_AUTHENTICATION_ENDPOINTS } from '../../../api-endpoints/api-authentication-endpoints';
+import { API_ACCOUNTS_ENDPOINTS } from '../../../api-endpoints/api-accounts-endpoints';
 
 @Component({
   selector: 'hoa-login',
@@ -66,13 +68,13 @@ export class LoginComponent implements OnInit {
     const userForAuth: UserForAuthenticationDto = {
       email: login.email,
       password: login.password,
-      clientURI: `${environment.baseUrl}/authentication/forgotpassword`,
+      clientURI: `${environment.baseUrl}/${API_AUTHENTICATION_ENDPOINTS.forgotPassword}`,
     };
 
-    this.#authService.loginUser('authentication/login', userForAuth).subscribe({
+    this.#authService.loginUser(userForAuth).subscribe({
       next: (res: AuthResponseDto) => {
         if (res.is2StepVerificationRequired) {
-          this.#router.navigate(['/authentication/twostepverification'], {
+          this.#router.navigate([`/${API_ACCOUNTS_ENDPOINTS.twoStepVerification}`], {
             queryParams: {
               returnUrl: this.returnUrl,
               provider: res.provider,
