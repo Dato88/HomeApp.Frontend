@@ -15,6 +15,18 @@ export const routes: Routes = [
       import('./dashboard/dashboard.component').then((m) => m.DashboardComponent),
   },
   {
+    path: 'todo',
+    title: 'Todo',
+    canActivate: [AuthGuard],
+    loadComponent: () => import('./todo/todo.component').then((m) => m.TodoComponent),
+  },
+  {
+    path: 'budget',
+    title: 'Budget',
+    canActivate: [AuthGuard],
+    loadComponent: () => import('./budget/budget.component').then((m) => m.BudgetComponent),
+  },
+  {
     path: 'settings',
     title: 'Settings',
     canActivate: [AuthGuard],

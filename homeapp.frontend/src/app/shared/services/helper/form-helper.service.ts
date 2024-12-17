@@ -5,8 +5,6 @@ import { FormGroup } from '@angular/forms';
   providedIn: 'root',
 })
 export class FormHelperService {
-  constructor() {}
-
   public defaultValidateControl(controlName: string, registerForm: FormGroup) {
     return registerForm.get(controlName)?.invalid && registerForm.get(controlName)?.touched;
   }
