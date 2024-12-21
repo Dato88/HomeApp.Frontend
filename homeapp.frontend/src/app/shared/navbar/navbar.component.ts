@@ -16,9 +16,11 @@ export class NavbarComponent {
   @Input() navbarItem: NavbarItem;
   readonly #authService = inject(AuthenticationService);
   readonly #router = inject(Router);
+  readonly #service = inject(NavbarService);
 
-  constructor(private service: NavbarService) {
-    this.navbarItem = this.service.getAll();
+  constructor() {
+    this.navbarItem = this.#service.getAll();
+    this.#service.getPerson();
   }
 
   clickNav(event: any) {

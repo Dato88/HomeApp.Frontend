@@ -1,5 +1,6 @@
 export const API_ACCOUNTS_ENDPOINTS = {
-  register: 'authentication/register',
-  twoStepVerification: 'accounts/twostepverification',
-  emailConfirmation: 'accounts/emailconfirmation',
+  emailConfirmation: 'accounts/confirm-email',
+  forgotPassword: 'accounts/forgot-password',
+  register: 'accounts/register',
+  resetPassword: 'accounts/reset-password',
 };

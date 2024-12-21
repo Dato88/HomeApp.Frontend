@@ -1,7 +1,8 @@
-import { User } from '../authentication/auth/user';
+import { WritableSignal } from '@angular/core';
+import { PersonDto } from '../person/person-dto';
 import { NavbarListItem } from './navbar-list-item';
 
 export interface NavbarItem {
   navbarListItems: NavbarListItem[];
-  user: User;
+  person: WritableSignal<PersonDto>;
 }

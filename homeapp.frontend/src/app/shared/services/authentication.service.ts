@@ -56,21 +56,24 @@ export class AuthenticationService {
 
   public twoStepLogin = (body: TwoFactorDto) => {
     return this.#http.post<AuthResponseDto>(
-      this.createCompleteRoute(API_ACCOUNTS_ENDPOINTS.twoStepVerification, environment.backendUrl),
+      this.createCompleteRoute(
+        API_AUTHENTICATION_ENDPOINTS.twoStepVerification,
+        environment.backendUrl
+      ),
       body
     );
   };
 
   public forgotPassword = (body: ForgotPasswordDto) => {
     return this.#http.post(
-      this.createCompleteRoute(API_AUTHENTICATION_ENDPOINTS.forgotPassword, environment.backendUrl),
+      this.createCompleteRoute(API_ACCOUNTS_ENDPOINTS.forgotPassword, environment.backendUrl),
       body
     );
   };
 
   public resetPassword = (body: ResetPasswordDto) => {
     return this.#http.post(
-      this.createCompleteRoute(API_AUTHENTICATION_ENDPOINTS.resetPassword, environment.backendUrl),
+      this.createCompleteRoute(API_ACCOUNTS_ENDPOINTS.resetPassword, environment.backendUrl),
       body
     );
   };

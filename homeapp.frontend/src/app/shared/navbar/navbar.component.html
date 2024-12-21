@@ -54,7 +54,9 @@
               src="image/profile.jpg"
               alt="PS" />
           </div>
-          <div class="profile-name">{{ navbarItem.user.username }}</div>
+          <div class="profile-name">
+            {{ navbarItem.person().firstName }} {{ navbarItem.person().lastName }}
+          </div>
           <a (click)="logout()">
             <mat-icon>logout</mat-icon>
           </a>

@@ -1,7 +1,11 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { User } from '../../_interfaces/authentication/auth/user';
 import { NavbarItem } from '../../_interfaces/navbar/navbar-item';
 import { NavbarListItem } from '../../_interfaces/navbar/navbar-list-item';
+import { PersonDto } from '../../_interfaces/person/person-dto';
+import { HttpClient } from '@angular/common/http';
+import { API_PERSON_ENDPOINTS } from '../../../../api-endpoints/api-person-endpoints';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -76,18 +80,33 @@ export class NavbarService {
     },
   ];
 
-  user: User = {
-    username: 'Andrej Miller',
-    email: 'andrej_miller@outlook.de',
-  };
-  constructor() {}
+  private readonly personSignal: WritableSignal<PersonDto> = signal({
+    id: 0,
+    firstName: '',
+    lastName: '',
+    email: '',
+  });
 
   getAll(): NavbarItem {
     const navbarItem: NavbarItem = {
       navbarListItems: this.navbarListItems,
-      user: this.user,
+      person: this.personSignal,
     };
 
     return navbarItem;
   }
+
+  readonly #http = inject(HttpClient);
+
+  public createCompleteRoute = (route: string, envAdress: string) => {
+    return `${envAdress}/${route}`;
+  };
+
+  public getPerson = () => {
+    return this.#http
+      .get<PersonDto>(this.createCompleteRoute(API_PERSON_ENDPOINTS.person, environment.backendUrl))
+      .subscribe((person) => {
+        this.personSignal.set(person);
+      });
+  };
 }
