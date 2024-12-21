@@ -5,13 +5,13 @@ import { ForgotPasswordDto } from '../../shared/_interfaces/authentication/auth/
 import { FormHelperService } from '../../shared/services/helper/form-helper.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { API_AUTHENTICATION_ENDPOINTS } from '../../../api-endpoints/api-authentication-endpoints';
+import { API_ACCOUNTS_ENDPOINTS } from '../../../api-endpoints/api-accounts-endpoints';
 
 @Component({
-    selector: 'hoa-forgot-password',
-    imports: [ReactiveFormsModule],
-    templateUrl: './forgot-password.component.html',
-    styleUrl: './forgot-password.component.scss'
+  selector: 'hoa-forgot-password',
+  imports: [ReactiveFormsModule],
+  templateUrl: './forgot-password.component.html',
+  styleUrl: './forgot-password.component.scss',
 })
 export class ForgotPasswordComponent implements OnInit {
   readonly #authService = inject(AuthenticationService);
@@ -58,7 +58,7 @@ export class ForgotPasswordComponent implements OnInit {
   public forgotPassword = (forgotPasswordFormValue: ForgotPasswordDto) => {
     this.showError = this.showSuccess = false;
 
-    const clientURI = `${environment.baseUrl}/${API_AUTHENTICATION_ENDPOINTS.resetPassword}`;
+    const clientURI = `${environment.baseUrl}/${API_ACCOUNTS_ENDPOINTS.resetPassword}`;
 
     const forgotPassDto: ForgotPasswordDto = {
       email: forgotPasswordFormValue.email,

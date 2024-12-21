@@ -17,10 +17,10 @@ import { API_AUTHENTICATION_ENDPOINTS } from '../../../api-endpoints/api-authent
 import { API_ACCOUNTS_ENDPOINTS } from '../../../api-endpoints/api-accounts-endpoints';
 
 @Component({
-    selector: 'hoa-login',
-    imports: [ReactiveFormsModule, RouterModule],
-    templateUrl: './login.component.html',
-    styleUrl: './login.component.scss'
+  selector: 'hoa-login',
+  imports: [ReactiveFormsModule, RouterModule],
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.scss',
 })
 export class LoginComponent implements OnInit {
   private returnUrl: string;
@@ -67,13 +67,13 @@ export class LoginComponent implements OnInit {
     const userForAuth: UserForAuthenticationDto = {
       email: login.email,
       password: login.password,
-      clientURI: `${environment.baseUrl}/${API_AUTHENTICATION_ENDPOINTS.forgotPassword}`,
+      clientURI: `${environment.baseUrl}/${API_ACCOUNTS_ENDPOINTS.forgotPassword}`,
     };
 
     this.#authService.loginUser(userForAuth).subscribe({
       next: (res: AuthResponseDto) => {
         if (res.is2StepVerificationRequired) {
-          this.#router.navigate([`/${API_ACCOUNTS_ENDPOINTS.twoStepVerification}`], {
+          this.#router.navigate([`/${API_AUTHENTICATION_ENDPOINTS.twoStepVerification}`], {
             queryParams: {
               returnUrl: this.returnUrl,
               provider: res.provider,
