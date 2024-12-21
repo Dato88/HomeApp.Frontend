@@ -6,11 +6,10 @@ import { AuthenticationService } from '../services/authentication.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'am-navbar',
-  standalone: true,
-  imports: [MatIconModule],
-  templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.scss',
+    selector: 'am-navbar',
+    imports: [MatIconModule],
+    templateUrl: './navbar.component.html',
+    styleUrl: './navbar.component.scss'
 })
 export class NavbarComponent {
   @Input() navbarItem: NavbarItem;

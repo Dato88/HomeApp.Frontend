@@ -8,11 +8,10 @@ import { FormHelperService } from '../../shared/services/helper/form-helper.serv
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
-  selector: 'hoa-reset-password',
-  standalone: true,
-  imports: [ReactiveFormsModule, RouterModule],
-  templateUrl: './reset-password.component.html',
-  styleUrl: './reset-password.component.scss',
+    selector: 'hoa-reset-password',
+    imports: [ReactiveFormsModule, RouterModule],
+    templateUrl: './reset-password.component.html',
+    styleUrl: './reset-password.component.scss'
 })
 export class ResetPasswordComponent implements OnInit {
   readonly #authService = inject(AuthenticationService);

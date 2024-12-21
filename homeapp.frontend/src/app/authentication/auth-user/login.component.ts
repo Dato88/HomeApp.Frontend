@@ -17,11 +17,10 @@ import { API_AUTHENTICATION_ENDPOINTS } from '../../../api-endpoints/api-authent
 import { API_ACCOUNTS_ENDPOINTS } from '../../../api-endpoints/api-accounts-endpoints';
 
 @Component({
-  selector: 'hoa-login',
-  standalone: true,
-  imports: [ReactiveFormsModule, RouterModule],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.scss',
+    selector: 'hoa-login',
+    imports: [ReactiveFormsModule, RouterModule],
+    templateUrl: './login.component.html',
+    styleUrl: './login.component.scss'
 })
 export class LoginComponent implements OnInit {
   private returnUrl: string;

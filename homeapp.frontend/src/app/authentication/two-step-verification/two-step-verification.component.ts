@@ -8,11 +8,10 @@ import { AuthResponseDto } from '../../shared/_interfaces/authentication/auth/au
 import { FormHelperService } from '../../shared/services/helper/form-helper.service';
 
 @Component({
-  selector: 'hoa-two-step-verification',
-  standalone: true,
-  imports: [ReactiveFormsModule],
-  templateUrl: './two-step-verification.component.html',
-  styleUrl: './two-step-verification.component.scss',
+    selector: 'hoa-two-step-verification',
+    imports: [ReactiveFormsModule],
+    templateUrl: './two-step-verification.component.html',
+    styleUrl: './two-step-verification.component.scss'
 })
 export class TwoStepVerificationComponent implements OnInit {
   readonly #authService = inject(AuthenticationService);

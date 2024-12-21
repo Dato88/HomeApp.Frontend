@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'hoa-budget',
-  standalone: true,
-  imports: [],
-  templateUrl: './budget.component.html',
-  styleUrl: './budget.component.scss'
+    selector: 'hoa-budget',
+    imports: [],
+    templateUrl: './budget.component.html',
+    styleUrl: './budget.component.scss'
 })
 export class BudgetComponent {
 

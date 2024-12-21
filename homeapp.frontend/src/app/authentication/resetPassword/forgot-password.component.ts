@@ -8,11 +8,10 @@ import { environment } from '../../../environments/environment';
 import { API_AUTHENTICATION_ENDPOINTS } from '../../../api-endpoints/api-authentication-endpoints';
 
 @Component({
-  selector: 'hoa-forgot-password',
-  standalone: true,
-  imports: [ReactiveFormsModule],
-  templateUrl: './forgot-password.component.html',
-  styleUrl: './forgot-password.component.scss',
+    selector: 'hoa-forgot-password',
+    imports: [ReactiveFormsModule],
+    templateUrl: './forgot-password.component.html',
+    styleUrl: './forgot-password.component.scss'
 })
 export class ForgotPasswordComponent implements OnInit {
   readonly #authService = inject(AuthenticationService);
