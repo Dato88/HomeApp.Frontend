@@ -1,11 +1,5 @@
 import { Component, inject, Inject, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthenticationService } from '../../shared/services/authentication.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { UserForAuthenticationDto } from '../../shared/_interfaces/authentication/auth/user-for-authentication-dto';

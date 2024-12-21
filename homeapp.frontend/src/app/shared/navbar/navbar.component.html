@@ -12,7 +12,7 @@
   </div>
   <div>
     <ul class="nav-links">
-      @for (item of navbarItem.navbarListItems; track $index) {
+      @for (item of navbarItem.navbarListItems(); track $index) {
         <li>
           <ng-container>
             <div
