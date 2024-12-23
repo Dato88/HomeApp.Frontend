@@ -17,15 +17,10 @@ export class NavbarComponent implements OnInit {
   readonly #router = inject(Router);
   readonly #service = inject(NavbarService);
 
-  constructor() {
-    // Der Konstruktor bleibt schlank – nur für Dependency Injection
-  }
-
   ngOnInit(): void {
-    // Initialisierungslogik wird hier ausgeführt
     this.navbarItem = this.#service.getAll();
-    this.#service.getNavbarItems(); // API-Aufruf für Navbar-Items
-    this.#service.getPerson(); // API-Aufruf für Personen-Daten
+    this.#service.getNavbarItems();
+    this.#service.getPerson();
   }
 
   clickNav(event: any): void {

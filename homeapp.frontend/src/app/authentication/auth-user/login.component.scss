@@ -1,12 +1,61 @@
 .login-component {
   display: flex;
   align-items: center;
-  justify-content: center;
   height: 100vh;
-  width: 100vw;
 
-  mat-card {
-    padding: 2rem;
+  .card {
+    width: 100%;
+    margin-inline: 0.5rem;
+    padding: 0.5rem;
+    border: solid 1px;
     border-radius: 0.25rem;
+
+    .card-body {
+      display: grid;
+      justify-items: center;
+
+      form {
+        width: 100%;
+
+        div {
+          div {
+            input {
+              width: 100%;
+              height: 2rem;
+              font-size: 1.2rem;
+              padding-inline: 0.5rem;
+              border-radius: 0.25rem;
+              box-sizing: border-box;
+            }
+
+            button {
+              width: 100%;
+              font-size: 1.2rem;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .login-component {
+    justify-content: center;
+
+    .card {
+      width: 20rem;
+
+      .card-body {
+        form {
+          div {
+            div {
+              input {
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }
