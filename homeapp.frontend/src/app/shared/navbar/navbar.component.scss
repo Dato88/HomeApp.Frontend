@@ -77,12 +77,6 @@ $navbar-desktop-closed-width: 78px;
       list-style: none;
       transition: all 0.4s ease;
 
-      .icon-link {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-
       mat-icon {
         height: max-content;
         width: 2rem;
@@ -94,17 +88,23 @@ $navbar-desktop-closed-width: 78px;
         transition: all 0.3s ease;
       }
 
-      a {
-        display: flex;
-        align-items: center;
-        text-decoration: none;
+      div {
+        a {
+          display: flex;
+          align-items: center;
+          text-decoration: none;
 
-        .link-name {
-          font-size: $font-size-small;
-          font-weight: 400;
-          color: $font-color;
-          white-space: nowrap;
+          .link-name {
+            font-size: $font-size-small;
+            font-weight: 400;
+            color: $font-color;
+            white-space: nowrap;
+          }
         }
+      }
+
+      .active {
+        @extend %blurBackground;
       }
 
       .sub-menu {
@@ -250,7 +250,6 @@ $navbar-desktop-closed-width: 78px;
 
 @media only screen and (min-width: 768px) {
   .sidebar {
-    position: relative;
     height: 100vh;
     width: $navbar-desktop-width;
 

@@ -9,10 +9,11 @@ import { FormHelperService } from '../../shared/services/helper/form-helper.serv
 import { environment } from '../../../environments/environment';
 import { API_AUTHENTICATION_ENDPOINTS } from '../../../api-endpoints/api-authentication-endpoints';
 import { API_ACCOUNTS_ENDPOINTS } from '../../../api-endpoints/api-accounts-endpoints';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'hoa-login',
-  imports: [ReactiveFormsModule, RouterModule],
+  imports: [MatCardModule, ReactiveFormsModule, RouterModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
