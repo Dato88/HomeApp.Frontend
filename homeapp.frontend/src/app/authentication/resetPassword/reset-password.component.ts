@@ -8,13 +8,17 @@ import { FormHelperService } from '../../shared/services/helper/form-helper.serv
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
-  selector: 'hoa-reset-password',
-  standalone: true,
-  imports: [ReactiveFormsModule, RouterModule],
-  templateUrl: './reset-password.component.html',
-  styleUrl: './reset-password.component.scss',
+    selector: 'hoa-reset-password',
+    imports: [ReactiveFormsModule, RouterModule],
+    templateUrl: './reset-password.component.html',
+    styleUrl: './reset-password.component.scss'
 })
 export class ResetPasswordComponent implements OnInit {
+  readonly #authService = inject(AuthenticationService);
+  readonly #route = inject(ActivatedRoute);
+  readonly #formHelperService = inject(FormHelperService);
+  readonly #passConfValidator = inject(PasswordConfirmationValidatorService);
+
   public resetPasswordForm: FormGroup;
   public errorMessage: string;
   public showSuccess: boolean;
@@ -24,12 +28,7 @@ export class ResetPasswordComponent implements OnInit {
   private token: string;
   private email: string;
 
-  constructor(
-    private authService: AuthenticationService,
-    private formHelperService: FormHelperService,
-    private passConfValidator: PasswordConfirmationValidatorService,
-    private route: ActivatedRoute
-  ) {
+  constructor() {
     this.resetPasswordForm = new FormGroup({});
     this.errorMessage = '';
     this.showSuccess = false;
@@ -50,19 +49,25 @@ export class ResetPasswordComponent implements OnInit {
       .get('password')!
       .setValidators([
         Validators.required,
-        this.passConfValidator.validateConfirmPassword(this.resetPasswordForm.get('confirmPassword')!),
+        this.#passConfValidator.validateConfirmPassword(
+          this.resetPasswordForm.get('confirmPassword')!
+        ),
       ]);
 
-    this.token = this.route.snapshot.queryParams['token'];
-    this.email = this.route.snapshot.queryParams['email'];
+    this.token = this.#route.snapshot.queryParams['token'];
+    this.email = this.#route.snapshot.queryParams['email'];
   }
 
   public validateControl = (controlName: string) => {
-    return this.formHelperService.defaultValidateControl(controlName, this.resetPasswordForm);
+    return this.#formHelperService.defaultValidateControl(controlName, this.resetPasswordForm);
   };
 
   public hasError = (controlName: string, errorName: string) => {
-    return this.formHelperService.defaultErroControl(controlName, errorName, this.resetPasswordForm);
+    return this.#formHelperService.defaultErroControl(
+      controlName,
+      errorName,
+      this.resetPasswordForm
+    );
   };
 
   public resetPassword = (resetPasswordFormValue: ResetPasswordDto) => {
@@ -74,7 +79,7 @@ export class ResetPasswordComponent implements OnInit {
       token: this.fb.control(this.token, { nonNullable: true }),
       email: this.fb.control(this.email, { nonNullable: true }),
     };
-    this.authService.resetPassword('api/accounts/resetpassword', resetPassDto).subscribe({
+    this.#authService.resetPassword(resetPassDto).subscribe({
       next: (_) => (this.showSuccess = true),
       error: (err: HttpErrorResponse) => {
         this.showError = true;

@@ -1,3 +1,10 @@
-<main>
+@if (isUserAuthenticated) {
+  <am-navbar></am-navbar>
+  <main>
+    <router-outlet></router-outlet>
+  </main>
+}
+
+@if (!isUserAuthenticated) {
   <router-outlet></router-outlet>
-</main>
+}

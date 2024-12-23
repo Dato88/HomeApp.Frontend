@@ -9,25 +9,24 @@ import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 
 @Component({
-  selector: 'hoa-register-user',
-  standalone: true,
-  imports: [ReactiveFormsModule],
-  templateUrl: './register-user.component.html',
-  styleUrl: './register-user.component.scss',
+    selector: 'hoa-register-user',
+    imports: [ReactiveFormsModule],
+    templateUrl: './register-user.component.html',
+    styleUrl: './register-user.component.scss'
 })
 export class RegisterUserComponent implements OnInit {
+  readonly #authService = inject(AuthenticationService);
+  readonly #router = inject(Router);
+  readonly #formHelperService = inject(FormHelperService);
+  readonly #passConfValidator = inject(PasswordConfirmationValidatorService);
+
   public registerForm: FormGroup;
   public errorMessage: string;
   public showError: boolean;
 
   private fb = inject(FormBuilder);
 
-  constructor(
-    private authService: AuthenticationService,
-    private formHelperService: FormHelperService,
-    private passConfValidator: PasswordConfirmationValidatorService,
-    private router: Router
-  ) {
+  constructor() {
     this.registerForm = new FormGroup({});
     this.errorMessage = '';
     this.showError = false;
@@ -53,16 +52,16 @@ export class RegisterUserComponent implements OnInit {
       .get('password')!
       .setValidators([
         Validators.required,
-        this.passConfValidator.validateConfirmPassword(this.registerForm.get('confirmPassword')!),
+        this.#passConfValidator.validateConfirmPassword(this.registerForm.get('confirmPassword')!),
       ]);
   }
 
   public validateControl = (controlName: string) => {
-    return this.formHelperService.defaultValidateControl(controlName, this.registerForm);
+    return this.#formHelperService.defaultValidateControl(controlName, this.registerForm);
   };
 
   public hasError = (controlName: string, errorName: string) => {
-    return this.formHelperService.defaultErroControl(controlName, errorName, this.registerForm);
+    return this.#formHelperService.defaultErroControl(controlName, errorName, this.registerForm);
   };
 
   public registerUser = (registerFormValue: UserForRegistrationDto) => {
@@ -78,8 +77,8 @@ export class RegisterUserComponent implements OnInit {
       clientURI: '',
     };
 
-    this.authService.registerUser('authentication/register', user).subscribe({
-      next: (_) => this.router.navigate(['/authentication']),
+    this.#authService.registerUser(user).subscribe({
+      next: (_) => this.#router.navigate(['/authentication']),
       error: (err: HttpErrorResponse) => {
         this.errorMessage = err.message;
         this.showError = true;
