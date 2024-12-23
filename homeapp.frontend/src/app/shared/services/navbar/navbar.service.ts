@@ -31,13 +31,9 @@ export class NavbarService {
     return navbarItem;
   }
 
-  public createCompleteRoute = (route: string, envAdress: string) => {
-    return `${envAdress}/${route}`;
-  };
-
   public getPerson(): void {
     this.#http
-      .get<PersonDto>(this.createCompleteRoute(API_PERSON_ENDPOINTS.person, environment.backendUrl))
+      .get<PersonDto>(`${environment.backendUrl}/${API_PERSON_ENDPOINTS.person}`)
       .subscribe((person) => {
         this.personSignal.set(person);
       });
@@ -45,9 +41,7 @@ export class NavbarService {
 
   public getNavbarItems(): void {
     this.#http
-      .get<
-        NavbarListItem[]
-      >(this.createCompleteRoute(API_NAVBAR_ENDPOINTS.navbar, environment.backendUrl))
+      .get<NavbarListItem[]>(`${environment.backendUrl}/${API_NAVBAR_ENDPOINTS.navbar}`)
       .subscribe((navbarItems) => {
         this.navbarListItemsSignal.set(navbarItems);
       });

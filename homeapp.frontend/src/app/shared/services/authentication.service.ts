@@ -26,7 +26,7 @@ export class AuthenticationService {
 
   public registerUser = (body: UserForRegistrationDto) => {
     return this.#http.post<RegistrationResponseDto>(
-      this.createCompleteRoute(API_ACCOUNTS_ENDPOINTS.register, environment.backendUrl),
+      `${environment.backendUrl}/${API_ACCOUNTS_ENDPOINTS.register}`,
       body
     );
   };
@@ -43,37 +43,30 @@ export class AuthenticationService {
     return isAuthenticated;
   };
 
-  public createCompleteRoute = (route: string, envAdress: string) => {
-    return `${envAdress}/${route}`;
-  };
-
   public loginUser = (body: UserForAuthenticationDto) => {
     return this.#http.post<AuthResponseDto>(
-      this.createCompleteRoute(API_AUTHENTICATION_ENDPOINTS.login, environment.backendUrl),
+      `${environment.backendUrl}/${API_AUTHENTICATION_ENDPOINTS.login}`,
       body
     );
   };
 
   public twoStepLogin = (body: TwoFactorDto) => {
     return this.#http.post<AuthResponseDto>(
-      this.createCompleteRoute(
-        API_AUTHENTICATION_ENDPOINTS.twoStepVerification,
-        environment.backendUrl
-      ),
+      `${environment.backendUrl}/${API_AUTHENTICATION_ENDPOINTS.twoStepVerification}`,
       body
     );
   };
 
   public forgotPassword = (body: ForgotPasswordDto) => {
     return this.#http.post(
-      this.createCompleteRoute(API_ACCOUNTS_ENDPOINTS.forgotPassword, environment.backendUrl),
+      `${environment.backendUrl}/${API_ACCOUNTS_ENDPOINTS.forgotPassword}`,
       body
     );
   };
 
   public resetPassword = (body: ResetPasswordDto) => {
     return this.#http.post(
-      this.createCompleteRoute(API_ACCOUNTS_ENDPOINTS.resetPassword, environment.backendUrl),
+      `${environment.backendUrl}/${API_ACCOUNTS_ENDPOINTS.resetPassword}`,
       body
     );
   };
@@ -83,12 +76,9 @@ export class AuthenticationService {
     params = params.append('token', token);
     params = params.append('email', email);
 
-    return this.#http.get(
-      this.createCompleteRoute(API_ACCOUNTS_ENDPOINTS.emailConfirmation, environment.backendUrl),
-      {
-        params: params,
-      }
-    );
+    return this.#http.get(`${environment.backendUrl}/${API_ACCOUNTS_ENDPOINTS.emailConfirmation}`, {
+      params: params,
+    });
   };
 
   public logout = () => {
