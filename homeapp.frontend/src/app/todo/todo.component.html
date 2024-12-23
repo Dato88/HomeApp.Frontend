@@ -1,3 +1,42 @@
 <div class="content">
-  <p>todo works!</p>
+  <h1>Todo</h1>
+
+  <td class="todo-list">
+    @for (todoDto of todoDtos; track todoDto.id) {
+      @let backgroundColor = todoDto.done ? 'green' : '';
+
+      <tr style="background-color: {{ backgroundColor }}">
+        @if (todoDto.done) {
+          <mat-icon>check</mat-icon>
+        }
+
+        <div class="todo-item">
+          <div class="todo-name">
+            <h3>{{ todoDto.name }}</h3>
+          </div>
+
+          <div class="todo-infos">
+            <div class="todo-execution-date">
+              <p>{{ todoDto.executionDate | date: 'dd.MM.yyyy HH:mm' }}</p>
+            </div>
+
+            <div class="todo-priority-icons">
+              @if (todoDto.priority >= 1) {
+                <!-- <mat-icon>priority_high</mat-icon> -->
+                !
+              }
+              @if (todoDto.priority >= 2) {
+                <!-- <mat-icon>priority_high</mat-icon> -->
+                !
+              }
+              @if (todoDto.priority >= 3) {
+                <!-- <mat-icon>priority_high</mat-icon> -->
+                !
+              }
+            </div>
+          </div>
+        </div>
+      </tr>
+    }
+  </td>
 </div>

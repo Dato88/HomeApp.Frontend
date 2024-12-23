@@ -1,0 +1,48 @@
+hoa-todo {
+  width: 100%;
+}
+
+.todo-list {
+  display: grid;
+  width: 100%;
+  gap: 0.5rem;
+
+  tr {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border: solid 1px;
+    border-radius: 0.25rem;
+
+    .todo-item {
+      display: grid;
+      width: 100%;
+      gap: 0.5rem;
+
+      .todo-name {
+        h3 {
+          margin: 0;
+        }
+      }
+
+      .todo-infos {
+        display: grid;
+        grid-template-columns: 1fr max-content;
+        justify-content: space-between;
+        height: max-content;
+
+        .todo-execution-date {
+          p {
+            margin: 0;
+          }
+        }
+
+        .todo-priority-icons {
+          width: max-content;
+          height: max-content;
+        }
+      }
+    }
+  }
+}

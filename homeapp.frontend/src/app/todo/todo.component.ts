@@ -1,12 +1,14 @@
 import { Component, inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TodoDto } from '../shared/_interfaces/todo/todo-dto';
 import { TodoPriorityEnum } from '../shared/enum/todo-priority.enum';
 import { TodoService } from '../shared/services/person/todo.service';
+import { MatIconModule } from '@angular/material/icon';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'hoa-todo',
-  imports: [],
+  imports: [DatePipe, MatIconModule, ReactiveFormsModule],
   templateUrl: './todo.component.html',
   styleUrl: './todo.component.scss',
 })
@@ -16,32 +18,25 @@ export class TodoComponent {
   public showError: boolean;
 
   readonly #todoService = inject(TodoService);
-
   private fb = inject(FormBuilder);
-  bla: TodoDto[] = [];
+  todoDtos: TodoDto[] = [];
 
   constructor() {
-    this.todoForm = new FormGroup({});
+    this.todoForm = this.fb.group({});
     this.errorMessage = '';
     this.showError = false;
 
     this.#todoService.getTodos().subscribe((todos) => {
       console.log(todos);
-      this.bla = todos;
+      this.todoDtos = todos; // Aufruf der Methode, um das Formular zu aktualisieren
     });
   }
 
   ngOnInit(): void {
     this.todoForm = this.fb.group({
-      id: this.fb.control<number>(0, {
-        validators: [Validators.required],
-        nonNullable: true,
-      }),
-      todoGroupId: this.fb.control<number | null>(null),
-      name: this.fb.control<string>('', {
-        validators: [Validators.required, Validators.email],
-        nonNullable: true,
-      }),
+      // Standardfelder für das Formular, die zuerst definiert sind
+      id: this.fb.control<number>(0, { validators: [Validators.required], nonNullable: true }),
+      name: this.fb.control<string>('', { validators: [Validators.required], nonNullable: true }),
       done: this.fb.control<boolean>(false, {
         validators: [Validators.required],
         nonNullable: true,
