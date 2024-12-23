@@ -18,7 +18,10 @@
             <div
               class="icon-link"
               (click)="item?.link && item?.sublist ? clickNav($event) : null">
-              <a [attr.href]="item?.link && !item?.sublist ? item.link : undefined">
+              <a
+                [routerLink]="item?.link && !item?.sublist ? item.link : undefined"
+                routerLinkActive="active"
+                ariaCurrentWhenActive="page">
                 <mat-icon>{{ item?.icon }}</mat-icon>
                 <span class="link-name">{{ item?.name }}</span>
               </a>

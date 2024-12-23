@@ -3,11 +3,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { NavbarService } from '../services/navbar/navbar.service';
 import { NavbarItem } from '../_interfaces/navbar/navbar-item';
 import { AuthenticationService } from '../services/authentication.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'am-navbar',
-  imports: [MatIconModule],
+  imports: [MatIconModule, RouterModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
 })
