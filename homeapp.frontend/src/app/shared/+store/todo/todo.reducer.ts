@@ -7,11 +7,13 @@ export const todoFeatureKey = 'todoState';
 export interface TodoState {
   todos: TodoDto[];
   loading: boolean;
+  error: string | null;
 }
 
 export const initialState: TodoState = {
   todos: [],
   loading: false,
+  error: null,
 };
 
 export const todoReducer = createReducer(
@@ -23,6 +25,6 @@ export const todoReducer = createReducer(
     return { ...state, todos, loading: false };
   }),
   on(TodoActions.loadTodosFailure, (state, { error }) => {
-    return { ...state, loading: false };
+    return { ...state, loading: false, error };
   })
 );
