@@ -1,54 +1,32 @@
-import { Component, inject } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { TodoDto } from '../shared/_interfaces/todo/todo-dto';
-import { TodoPriorityEnum } from '../shared/enum/todo-priority.enum';
-import { TodoService } from '../shared/services/person/todo.service';
 import { MatIconModule } from '@angular/material/icon';
-import { DatePipe } from '@angular/common';
+import { AsyncPipe, DatePipe } from '@angular/common';
+import { Store } from '@ngrx/store';
+import { TodoActions } from '../shared/+store/todo/todo.actions';
+import { Observable } from 'rxjs';
+import { selectAllTodos, selectTodosLoading } from '../shared/+store/todo/todo.selectors';
 
 @Component({
   selector: 'hoa-todo',
-  imports: [DatePipe, MatIconModule, ReactiveFormsModule],
+  imports: [AsyncPipe, DatePipe, MatIconModule, ReactiveFormsModule],
   templateUrl: './todo.component.html',
   styleUrl: './todo.component.scss',
 })
 export class TodoComponent {
-  public todoForm: FormGroup;
   public errorMessage: string;
   public showError: boolean;
 
-  readonly #todoService = inject(TodoService);
-  private fb = inject(FormBuilder);
-  todoDtos: TodoDto[] = [];
+  todos$: Observable<TodoDto[]>;
+  loading$: Observable<boolean>;
 
-  constructor() {
-    this.todoForm = this.fb.group({});
+  constructor(private store: Store) {
+    this.store.dispatch(TodoActions.loadTodos());
     this.errorMessage = '';
     this.showError = false;
 
-    this.#todoService.getTodos().subscribe((todos) => {
-      console.log(todos);
-      this.todoDtos = todos; // Aufruf der Methode, um das Formular zu aktualisieren
-    });
-  }
-
-  ngOnInit(): void {
-    this.todoForm = this.fb.group({
-      // Standardfelder für das Formular, die zuerst definiert sind
-      id: this.fb.control<number>(0, { validators: [Validators.required], nonNullable: true }),
-      name: this.fb.control<string>('', { validators: [Validators.required], nonNullable: true }),
-      done: this.fb.control<boolean>(false, {
-        validators: [Validators.required],
-        nonNullable: true,
-      }),
-      priority: this.fb.control<TodoPriorityEnum>(0, {
-        validators: [Validators.required],
-        nonNullable: true,
-      }),
-      executionDate: this.fb.control<Date | null>(null, {
-        validators: [Validators.required],
-        nonNullable: true,
-      }),
-    });
+    this.todos$ = this.store.select(selectAllTodos);
+    this.loading$ = this.store.select(selectTodosLoading);
   }
 }

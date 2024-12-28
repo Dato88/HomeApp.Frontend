@@ -1,0 +1,24 @@
+import { inject, Injectable } from '@angular/core';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { catchError, map, switchMap } from 'rxjs/operators';
+import { TodoActions } from './todo.actions';
+import { TodoService } from '../../services/person/todo.service';
+import { of } from 'rxjs';
+
+@Injectable()
+export class TodoEffects {
+  #actions$: Actions = inject(Actions);
+  #todoService = inject(TodoService);
+
+  loadTodos$ = createEffect(() => {
+    return this.#actions$.pipe(
+      ofType(TodoActions.loadTodos),
+      switchMap(() =>
+        this.#todoService.getTodos().pipe(
+          map((todos) => TodoActions.loadTodosSuccess({ todos })),
+          catchError((error) => of(TodoActions.loadTodosFailure({ error })))
+        )
+      )
+    );
+  });
+}

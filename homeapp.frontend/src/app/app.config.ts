@@ -17,6 +17,8 @@ import { JwtModule } from '@auth0/angular-jwt';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { provideEffects } from '@ngrx/effects';
 import { provideStore } from '@ngrx/store';
+import { todoFeatureKey, todoReducer } from './shared/+store/todo/todo.reducer';
+import { TodoEffects } from './shared/+store/todo/todo.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -33,8 +35,8 @@ export const appConfig: ApplicationConfig = {
       }),
     ]),
     httpInterceptorProviders,
-    provideStore(),
+    provideStore({ [todoFeatureKey]: todoReducer }),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
-    provideEffects(),
+    provideEffects([TodoEffects]),
   ],
 };
