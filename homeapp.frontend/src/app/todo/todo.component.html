@@ -45,4 +45,17 @@
       }
     }
   </td>
+  <div class="add-todo">
+    <dialog
+      #todoDialog
+      (close)="onDialogClose()">
+      <div class="dialog-header">
+        <button (click)="todoDialog.close()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <hoa-todo-form></hoa-todo-form>
+    </dialog>
+    <button (click)="todoDialog.showModal()">Create Todo</button>
+  </div>
 </div>

@@ -1,0 +1,12 @@
+<div class="todo-form">
+  <form
+    [formGroup]="todoForm"
+    (ngSubmit)="submitForm()">
+    <input
+      type="text"
+      autofocus
+      formControlName="name"
+      placeholder="Title" />
+    <button type="submit">Add</button>
+  </form>
+</div>

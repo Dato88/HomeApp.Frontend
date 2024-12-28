@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TodoDto } from '../shared/_interfaces/todo/todo-dto';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,10 +11,11 @@ import {
   selectTodoError,
   selectTodosLoading,
 } from '../shared/+store/todo/todo.selectors';
+import { TodoFormComponent } from './todo-form/todo-form.component';
 
 @Component({
   selector: 'hoa-todo',
-  imports: [AsyncPipe, DatePipe, MatIconModule, ReactiveFormsModule],
+  imports: [AsyncPipe, DatePipe, MatIconModule, ReactiveFormsModule, TodoFormComponent],
   templateUrl: './todo.component.html',
   styleUrl: './todo.component.scss',
 })
@@ -37,5 +38,14 @@ export class TodoComponent {
       this.showError = !!error;
       this.errorMessage = error || '';
     });
+  }
+
+  @ViewChild(TodoFormComponent) todoFormComponent!: TodoFormComponent;
+
+  // Diese Methode wird beim Schließen des Dialogs aufgerufen
+  onDialogClose(): void {
+    if (this.todoFormComponent) {
+      this.todoFormComponent.resetForm();
+    }
   }
 }
