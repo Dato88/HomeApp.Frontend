@@ -45,6 +45,8 @@ export class TodoFormComponent {
     };
 
     this.submitTodo.emit(newTodo);
+
+    this.resetForm();
   }
 
   resetForm(): void {

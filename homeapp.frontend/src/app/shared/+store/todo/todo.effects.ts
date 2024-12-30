@@ -21,4 +21,16 @@ export class TodoEffects {
       )
     );
   });
+
+  createTodo$ = createEffect(() => {
+    return this.#actions$.pipe(
+      ofType(TodoActions.createTodo),
+      switchMap(({ todo }) =>
+        this.#todoService.create(todo).pipe(
+          map((createdTodo) => TodoActions.createTodoSuccess({ todo: createdTodo })),
+          catchError((error) => of(TodoActions.createTodoFailure({ error: error.message })))
+        )
+      )
+    );
+  });
 }

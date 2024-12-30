@@ -26,5 +26,20 @@ export const todoReducer = createReducer(
   }),
   on(TodoActions.loadTodosFailure, (state, { error }) => {
     return { ...state, loading: false, error };
-  })
+  }),
+  on(TodoActions.createTodo, (state) => ({
+    ...state,
+    loading: true,
+  })),
+  on(TodoActions.createTodoSuccess, (state, { todo }) => ({
+    ...state,
+    todos: [...state.todos, todo],
+    loading: false,
+    error: null,
+  })),
+  on(TodoActions.createTodoFailure, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error,
+  }))
 );

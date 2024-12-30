@@ -11,6 +11,10 @@ import { Observable } from 'rxjs';
 export class TodoService {
   readonly #http = inject(HttpClient);
 
+  public create(todo: TodoDto): Observable<TodoDto> {
+    return this.#http.post<TodoDto>(`${environment.backendUrl}/${API_TODO_ENDPOINTS.todo}`, todo);
+  }
+
   public getTodos(): Observable<TodoDto[]> {
     return this.#http.get<TodoDto[]>(`${environment.backendUrl}/${API_TODO_ENDPOINTS.todos}`);
   }

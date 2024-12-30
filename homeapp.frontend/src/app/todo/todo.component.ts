@@ -12,10 +12,18 @@ import {
   selectTodosLoading,
 } from '../shared/+store/todo/todo.selectors';
 import { TodoFormComponent } from './todo-form/todo-form.component';
+import { TodoCreateFormComponent } from './todo-create-form/todo-create-form.component';
 
 @Component({
   selector: 'hoa-todo',
-  imports: [AsyncPipe, DatePipe, MatIconModule, NgStyle, ReactiveFormsModule, TodoFormComponent],
+  imports: [
+    AsyncPipe,
+    DatePipe,
+    MatIconModule,
+    NgStyle,
+    ReactiveFormsModule,
+    TodoCreateFormComponent,
+  ],
   templateUrl: './todo.component.html',
   styleUrl: './todo.component.scss',
 })
