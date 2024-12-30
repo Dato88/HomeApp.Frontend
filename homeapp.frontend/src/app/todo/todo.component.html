@@ -10,7 +10,7 @@
       @for (todoDto of todoDtos; track todoDto.id) {
         @let backgroundColor = todoDto.done ? 'green' : '';
 
-        <tr style="background-color: {{ backgroundColor }}">
+        <tr [ngStyle]="{ 'background-color': backgroundColor }">
           @if (todoDto.done) {
             <mat-icon>check</mat-icon>
           }

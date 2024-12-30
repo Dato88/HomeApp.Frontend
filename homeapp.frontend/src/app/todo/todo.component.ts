@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TodoDto } from '../shared/_interfaces/todo/todo-dto';
 import { MatIconModule } from '@angular/material/icon';
-import { AsyncPipe, DatePipe } from '@angular/common';
+import { AsyncPipe, DatePipe, NgStyle } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { TodoActions } from '../shared/+store/todo/todo.actions';
 import { Observable } from 'rxjs';
@@ -15,7 +15,7 @@ import { TodoFormComponent } from './todo-form/todo-form.component';
 
 @Component({
   selector: 'hoa-todo',
-  imports: [AsyncPipe, DatePipe, MatIconModule, ReactiveFormsModule, TodoFormComponent],
+  imports: [AsyncPipe, DatePipe, MatIconModule, NgStyle, ReactiveFormsModule, TodoFormComponent],
   templateUrl: './todo.component.html',
   styleUrl: './todo.component.scss',
 })
