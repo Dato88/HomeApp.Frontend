@@ -50,10 +50,13 @@ export class TodoComponent {
 
   @ViewChild(TodoFormComponent) todoFormComponent!: TodoFormComponent;
 
-  // Diese Methode wird beim Schließen des Dialogs aufgerufen
   onDialogClose(): void {
     if (this.todoFormComponent) {
       this.todoFormComponent.resetForm();
     }
+  }
+
+  deleteTodo(id: number): void {
+    this.store.dispatch(TodoActions.deleteTodo({ id }));
   }
 }

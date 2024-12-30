@@ -10,5 +10,8 @@ export const TodoActions = createActionGroup({
     'Create Todo': props<{ todo: TodoDto }>(),
     'Create Todo Success': props<{ todo: TodoDto }>(),
     'Create Todo Failure': props<{ error: string }>(),
+    'Delete Todo': props<{ id: number }>(),
+    'Delete Todo Success': props<{ id: number }>(),
+    'Delete Todo Failure': props<{ error: string }>(),
   },
 });
