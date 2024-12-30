@@ -10,12 +10,16 @@
       @for (todoDto of todoDtos; track todoDto.id) {
         @let backgroundColor = todoDto.done ? 'green' : '';
 
-        <tr [ngStyle]="{ 'background-color': backgroundColor }">
-          @if (todoDto.done) {
-            <mat-icon>check</mat-icon>
-          }
-
+        <tr
+          [ngStyle]="{ 'background-color': backgroundColor }"
+          [id]="'todo-item-' + todoDto.id"
+          (touchstart)="onTouchStart($event, todoDto.id)"
+          (touchmove)="onTouchMove($event, todoDto.id)"
+          (touchend)="onTouchEnd($event, todoDto.id)">
           <div class="todo-item">
+            @if (todoDto.done) {
+              <mat-icon>check</mat-icon>
+            }
             <div class="todo-name">
               <h3>{{ todoDto.name }}</h3>
             </div>
@@ -27,21 +31,22 @@
 
               <div class="todo-priority-icons">
                 @if (todoDto.priority >= 1) {
-                  <!-- <mat-icon>priority_high</mat-icon> -->
                   !
                 }
                 @if (todoDto.priority >= 2) {
-                  <!-- <mat-icon>priority_high</mat-icon> -->
                   !
                 }
                 @if (todoDto.priority >= 3) {
-                  <!-- <mat-icon>priority_high</mat-icon> -->
                   !
                 }
               </div>
             </div>
-            <button (click)="deleteTodo(todoDto.id)">Delete</button>
           </div>
+          <button
+            class="delete-button"
+            (click)="deleteTodo(todoDto.id)">
+            Delete
+          </button>
         </tr>
       }
     }

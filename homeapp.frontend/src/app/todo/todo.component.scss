@@ -10,15 +10,16 @@ hoa-todo {
   tr {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem;
+    justify-content: space-between;
     border: solid 1px;
     border-radius: 0.25rem;
 
     .todo-item {
+      position: relative;
       display: grid;
-      width: 100%;
+      padding: 0.5rem;
       gap: 0.5rem;
+      transition: transform 0.3s ease-in-out;
 
       .todo-name {
         h3 {
@@ -43,6 +44,25 @@ hoa-todo {
           height: max-content;
         }
       }
+    }
+
+    .delete-button {
+      display: none;
+      background-color: red;
+      color: white;
+      border: none;
+      padding: 10px 2rem;
+      cursor: pointer;
+
+      &.swiped {
+        display: block;
+        // transform: translateX(3rem);
+        transition: right 0.3s ease-in-out;
+      }
+    }
+
+    button {
+      height: 100%;
     }
   }
 }
