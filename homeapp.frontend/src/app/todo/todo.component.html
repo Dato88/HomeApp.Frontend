@@ -16,7 +16,9 @@
           (touchstart)="onTouchStart($event, todoDto.id)"
           (touchmove)="onTouchMove($event, todoDto.id)"
           (touchend)="onTouchEnd($event, todoDto.id)">
-          <div class="todo-item">
+          <div
+            class="todo-item"
+            (click)="completeTodoToggle(todoDto)">
             @if (todoDto.done) {
               <mat-icon>check</mat-icon>
             }
@@ -26,7 +28,7 @@
 
             <div class="todo-infos">
               <div class="todo-execution-date">
-                <p>{{ todoDto.executionDate | date: 'dd.MM.yyyy HH:mm' }}</p>
+                <p>{{ todoDto.lastModified | date: 'dd.MM.yyyy HH:mm' }}</p>
               </div>
 
               <div class="todo-priority-icons">

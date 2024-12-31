@@ -34,13 +34,25 @@ export class TodoEffects {
     );
   });
 
+  completeTodo$ = createEffect(() => {
+    return this.#actions$.pipe(
+      ofType(TodoActions.completeTodo),
+      switchMap(({ todo }) =>
+        this.#todoService.update(todo).pipe(
+          map((createdTodo) => TodoActions.completeTodoSuccess({ todo })),
+          catchError((error) => of(TodoActions.completeTodoFailure({ error: error.message })))
+        )
+      )
+    );
+  });
+
   deleteTodo$ = createEffect(() => {
     return this.#actions$.pipe(
       ofType(TodoActions.deleteTodo),
       switchMap(({ id }) =>
         this.#todoService.delete(id).pipe(
           map(() => TodoActions.deleteTodoSuccess({ id })),
-          catchError((error) => of(TodoActions.createTodoFailure({ error: error.message })))
+          catchError((error) => of(TodoActions.deleteTodoFailure({ error: error.message })))
         )
       )
     );

@@ -6,5 +6,5 @@ export interface TodoDto {
   name: string;
   done: boolean;
   priority: TodoPriorityEnum;
-  executionDate?: Date;
+  lastModified?: Date;
 }

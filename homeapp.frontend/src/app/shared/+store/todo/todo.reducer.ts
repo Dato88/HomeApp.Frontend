@@ -42,6 +42,25 @@ export const todoReducer = createReducer(
     loading: false,
     error,
   })),
+  on(TodoActions.completeTodo, (state) => ({
+    ...state,
+    loading: true,
+  })),
+  on(TodoActions.completeTodoSuccess, (state, { todo }) => ({
+    ...state,
+    todos: state.todos.map((existingTodo) =>
+      existingTodo.id === todo.id
+        ? { ...existingTodo, done: !existingTodo.done } // Toggle the 'done' status
+        : existingTodo
+    ),
+    loading: false,
+    error: null,
+  })),
+  on(TodoActions.completeTodoFailure, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error,
+  })),
   on(TodoActions.deleteTodo, (state) => ({
     ...state,
     loading: true,
