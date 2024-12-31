@@ -17,36 +17,41 @@
         autocomplete="off"
         novalidate
         (ngSubmit)="loginUser(loginForm.value)">
-        <div>
-          <label for="email">Username:</label>
-          <div>
-            <input
-              type="text"
-              id="email"
-              formControlName="email"
-              class="form-control" />
-          </div>
-          <div>
-            @if (validateControl('email') && hasError('email', 'required')) {
-              <em>Username is required</em>
-            }
-          </div>
-        </div>
-        <div>
-          <label for="password">Password:</label>
-          <div>
-            <input
-              type="password"
-              id="password"
-              formControlName="password"
-              class="form-control" />
-          </div>
-          <div>
-            @if (validateControl('password') && hasError('password', 'required')) {
-              <em>Password is required</em>
-            }
-          </div>
-        </div>
+        <mat-form-field>
+          <mat-label>Enter your email</mat-label>
+          <input
+            type="email"
+            matInput
+            autofocus
+            placeholder="your@example.com"
+            formControlName="email"
+            required />
+          @if (validateControl('email') && hasError('email', 'required')) {
+            <mat-error>{{ errorMessage }}</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field>
+          <input
+            matInput
+            placeholder="Password"
+            [type]="hide ? 'password' : 'text'"
+            formControlName="password"
+            required />
+          <mat-icon
+            matSuffix
+            (click)="hide = !hide">
+            {{ hide ? 'visibility_off' : 'visibility' }}
+          </mat-icon>
+          @if (
+            !loginForm.value.password &&
+            !(validateControl('password') && hasError('password', 'required'))
+          ) {
+            <mat-hint>Enter your password</mat-hint>
+          }
+          @if (validateControl('password') && hasError('password', 'required')) {
+            <mat-hint>Password is required</mat-hint>
+          }
+        </mat-form-field>
         <div>
           <a routerLink="/authentication/forgotpassword">Forgot Password</a>
         </div>

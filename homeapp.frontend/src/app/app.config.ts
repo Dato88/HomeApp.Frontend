@@ -19,6 +19,7 @@ import { provideEffects } from '@ngrx/effects';
 import { provideStore } from '@ngrx/store';
 import { todoFeatureKey, todoReducer } from './shared/+store/todo/todo.reducer';
 import { TodoEffects } from './shared/+store/todo/todo.effects';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -37,6 +38,6 @@ export const appConfig: ApplicationConfig = {
     httpInterceptorProviders,
     provideStore({ [todoFeatureKey]: todoReducer }),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
-    provideEffects([TodoEffects]),
+    provideEffects([TodoEffects]), provideAnimationsAsync(),
   ],
 };
