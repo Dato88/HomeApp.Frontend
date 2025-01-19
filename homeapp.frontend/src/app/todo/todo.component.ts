@@ -2,6 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TodoDto } from '../shared/_interfaces/todo/todo-dto';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AsyncPipe, DatePipe, NgClass, NgStyle } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { TodoActions } from '../shared/+store/todo/todo.actions';
@@ -20,6 +21,7 @@ import { TodoCreateFormComponent } from './todo-create-form/todo-create-form.com
     AsyncPipe,
     DatePipe,
     MatIconModule,
+    MatProgressSpinnerModule,
     NgStyle,
     ReactiveFormsModule,
     TodoCreateFormComponent,

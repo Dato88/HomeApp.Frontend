@@ -7,4 +7,5 @@ export interface TodoDto {
   done: boolean;
   priority: TodoPriorityEnum;
   lastModified?: Date;
+  loading: boolean;
 }

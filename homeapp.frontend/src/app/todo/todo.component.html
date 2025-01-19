@@ -16,39 +16,45 @@
           (touchstart)="onTouchStart($event, todoDto.id)"
           (touchmove)="onTouchMove($event, todoDto.id)"
           (touchend)="onTouchEnd($event, todoDto.id)">
-          <div
-            class="todo-item"
-            (click)="completeTodoToggle(todoDto)">
-            @if (todoDto.done) {
-              <mat-icon>check</mat-icon>
-            }
-            <div class="todo-name">
-              <h3>{{ todoDto.name }}</h3>
+          @if (todoDto.loading) {
+            <div class="loader">
+              <mat-spinner></mat-spinner>
             </div>
-
-            <div class="todo-infos">
-              <div class="todo-execution-date">
-                <p>{{ todoDto.lastModified | date: 'dd.MM.yyyy HH:mm' }}</p>
+          } @else {
+            <div
+              class="todo-item"
+              (click)="completeTodoToggle(todoDto)">
+              @if (todoDto.done) {
+                <mat-icon>check</mat-icon>
+              }
+              <div class="todo-name">
+                <h3>{{ todoDto.name }}</h3>
               </div>
 
-              <div class="todo-priority-icons">
-                @if (todoDto.priority >= 1) {
-                  !
-                }
-                @if (todoDto.priority >= 2) {
-                  !
-                }
-                @if (todoDto.priority >= 3) {
-                  !
-                }
+              <div class="todo-infos">
+                <div class="todo-execution-date">
+                  <p>{{ todoDto.lastModified | date: 'dd.MM.yyyy HH:mm' }}</p>
+                </div>
+
+                <div class="todo-priority-icons">
+                  @if (todoDto.priority >= 1) {
+                    !
+                  }
+                  @if (todoDto.priority >= 2) {
+                    !
+                  }
+                  @if (todoDto.priority >= 3) {
+                    !
+                  }
+                </div>
               </div>
             </div>
-          </div>
-          <button
-            class="delete-button"
-            (click)="deleteTodo(todoDto.id)">
-            Delete
-          </button>
+            <button
+              class="delete-button"
+              (click)="deleteTodo(todoDto.id)">
+              Delete
+            </button>
+          }
         </tr>
       }
     }
