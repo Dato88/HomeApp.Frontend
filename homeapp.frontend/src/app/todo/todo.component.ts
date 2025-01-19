@@ -3,7 +3,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { TodoDto } from '../shared/_interfaces/todo/todo-dto';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { AsyncPipe, DatePipe, NgClass, NgStyle } from '@angular/common';
+import { AsyncPipe, DatePipe, NgStyle } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { TodoActions } from '../shared/+store/todo/todo.actions';
 import { Observable } from 'rxjs';

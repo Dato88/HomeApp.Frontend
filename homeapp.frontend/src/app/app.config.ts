@@ -38,6 +38,7 @@ export const appConfig: ApplicationConfig = {
     httpInterceptorProviders,
     provideStore({ [todoFeatureKey]: todoReducer }),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
-    provideEffects([TodoEffects]), provideAnimationsAsync(),
+    provideEffects([TodoEffects]),
+    provideAnimationsAsync(),
   ],
 };

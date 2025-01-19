@@ -1,7 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
 import { TodoActions } from './todo.actions';
-import { TodoDto } from '../../_interfaces/todo/todo-dto';
-import { initialState } from '../../_interfaces/states/todo-state';
+import { initialState, todoAdapter } from './todo.adapter';
 
 export const todoFeatureKey = 'todoState';
 
@@ -12,83 +11,47 @@ export const todoReducer = createReducer(
     loading: true,
   })),
   on(TodoActions.loadTodosSuccess, (state, { todos }) => {
-    const entities = todos.reduce(
-      (acc, todo) => {
-        acc[todo.id] = { ...todo, loading: false };
-        return acc;
-      },
-      {} as { [id: number]: TodoDto }
-    );
-
-    const ids = todos.map((todo) => todo.id);
-
-    return { ...state, entities, ids, loading: false };
+    return todoAdapter.setAll(todos, { ...state, loading: false });
   }),
   on(TodoActions.loadTodosFailure, (state, { error }) => ({
     ...state,
     loading: false,
     error,
   })),
-  on(TodoActions.createTodo, (state, { todo }) => ({
+  on(TodoActions.createTodo, (state) => ({
     ...state,
-    entities: {
-      ...state.entities,
-      [todo.id]: { ...todo, loading: true },
-    },
     loading: true,
   })),
-  on(TodoActions.createTodoSuccess, (state, { todo }) => ({
-    ...state,
-    entities: {
-      ...state.entities,
-      [todo.id]: { ...todo, loading: false },
-    },
-    ids: state.ids.includes(todo.id) ? state.ids : [...state.ids, todo.id],
-    loading: false,
-    error: null,
-  })),
+  on(TodoActions.createTodoSuccess, (state, { todo }) => {
+    return todoAdapter.addOne(todo, { ...state, loading: false });
+  }),
   on(TodoActions.createTodoFailure, (state, { error }) => ({
     ...state,
     loading: false,
     error,
   })),
-  on(TodoActions.completeTodo, (state, { todo }) => ({
-    ...state,
-    entities: {
-      ...state.entities,
-      [todo.id]: { ...state.entities[todo.id], loading: true },
-    },
-  })),
-  on(TodoActions.completeTodoSuccess, (state, { todo }) => ({
-    ...state,
-    entities: {
-      ...state.entities,
-      [todo.id]: { ...todo, loading: false },
-    },
-    loading: false,
-    error: null,
-  })),
+  on(TodoActions.completeTodo, (state, { todo }) => {
+    return todoAdapter.updateOne(
+      { id: todo.id, changes: { ...todo, loading: true } },
+      { ...state }
+    );
+  }),
+  on(TodoActions.completeTodoSuccess, (state, { todo }) => {
+    return todoAdapter.updateOne(
+      { id: todo.id, changes: { ...todo, loading: false } },
+      { ...state }
+    );
+  }),
   on(TodoActions.completeTodoFailure, (state, { error }) => ({
     ...state,
     loading: false,
     error,
   })),
-  on(TodoActions.deleteTodo, (state, { id }) => ({
-    ...state,
-    entities: {
-      ...state.entities,
-      [id]: { ...state.entities[id], loading: true },
-    },
-  })),
+  on(TodoActions.deleteTodo, (state, { id }) => {
+    return todoAdapter.removeOne(id, { ...state });
+  }),
   on(TodoActions.deleteTodoSuccess, (state, { id }) => {
-    const { [id]: deletedTodo, ...remainingEntities } = state.entities;
-    return {
-      ...state,
-      entities: remainingEntities,
-      ids: state.ids.filter((existingId) => existingId !== id),
-      loading: false,
-      error: null,
-    };
+    return todoAdapter.removeOne(id, { ...state });
   }),
   on(TodoActions.deleteTodoFailure, (state, { error }) => ({
     ...state,

@@ -23,6 +23,7 @@ hoa-todo {
     .todo-item {
       position: relative;
       display: grid;
+      grid-template-columns: max-content 1fr;
       padding: 0.5rem;
       gap: 0.5rem;
       width: 100%;
@@ -38,6 +39,7 @@ hoa-todo {
         grid-template-columns: 1fr max-content;
         justify-content: space-between;
         height: max-content;
+        grid-column: span 2;
 
         .todo-execution-date {
           p {

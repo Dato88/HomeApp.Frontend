@@ -1,9 +1,8 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, switchMap } from 'rxjs/operators';
-import { TodoActions } from './todo.actions';
+import { switchMap, map, catchError, of } from 'rxjs';
 import { TodoService } from '../../services/person/todo.service';
-import { of } from 'rxjs';
+import { TodoActions } from './todo.actions';
 
 @Injectable()
 export class TodoEffects {
