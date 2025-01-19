@@ -17,12 +17,14 @@ import { API_AUTHENTICATION_ENDPOINTS } from '../../../api-endpoints/api-authent
 import { API_ACCOUNTS_ENDPOINTS } from '../../../api-endpoints/api-accounts-endpoints';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'hoa-login',
   imports: [
+    MatButtonModule,
     MatCardModule,
     MatFormFieldModule,
     MatIconModule,

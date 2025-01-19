@@ -37,12 +37,14 @@ export class TodoEffects {
   completeTodo$ = createEffect(() => {
     return this.#actions$.pipe(
       ofType(TodoActions.completeTodo),
-      switchMap(({ todo }) =>
-        this.#todoService.update(todo).pipe(
-          map((createdTodo) => TodoActions.completeTodoSuccess({ todo })),
+      switchMap(({ todo }) => {
+        const updatedTodo = { ...todo, done: !todo.done };
+
+        return this.#todoService.update(updatedTodo).pipe(
+          map((response) => TodoActions.completeTodoSuccess({ todo: response })),
           catchError((error) => of(TodoActions.completeTodoFailure({ error: error.message })))
-        )
-      )
+        );
+      })
     );
   });
 

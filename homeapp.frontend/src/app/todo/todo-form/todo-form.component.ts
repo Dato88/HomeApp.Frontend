@@ -2,10 +2,13 @@ import { Component, EventEmitter, inject, Output } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TodoPriorityEnum } from '../../shared/enum/todo-priority.enum';
 import { TodoDto } from '../../shared/_interfaces/todo/todo-dto';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'hoa-todo-form',
-  imports: [ReactiveFormsModule],
+  imports: [MatButtonModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule],
   templateUrl: './todo-form.component.html',
   styleUrl: './todo-form.component.scss',
 })

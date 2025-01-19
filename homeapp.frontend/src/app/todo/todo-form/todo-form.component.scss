@@ -3,26 +3,24 @@
 
   form {
     display: grid;
-    grid-template-columns: 1fr max-content;
 
-    input {
-      height: 2rem;
-      font-size: 1.2rem;
-      padding-inline: 0.5rem;
-      border: 1px solid #676767;
-      border-radius: 0.25rem 0 0 0.25rem;
+    // input {
+    //   height: 2rem;
+    //   font-size: 1.2rem;
+    //   padding-inline: 0.5rem;
+    //   border: 1px solid #676767;
+    //   border-radius: 0.25rem 0 0 0.25rem;
 
-      &:focus-visible {
-        outline-color: #6699cc;
-        border-radius: 0;
-      }
-    }
+    //   &:focus-visible {
+    //     outline-color: #6699cc;
+    //     border-radius: 0;
+    //   }
+    // }
 
     button {
       font-weight: 600;
       padding-inline: 1rem;
       border: 1px solid #676767;
-      border-radius: 0 0.25rem 0.25rem 0;
     }
   }
 }

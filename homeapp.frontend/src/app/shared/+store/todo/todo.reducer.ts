@@ -49,9 +49,7 @@ export const todoReducer = createReducer(
   on(TodoActions.completeTodoSuccess, (state, { todo }) => ({
     ...state,
     todos: state.todos.map((existingTodo) =>
-      existingTodo.id === todo.id
-        ? { ...existingTodo, done: !existingTodo.done } // Toggle the 'done' status
-        : existingTodo
+      existingTodo.id === todo.id ? { ...existingTodo, ...todo } : existingTodo
     ),
     loading: false,
     error: null,

@@ -15,8 +15,8 @@ export class TodoService {
     return this.#http.post<TodoDto>(`${environment.backendUrl}/${API_TODO_ENDPOINTS.todo}`, todo);
   }
 
-  public update(todo: TodoDto): Observable<void> {
-    return this.#http.patch<void>(`${environment.backendUrl}/${API_TODO_ENDPOINTS.todo}`, todo);
+  public update(todo: TodoDto): Observable<TodoDto> {
+    return this.#http.patch<TodoDto>(`${environment.backendUrl}/${API_TODO_ENDPOINTS.todo}`, todo);
   }
 
   public delete(id: number): Observable<void> {
