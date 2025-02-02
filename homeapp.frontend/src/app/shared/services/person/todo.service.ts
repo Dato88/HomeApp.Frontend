@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import { API_TODO_ENDPOINTS } from '../../../../api-endpoints/api-todo-endpoints';
 import { Observable } from 'rxjs';
+import { BaseResponse } from '../../_interfaces/base-response';
 
 @Injectable({
   providedIn: 'root',
@@ -11,12 +12,18 @@ import { Observable } from 'rxjs';
 export class TodoService {
   readonly #http = inject(HttpClient);
 
-  public create(todo: TodoDto): Observable<TodoDto> {
-    return this.#http.post<TodoDto>(`${environment.backendUrl}/${API_TODO_ENDPOINTS.todo}`, todo);
+  public create(todo: TodoDto): Observable<BaseResponse<TodoDto>> {
+    return this.#http.post<BaseResponse<TodoDto>>(
+      `${environment.backendUrl}/${API_TODO_ENDPOINTS.todo}`,
+      todo
+    );
   }
 
-  public update(todo: TodoDto): Observable<TodoDto> {
-    return this.#http.patch<TodoDto>(`${environment.backendUrl}/${API_TODO_ENDPOINTS.todo}`, todo);
+  public update(todo: TodoDto): Observable<BaseResponse<TodoDto>> {
+    return this.#http.patch<BaseResponse<TodoDto>>(
+      `${environment.backendUrl}/${API_TODO_ENDPOINTS.todo}`,
+      todo
+    );
   }
 
   public delete(id: number): Observable<void> {
@@ -25,7 +32,9 @@ export class TodoService {
     );
   }
 
-  public getTodos(): Observable<TodoDto[]> {
-    return this.#http.get<TodoDto[]>(`${environment.backendUrl}/${API_TODO_ENDPOINTS.todos}`);
+  public getTodos(): Observable<BaseResponse<TodoDto[]>> {
+    return this.#http.get<BaseResponse<TodoDto[]>>(
+      `${environment.backendUrl}/${API_TODO_ENDPOINTS.todos}`
+    );
   }
 }

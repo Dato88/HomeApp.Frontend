@@ -14,7 +14,7 @@ export class TodoEffects {
       ofType(TodoActions.loadTodos),
       switchMap(() =>
         this.#todoService.getTodos().pipe(
-          map((todos) => TodoActions.loadTodosSuccess({ todos })),
+          map((response) => TodoActions.loadTodosSuccess({ todos: response.data })),
           catchError((error) => of(TodoActions.loadTodosFailure({ error })))
         )
       )
@@ -26,7 +26,7 @@ export class TodoEffects {
       ofType(TodoActions.createTodo),
       switchMap(({ todo }) =>
         this.#todoService.create(todo).pipe(
-          map((createdTodo) => TodoActions.createTodoSuccess({ todo: createdTodo })),
+          map((response) => TodoActions.createTodoSuccess({ todo: response.data })),
           catchError((error) => of(TodoActions.createTodoFailure({ error: error.message })))
         )
       )
@@ -40,7 +40,7 @@ export class TodoEffects {
         const updatedTodo = { ...todo, done: !todo.done };
 
         return this.#todoService.update(updatedTodo).pipe(
-          map((response) => TodoActions.completeTodoSuccess({ todo: response })),
+          map((response) => TodoActions.completeTodoSuccess({ todo: response.data })),
           catchError((error) => of(TodoActions.completeTodoFailure({ error: error.message })))
         );
       })
