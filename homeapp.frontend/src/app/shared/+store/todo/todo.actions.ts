@@ -4,6 +4,9 @@ import { TodoDto } from '../../_interfaces/todo/todo-dto';
 export const TodoActions = createActionGroup({
   source: 'Todo',
   events: {
+    'Load Todo By Id': props<{ id: number }>(),
+    'Load Todo By Id Success': props<{ todo: TodoDto }>(),
+    'Load Todo By Id Failure': props<{ error: string }>(),
     'Load Todos': emptyProps(),
     'Load Todos Success': props<{ todos: TodoDto[] }>(),
     'Load Todos Failure': props<{ error: string }>(),

@@ -12,15 +12,15 @@ import { BaseResponse } from '../../_interfaces/base-response';
 export class TodoService {
   readonly #http = inject(HttpClient);
 
-  public create(todo: TodoDto): Observable<BaseResponse<TodoDto>> {
-    return this.#http.post<BaseResponse<TodoDto>>(
+  public create(todo: TodoDto): Observable<BaseResponse<number>> {
+    return this.#http.post<BaseResponse<number>>(
       `${environment.backendUrl}/${API_TODO_ENDPOINTS.todo}`,
       todo
     );
   }
 
-  public update(todo: TodoDto): Observable<BaseResponse<TodoDto>> {
-    return this.#http.patch<BaseResponse<TodoDto>>(
+  public update(todo: TodoDto): Observable<BaseResponse<boolean>> {
+    return this.#http.patch<BaseResponse<boolean>>(
       `${environment.backendUrl}/${API_TODO_ENDPOINTS.todo}`,
       todo
     );
@@ -28,6 +28,12 @@ export class TodoService {
 
   public delete(id: number): Observable<void> {
     return this.#http.delete<void>(
+      `${environment.backendUrl}/${API_TODO_ENDPOINTS.todo}/?id=${id}`
+    );
+  }
+
+  public getTodo(id: number): Observable<BaseResponse<TodoDto>> {
+    return this.#http.get<BaseResponse<TodoDto>>(
       `${environment.backendUrl}/${API_TODO_ENDPOINTS.todo}/?id=${id}`
     );
   }

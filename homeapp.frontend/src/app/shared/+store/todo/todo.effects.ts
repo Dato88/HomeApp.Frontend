@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { switchMap, map, catchError, of } from 'rxjs';
+import { switchMap, map, catchError, of, tap, mergeMap } from 'rxjs';
 import { TodoService } from '../../services/person/todo.service';
 import { TodoActions } from './todo.actions';
 
@@ -8,6 +8,18 @@ import { TodoActions } from './todo.actions';
 export class TodoEffects {
   #actions$: Actions = inject(Actions);
   #todoService = inject(TodoService);
+
+  loadTodoById$ = createEffect(() => {
+    return this.#actions$.pipe(
+      ofType(TodoActions.loadTodoById),
+      switchMap(({ id }) =>
+        this.#todoService.getTodo(id).pipe(
+          map((response) => TodoActions.loadTodoByIdSuccess({ todo: response.data })),
+          catchError((error) => of(TodoActions.loadTodoByIdFailure({ error: error.message })))
+        )
+      )
+    );
+  });
 
   loadTodos$ = createEffect(() => {
     return this.#actions$.pipe(
@@ -26,7 +38,11 @@ export class TodoEffects {
       ofType(TodoActions.createTodo),
       switchMap(({ todo }) =>
         this.#todoService.create(todo).pipe(
-          map((response) => TodoActions.createTodoSuccess({ todo: response.data })),
+          switchMap((response) => {
+            return response.success
+              ? [TodoActions.loadTodoById({ id: response.data })]
+              : [TodoActions.createTodoFailure({ error: 'Failed to create todo' })];
+          }),
           catchError((error) => of(TodoActions.createTodoFailure({ error: error.message })))
         )
       )
@@ -35,12 +51,19 @@ export class TodoEffects {
 
   completeTodo$ = createEffect(() => {
     return this.#actions$.pipe(
-      ofType(TodoActions.completeTodo),
+      ofType(TodoActions.completeTodo), // Wenn completeTodo Action ausgelöst wird
       switchMap(({ todo }) => {
         const updatedTodo = { ...todo, done: !todo.done };
 
         return this.#todoService.update(updatedTodo).pipe(
-          map((response) => TodoActions.completeTodoSuccess({ todo: response.data })),
+          mergeMap((response) =>
+            response.success
+              ? [
+                  TodoActions.completeTodoSuccess({ todo: updatedTodo }),
+                  TodoActions.loadTodoById({ id: updatedTodo.id }),
+                ]
+              : [TodoActions.completeTodoFailure({ error: 'Failed to update todo' })]
+          ),
           catchError((error) => of(TodoActions.completeTodoFailure({ error: error.message })))
         );
       })

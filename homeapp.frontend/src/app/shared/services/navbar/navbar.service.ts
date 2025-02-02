@@ -7,6 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import { API_PERSON_ENDPOINTS } from '../../../../api-endpoints/api-person-endpoints';
 import { environment } from '../../../../environments/environment';
 import { API_NAVBAR_ENDPOINTS } from '../../../../api-endpoints/api-navbar-endpoints';
+import { BaseResponse } from '../../_interfaces/base-response';
 
 @Injectable({
   providedIn: 'root',
@@ -33,9 +34,9 @@ export class NavbarService {
 
   public getPerson(): void {
     this.#http
-      .get<PersonDto>(`${environment.backendUrl}/${API_PERSON_ENDPOINTS.person}`)
-      .subscribe((person) => {
-        this.personSignal.set(person);
+      .get<BaseResponse<PersonDto>>(`${environment.backendUrl}/${API_PERSON_ENDPOINTS.person}`)
+      .subscribe((response) => {
+        this.personSignal.set(response.data);
       });
   }
 
