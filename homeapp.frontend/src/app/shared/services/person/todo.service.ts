@@ -26,8 +26,8 @@ export class TodoService {
     );
   }
 
-  public delete(id: number): Observable<void> {
-    return this.#http.delete<void>(
+  public delete(id: number): Observable<BaseResponse<boolean>> {
+    return this.#http.delete<BaseResponse<boolean>>(
       `${environment.backendUrl}/${API_TODO_ENDPOINTS.todo}/?id=${id}`
     );
   }

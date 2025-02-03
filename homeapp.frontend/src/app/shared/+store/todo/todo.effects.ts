@@ -51,7 +51,7 @@ export class TodoEffects {
 
   completeTodo$ = createEffect(() => {
     return this.#actions$.pipe(
-      ofType(TodoActions.completeTodo), // Wenn completeTodo Action ausgelöst wird
+      ofType(TodoActions.completeTodo),
       switchMap(({ todo }) => {
         const updatedTodo = { ...todo, done: !todo.done };
 
@@ -75,7 +75,13 @@ export class TodoEffects {
       ofType(TodoActions.deleteTodo),
       switchMap(({ id }) =>
         this.#todoService.delete(id).pipe(
-          map(() => TodoActions.deleteTodoSuccess({ id })),
+          map((response) =>
+            response.success
+              ? TodoActions.deleteTodoSuccess({ id })
+              : TodoActions.deleteTodoFailure({
+                  error: response.message ?? 'Failed to delete todo',
+                })
+          ),
           catchError((error) => of(TodoActions.deleteTodoFailure({ error: error.message })))
         )
       )

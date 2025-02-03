@@ -6,6 +6,8 @@ export const todoFeatureKey = 'todoState';
 
 export const todoReducer = createReducer(
   initialState,
+
+  //#region Load Todos
   on(TodoActions.loadTodos, (state) => ({
     ...state,
     loading: true,
@@ -18,26 +20,32 @@ export const todoReducer = createReducer(
     loading: false,
     error,
   })),
+  //#endregion Load Todos
+
+  //#region Load Todo By Id
   on(TodoActions.loadTodoByIdSuccess, (state, { todo }) => {
-    return todoAdapter.updateOne({ id: todo.id, changes: { ...todo } }, { ...state });
+    return todoAdapter.addOne(todo, { ...state, loading: false });
   }),
   on(TodoActions.loadTodoByIdFailure, (state, { error }) => ({
     ...state,
     loading: false,
     error,
   })),
+  //#endregion Load Todo By Id
+
+  //#region Create Todo
   on(TodoActions.createTodo, (state) => ({
     ...state,
     loading: true,
   })),
-  on(TodoActions.createTodoSuccess, (state, { todo }) => {
-    return todoAdapter.addOne(todo, { ...state, loading: false });
-  }),
   on(TodoActions.createTodoFailure, (state, { error }) => ({
     ...state,
     loading: false,
     error,
   })),
+  //#endregion Create Todo
+
+  //#region Complete Todo
   on(TodoActions.completeTodo, (state, { todo }) => {
     return todoAdapter.updateOne(
       { id: todo.id, changes: { ...todo, loading: true } },
@@ -55,6 +63,9 @@ export const todoReducer = createReducer(
     loading: false,
     error,
   })),
+  //#endregion Complete Todo
+
+  //#region Delete Todo
   on(TodoActions.deleteTodo, (state, { id }) => {
     return todoAdapter.removeOne(id, { ...state });
   }),
@@ -66,4 +77,5 @@ export const todoReducer = createReducer(
     loading: false,
     error,
   }))
+  //#endregion Delete Todo
 );
