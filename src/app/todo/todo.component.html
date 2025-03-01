@@ -2,12 +2,12 @@
   <h1>Todo</h1>
 
   <td class="todo-list">
-    @if (loading$ | async) {
+    @if (loading()) {
       <div class="loader">Loading...</div>
     }
 
-    @if (todos$ | async; as todoDtos) {
-      @for (todoDto of todoDtos; track todoDto.id) {
+    @if (todos(); as todos) {
+      @for (todoDto of todos; track todoDto.id) {
         @let backgroundColor = todoDto.done ? 'green' : '';
 
         <tr
