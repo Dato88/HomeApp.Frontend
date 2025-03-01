@@ -1,9 +1,11 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, computed, inject, Input, OnInit, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { NavbarService } from '../services/navbar/navbar.service';
 import { NavbarItem } from '../_interfaces/navbar/navbar-item';
 import { AuthenticationService } from '../services/authentication.service';
 import { Router, RouterModule } from '@angular/router';
+import { UserStore } from '../../+store/user-store';
+import { map, timeInterval } from 'rxjs';
 
 @Component({
   selector: 'am-navbar',
@@ -16,11 +18,13 @@ export class NavbarComponent implements OnInit {
   readonly #authService = inject(AuthenticationService);
   readonly #router = inject(Router);
   readonly #service = inject(NavbarService);
+  readonly #store = inject(UserStore);
+
+  user = computed(() => this.#store.user());
 
   ngOnInit(): void {
     this.navbarItem = this.#service.getAll();
     this.#service.getNavbarItems();
-    this.#service.getPerson();
   }
 
   clickNav(event: any): void {
