@@ -1,4 +1,4 @@
-import { PersonDto } from '../../shared/_interfaces/person/person-dto';
+import { PersonDto } from './person/person-dto';
 
 export interface UserState {
   isLoading: boolean;

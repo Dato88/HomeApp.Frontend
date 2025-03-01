@@ -1,11 +1,9 @@
-import { Component, computed, inject, Input, OnInit, signal } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { NavbarService } from '../services/navbar/navbar.service';
-import { NavbarItem } from '../_interfaces/navbar/navbar-item';
 import { AuthenticationService } from '../services/authentication.service';
 import { Router, RouterModule } from '@angular/router';
 import { UserStore } from '../../+store/user-store';
-import { map, timeInterval } from 'rxjs';
+import { NavbarStore } from '../../+store/navbar-store';
 
 @Component({
   selector: 'am-navbar',
@@ -13,19 +11,14 @@ import { map, timeInterval } from 'rxjs';
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
 })
-export class NavbarComponent implements OnInit {
-  @Input() navbarItem!: NavbarItem;
+export class NavbarComponent {
   readonly #authService = inject(AuthenticationService);
   readonly #router = inject(Router);
-  readonly #service = inject(NavbarService);
-  readonly #store = inject(UserStore);
+  readonly #userStore = inject(UserStore);
+  readonly #navbarStore = inject(NavbarStore);
 
-  user = computed(() => this.#store.user());
-
-  ngOnInit(): void {
-    this.navbarItem = this.#service.getAll();
-    this.#service.getNavbarItems();
-  }
+  user = computed(() => this.#userStore.user());
+  navbarListItems = computed(() => this.#navbarStore.navbarListItems());
 
   clickNav(event: any): void {
     let arrow = event;

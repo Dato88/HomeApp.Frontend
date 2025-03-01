@@ -6,25 +6,25 @@ import {
   withProps,
   withState,
 } from '@ngrx/signals';
-import { initialUserState } from './models/user.state';
-import { UserStoreService } from './services/user-store.service';
 import { inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
+import { initialNavbarState } from './models/navbar.state';
+import { NavbarStoreService } from './services/navbar-store.service';
 
-export const UserStore = signalStore(
+export const NavbarStore = signalStore(
   { providedIn: 'root' },
-  withState(initialUserState),
+  withState(initialNavbarState),
   withProps(() => ({
-    _userStoreService: inject(UserStoreService),
+    _navbarStoreService: inject(NavbarStoreService),
   })),
   withMethods((store) => {
     return {
-      async _getUser() {
+      async _getNavbarItems() {
         patchState(store, { isLoading: true });
         try {
-          const getUserResult = await firstValueFrom(store._userStoreService.getUser());
+          const result = await firstValueFrom(store._navbarStoreService.getNavbarItems());
 
-          patchState(store, { user: getUserResult });
+          patchState(store, { navbarListItems: result });
         } catch (error) {
           console.error('Error fetching user:', error);
         } finally {
@@ -34,8 +34,8 @@ export const UserStore = signalStore(
     };
   }),
   withHooks({
-    onInit({ _getUser }) {
-      _getUser();
+    onInit({ _getNavbarItems }) {
+      _getNavbarItems();
     },
     onDestroy() {
       console.log('user on destroy');

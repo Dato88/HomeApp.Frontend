@@ -1,13 +1,10 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, inject, WritableSignal, signal } from '@angular/core';
-import { API_NAVBAR_ENDPOINTS } from '../../../api-endpoints/api-navbar-endpoints';
+import { Injectable, inject } from '@angular/core';
 import { API_PERSON_ENDPOINTS } from '../../../api-endpoints/api-person-endpoints';
 import { environment } from '../../../environments/environment';
 import { BaseResponse } from '../../shared/_interfaces/base-response';
-import { NavbarItem } from '../../shared/_interfaces/navbar/navbar-item';
-import { NavbarListItem } from '../../shared/_interfaces/navbar/navbar-list-item';
-import { PersonDto } from '../../shared/_interfaces/person/person-dto';
-import { debounceTime, map, Observable, tap } from 'rxjs';
+import { PersonDto } from '../models/person/person-dto';
+import { map, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
