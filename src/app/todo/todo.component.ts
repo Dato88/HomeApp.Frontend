@@ -55,7 +55,7 @@ export class TodoComponent {
   }
 
   completeTodoToggle(todo: TodoDto): void {
-    this.store.dispatch(TodoActions.completeTodo({ todo }));
+    this.#todoStore.completeTodo(todo);
   }
 
   deleteTodo(id: number): void {

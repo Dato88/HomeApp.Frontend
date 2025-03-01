@@ -48,13 +48,13 @@ export const todoReducer = createReducer(
   //#region Complete Todo
   on(TodoActions.completeTodo, (state, { todo }) => {
     return todoAdapter.updateOne(
-      { id: todo.id, changes: { ...todo, loading: true } },
+      { id: todo.id, changes: { ...todo, isLoading: true } },
       { ...state }
     );
   }),
   on(TodoActions.completeTodoSuccess, (state, { todo }) => {
     return todoAdapter.updateOne(
-      { id: todo.id, changes: { ...todo, loading: false } },
+      { id: todo.id, changes: { ...todo, isLoading: false } },
       { ...state }
     );
   }),

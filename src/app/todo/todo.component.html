@@ -16,7 +16,7 @@
           (touchstart)="onTouchStart($event, todoDto.id)"
           (touchmove)="onTouchMove($event, todoDto.id)"
           (touchend)="onTouchEnd($event, todoDto.id)">
-          @if (todoDto.loading) {
+          @if (todoDto.isLoading) {
             <div class="loader">
               <mat-spinner></mat-spinner>
             </div>
