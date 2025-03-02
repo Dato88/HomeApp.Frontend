@@ -15,11 +15,12 @@ export async function completeTodo(store: any, _todoService: TodoService, todo: 
       throw new Error('400 Bad Request');
     }
 
+    const loadedTodo = await firstValueFrom(_todoService.getTodo(todo.id));
     patchState(
       store,
       updateEntity({
         id: todo.id,
-        changes: (todo) => ({ ...todo, done: updatedTodo.done, isLoading: false }),
+        changes: (todoId) => ({ ...todoId, ...loadedTodo.data, isLoading: false }),
       })
     );
   } catch (error) {
