@@ -5,7 +5,10 @@ import { TodoDto } from '../../../shared/_interfaces/todo/todo-dto';
 import { TodoService } from '../../../shared/services/person/todo.service';
 
 export async function completeTodo(store: any, _todoService: TodoService, todo: TodoDto) {
-  patchState(store, updateEntity({ id: todo.id, changes: (t) => ({ ...t, isLoading: true }) }));
+  patchState(
+    store,
+    updateEntity({ id: todo.id, changes: (todoId) => ({ ...todoId, isLoading: true }) })
+  );
 
   try {
     const updatedTodo = { ...todo, done: !todo.done };
@@ -28,6 +31,9 @@ export async function completeTodo(store: any, _todoService: TodoService, todo: 
 
     patchState(store, (state) => ({ ...state, error: 'Failed to update todo' }));
 
-    patchState(store, updateEntity({ id: todo.id, changes: (t) => ({ ...t, isLoading: false }) }));
+    patchState(
+      store,
+      updateEntity({ id: todo.id, changes: (todoId) => ({ ...todoId, isLoading: false }) })
+    );
   }
 }

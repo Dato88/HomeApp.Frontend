@@ -3,6 +3,7 @@ import { TodoFormComponent } from '../todo-form/todo-form.component';
 import { TodoDto } from '../../shared/_interfaces/todo/todo-dto';
 import { Store } from '@ngrx/store';
 import { TodoActions } from '../../shared/+store/todo/todo.actions';
+import { TodoStore } from '../+store/todo-store';
 
 @Component({
   selector: 'hoa-todo-create-form',
@@ -11,11 +12,11 @@ import { TodoActions } from '../../shared/+store/todo/todo.actions';
   styleUrl: './todo-create-form.component.scss',
 })
 export class TodoCreateFormComponent {
-  readonly #store = inject(Store);
+  readonly #store = inject(TodoStore);
   @Output() closeDialog = new EventEmitter<void>();
 
   create(todo: TodoDto) {
-    this.#store.dispatch(TodoActions.createTodo({ todo }));
+    this.#store.createTodo(todo);
 
     this.closeDialog.emit();
   }

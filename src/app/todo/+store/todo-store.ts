@@ -6,6 +6,7 @@ import { TodoService } from '../../shared/services/person/todo.service';
 import { completeTodo } from './methods/complete-todo';
 import { deleteTodo } from './methods/delete-todo';
 import { loadTodos } from './methods/load-todos';
+import { createTodo } from './methods/create-todo';
 
 export const TodoStore = signalStore(
   { providedIn: 'root' },
@@ -14,6 +15,7 @@ export const TodoStore = signalStore(
   withMethods((store) => ({
     loadTodos: () => loadTodos(store, store._todoService),
     completeTodo: (todo: TodoDto) => completeTodo(store, store._todoService, todo),
+    createTodo: (todo: TodoDto) => createTodo(store, store._todoService, todo),
     deleteTodo: (id: number) => deleteTodo(store, store._todoService, id),
   })),
   withHooks({

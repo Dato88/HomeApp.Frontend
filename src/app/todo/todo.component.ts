@@ -25,18 +25,10 @@ import { TodoStore } from './+store/todo-store';
 export class TodoComponent {
   readonly #todoStore = inject(TodoStore);
 
-  public errorMessage: string;
-  public showError: boolean;
-
   todos = computed(() => Object.values(this.#todoStore.entityMap()));
   loading = computed(() => this.#todoStore.isLoading);
 
   private touchStartX: number = 0;
-
-  constructor(private store: Store) {
-    this.errorMessage = '';
-    this.showError = false;
-  }
 
   @ViewChild(TodoFormComponent) todoFormComponent!: TodoFormComponent;
 

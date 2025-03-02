@@ -13,8 +13,10 @@ import { MatInputModule } from '@angular/material/input';
   styleUrl: './todo-form.component.scss',
 })
 export class TodoFormComponent {
-  public todoForm: FormGroup;
   #fb = inject(FormBuilder);
+
+  public todoForm: FormGroup;
+
   @Output() submitTodo: EventEmitter<TodoDto> = new EventEmitter<TodoDto>();
 
   constructor() {
