@@ -31,8 +31,8 @@ export class TodoComponent {
   public errorMessage: string;
   public showError: boolean;
 
-  todos = computed(() => Object.values(this.#todoStore.entities()));
-  loading = computed(() => this.#todoStore.isLoading());
+  todos = computed(() => Object.values(this.#todoStore.entityMap()));
+  loading = computed(() => this.#todoStore.isLoading);
 
   private touchStartX: number = 0;
 
