@@ -19,13 +19,13 @@ export async function completeTodo(store: any, _todoService: TodoService, todo: 
       store,
       updateEntity({
         id: todo.id,
-        changes: (t) => ({ ...t, done: updatedTodo.done, isLoading: false }),
+        changes: (todo) => ({ ...todo, done: updatedTodo.done, isLoading: false }),
       })
     );
   } catch (error) {
     console.error('Error updating todo:', error);
 
-    patchState(store, (state) => ({ ...state, error: 'Fehler beim Aktualisieren des Todos' }));
+    patchState(store, (state) => ({ ...state, error: 'Failed to update todo' }));
 
     patchState(store, updateEntity({ id: todo.id, changes: (t) => ({ ...t, isLoading: false }) }));
   }

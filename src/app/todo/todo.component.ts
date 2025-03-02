@@ -5,9 +5,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { DatePipe, NgStyle } from '@angular/common';
 import { Store } from '@ngrx/store';
-import { TodoActions } from '../shared/+store/todo/todo.actions';
-import { Observable } from 'rxjs';
-import { selectTodoError, selectTodosLoading } from '../shared/+store/todo/todo.selectors';
 import { TodoFormComponent } from './todo-form/todo-form.component';
 import { TodoCreateFormComponent } from './todo-create-form/todo-create-form.component';
 import { TodoStore } from './+store/todo-store';
@@ -39,11 +36,6 @@ export class TodoComponent {
   constructor(private store: Store) {
     this.errorMessage = '';
     this.showError = false;
-
-    this.store.select(selectTodoError).subscribe((error) => {
-      this.showError = !!error;
-      this.errorMessage = error || '';
-    });
   }
 
   @ViewChild(TodoFormComponent) todoFormComponent!: TodoFormComponent;
@@ -59,7 +51,7 @@ export class TodoComponent {
   }
 
   deleteTodo(id: number): void {
-    this.store.dispatch(TodoActions.deleteTodo({ id }));
+    this.#todoStore.deleteTodo(id);
   }
 
   onTouchStart(event: TouchEvent, todoId: number): void {
