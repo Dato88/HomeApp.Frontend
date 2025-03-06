@@ -1,39 +1,59 @@
 import { patchState } from '@ngrx/signals';
 import { updateEntity } from '@ngrx/signals/entities';
-import { firstValueFrom } from 'rxjs';
+import { take } from 'rxjs';
 import { TodoDto } from '../../../shared/_interfaces/todo/todo-dto';
 import { TodoService } from '../../../shared/services/person/todo.service';
 
-export async function completeTodo(store: any, _todoService: TodoService, todo: TodoDto) {
+export function completeTodo(store: any, _todoService: TodoService, todo: TodoDto) {
   patchState(
     store,
-    updateEntity({ id: todo.id, changes: (todoId) => ({ ...todoId, isLoading: true }) })
+    updateEntity({
+      id: todo.id,
+      changes: (todoId) => ({ ...todoId, isLoading: true }),
+    })
   );
 
-  try {
-    const updatedTodo = { ...todo, done: !todo.done };
-    const result = await firstValueFrom(_todoService.update(updatedTodo));
+  const updatedTodo = { ...todo, done: !todo.done };
 
-    if (!result.success) {
-      throw new Error('400 Bad Request');
-    }
-
-    const loadedTodo = await firstValueFrom(_todoService.getTodo(todo.id));
-    patchState(
-      store,
-      updateEntity({
-        id: todo.id,
-        changes: (todoId) => ({ ...todoId, ...loadedTodo.data, isLoading: false }),
-      })
-    );
-  } catch (error) {
-    console.error('Error updating todo:', error);
-
-    patchState(store, (state) => ({ ...state, error: 'Failed to update todo' }));
-
-    patchState(
-      store,
-      updateEntity({ id: todo.id, changes: (todoId) => ({ ...todoId, isLoading: false }) })
-    );
-  }
+  _todoService
+    .update(updatedTodo)
+    .pipe(take(1))
+    .subscribe({
+      next: () => {
+        _todoService
+          .getTodo(todo.id)
+          .pipe(take(1))
+          .subscribe({
+            next: (result) => {
+              patchState(
+                store,
+                updateEntity({
+                  id: todo.id,
+                  changes: (todoId) => ({ ...todoId, ...result.data, isLoading: false }),
+                })
+              );
+            },
+            error: (error) => {
+              console.error('Error fetching updated todo:', error);
+              patchState(
+                store,
+                updateEntity({
+                  id: todo.id,
+                  changes: (todoId) => ({ ...todoId, isLoading: false }),
+                })
+              );
+            },
+          });
+      },
+      error: (error) => {
+        console.error('Error updating todo:', error);
+        patchState(
+          store,
+          updateEntity({
+            id: todo.id,
+            changes: (todoId) => ({ ...todoId, isLoading: false }),
+          })
+        );
+      },
+    });
 }

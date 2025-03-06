@@ -26,7 +26,7 @@ export const NavbarStore = signalStore(
 
           patchState(store, { navbarListItems: result });
         } catch (error) {
-          console.error('Error fetching user:', error);
+          console.error('Error fetching navbarListItems:', error);
         } finally {
           patchState(store, { isLoading: false });
         }
@@ -38,7 +38,7 @@ export const NavbarStore = signalStore(
       _getNavbarItems();
     },
     onDestroy() {
-      console.log('user on destroy');
+      console.log('NavbarStore destroyed');
     },
   })
 );
