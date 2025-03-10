@@ -17,7 +17,7 @@
         autocomplete="off"
         novalidate
         (ngSubmit)="loginUser(loginForm.value)">
-        <mat-form-field>
+        <mat-form-field appearance="outline">
           <mat-label>Enter your email</mat-label>
           <input
             type="email"
@@ -30,7 +30,7 @@
             <mat-error>{{ errorMessage }}</mat-error>
           }
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field appearance="outline">
           <input
             matInput
             placeholder="Password"
