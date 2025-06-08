@@ -4,7 +4,8 @@ import { API_PERSON_ENDPOINTS } from '../../../api-endpoints/api-person-endpoint
 import { environment } from '../../../environments/environment';
 import { BaseResponse } from '../../shared/_interfaces/base-response';
 import { PersonDto } from '../models/person/person-dto';
-import { map, Observable } from 'rxjs';
+import { catchError, Observable } from 'rxjs';
+import { handleHttpErrorNull } from '../../shared/services/helper/http-error-utils';
 
 @Injectable({
   providedIn: 'root',
@@ -12,9 +13,9 @@ import { map, Observable } from 'rxjs';
 export class UserStoreService {
   readonly #http = inject(HttpClient);
 
-  public getUser(): Observable<PersonDto> {
+  public getUser(): Observable<BaseResponse<PersonDto>> {
     return this.#http
       .get<BaseResponse<PersonDto>>(`${environment.backendUrl}/${API_PERSON_ENDPOINTS.person}`)
-      .pipe(map((response) => response.data));
+      .pipe(catchError(handleHttpErrorNull<PersonDto>()));
   }
 }

@@ -10,6 +10,8 @@ import { initialUserState } from './models/user.state';
 import { UserStoreService } from './services/user-store.service';
 import { inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
+import { PersonDto } from './models/person/person-dto';
+import { BaseResponse } from '../shared/_interfaces/base-response';
 
 export const UserStore = signalStore(
   { providedIn: 'root' },
@@ -21,12 +23,19 @@ export const UserStore = signalStore(
     return {
       async _getUser() {
         patchState(store, { isLoading: true });
-        try {
-          const getUserResult = await firstValueFrom(store._userStoreService.getUser());
 
-          patchState(store, { user: getUserResult });
+        try {
+          const getUserResult: BaseResponse<PersonDto> = await firstValueFrom(
+            store._userStoreService.getUser()
+          );
+
+          if (getUserResult.isSuccess) {
+            patchState(store, { user: getUserResult.value });
+          } else {
+            console.error('Error loading user:', getUserResult.message);
+          }
         } catch (error) {
-          console.error('Error fetching user:', error);
+          console.error('Unexpected error fetching user:', error);
         } finally {
           patchState(store, { isLoading: false });
         }

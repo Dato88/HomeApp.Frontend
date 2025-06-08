@@ -3,13 +3,15 @@ import { updateEntity } from '@ngrx/signals/entities';
 import { take } from 'rxjs';
 import { TodoDto } from '../../../shared/_interfaces/todo/todo-dto';
 import { TodoService } from '../../../shared/services/person/todo.service';
+import { BaseResponse } from '../../../shared/_interfaces/base-response';
 
 export function completeTodo(store: any, _todoService: TodoService, todo: TodoDto) {
+  // Set isLoading to true on the specific entity
   patchState(
     store,
     updateEntity({
       id: todo.id,
-      changes: (todoId) => ({ ...todoId, isLoading: true }),
+      changes: (entity) => ({ ...entity, isLoading: true }),
     })
   );
 
@@ -19,39 +21,62 @@ export function completeTodo(store: any, _todoService: TodoService, todo: TodoDt
     .update(updatedTodo)
     .pipe(take(1))
     .subscribe({
-      next: () => {
+      next: (updateResult: BaseResponse<boolean>) => {
+        if (!updateResult.isSuccess) {
+          console.error('Error updating todo:', updateResult.message);
+          patchState(
+            store,
+            updateEntity({
+              id: todo.id,
+              changes: (entity) => ({ ...entity, isLoading: false }),
+            })
+          );
+          return;
+        }
+
         _todoService
           .getTodo(todo.id)
           .pipe(take(1))
           .subscribe({
-            next: (result) => {
-              patchState(
-                store,
-                updateEntity({
-                  id: todo.id,
-                  changes: (todoId) => ({ ...todoId, ...result.data, isLoading: false }),
-                })
-              );
+            next: (getResult: BaseResponse<TodoDto>) => {
+              if (getResult.isSuccess) {
+                patchState(
+                  store,
+                  updateEntity({
+                    id: todo.id,
+                    changes: (entity) => ({ ...entity, ...getResult.value, isLoading: false }),
+                  })
+                );
+              } else {
+                console.error('Error loading updated todo:', getResult.message);
+                patchState(
+                  store,
+                  updateEntity({
+                    id: todo.id,
+                    changes: (entity) => ({ ...entity, isLoading: false }),
+                  })
+                );
+              }
             },
             error: (error) => {
-              console.error('Error fetching updated todo:', error);
+              console.error('Unexpected error fetching updated todo:', error);
               patchState(
                 store,
                 updateEntity({
                   id: todo.id,
-                  changes: (todoId) => ({ ...todoId, isLoading: false }),
+                  changes: (entity) => ({ ...entity, isLoading: false }),
                 })
               );
             },
           });
       },
       error: (error) => {
-        console.error('Error updating todo:', error);
+        console.error('Unexpected error updating todo:', error);
         patchState(
           store,
           updateEntity({
             id: todo.id,
-            changes: (todoId) => ({ ...todoId, isLoading: false }),
+            changes: (entity) => ({ ...entity, isLoading: false }),
           })
         );
       },

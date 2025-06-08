@@ -1,8 +1,8 @@
 import { BaseError } from './base-error';
 
 export interface BaseResponse<T> {
-  success: boolean;
-  data: T;
+  isSuccess: boolean;
+  value: T;
   message?: string;
   errors?: BaseError[];
 }

@@ -4,10 +4,14 @@ import { firstValueFrom } from 'rxjs';
 import { TodoService } from '../../../shared/services/person/todo.service';
 
 export async function deleteTodo(store: any, _todoService: TodoService, id: number) {
-  try {
-    await firstValueFrom(_todoService.delete(id));
+  const response = await firstValueFrom(_todoService.delete(id));
+
+  if (response.isSuccess) {
     patchState(store, removeEntities([id]));
-  } catch (error) {
-    console.error('Error deleting todo:', error);
+  } else {
+    console.error('Deletion error:', response.message);
+    response.errors?.forEach((e) => {
+      console.error(`[${e.code}] ${e.message}`);
+    });
   }
 }
