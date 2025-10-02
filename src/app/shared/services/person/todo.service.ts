@@ -29,13 +29,15 @@ export class TodoService {
     return this.#http
       .delete<
         BaseResponse<boolean>
-      >(`${environment.backendUrl}/${API_TODO_ENDPOINTS.todo}/?id=${id}`)
+      >(`${environment.backendUrl}/${API_TODO_ENDPOINTS.todo}/?todoId=${id}`)
       .pipe(catchError(handleHttpError<boolean>(false)));
   }
 
   public getTodo(id: number): Observable<BaseResponse<TodoDto>> {
     return this.#http
-      .get<BaseResponse<TodoDto>>(`${environment.backendUrl}/${API_TODO_ENDPOINTS.todo}/?id=${id}`)
+      .get<
+        BaseResponse<TodoDto>
+      >(`${environment.backendUrl}/${API_TODO_ENDPOINTS.todo}/?todoId=${id}`)
       .pipe(catchError(handleHttpError<TodoDto>({} as TodoDto)));
   }
 

@@ -7,15 +7,15 @@
     }
 
     @if (todos(); as todos) {
-      @for (todoDto of todos; track todoDto.id) {
+      @for (todoDto of todos; track todoDto.todoId) {
         @let backgroundColor = todoDto.done ? 'green' : '';
 
         <tr
           [ngStyle]="{ 'background-color': backgroundColor }"
-          [id]="'todo-item-' + todoDto.id"
-          (touchstart)="onTouchStart($event, todoDto.id)"
-          (touchmove)="onTouchMove($event, todoDto.id)"
-          (touchend)="onTouchEnd($event, todoDto.id)">
+          [id]="'todo-item-' + todoDto.todoId"
+          (touchstart)="onTouchStart($event, todoDto.todoId)"
+          (touchmove)="onTouchMove($event, todoDto.todoId)"
+          (touchend)="onTouchEnd($event, todoDto.todoId)">
           @if (todoDto.isLoading) {
             <div class="loader">
               <mat-spinner></mat-spinner>
@@ -51,7 +51,7 @@
             </div>
             <button
               class="delete-button"
-              (click)="deleteTodo(todoDto.id)">
+              (click)="deleteTodo(todoDto.todoId)">
               Delete
             </button>
           }

@@ -12,28 +12,33 @@ export function createTodo(store: any, _todoService: TodoService, todo: TodoDto)
       take(1),
       switchMap((createResult: BaseResponse<number>) => {
         if (!createResult.isSuccess) {
-          // Handle creation failure without calling getTodo
           patchState(store, { error: createResult.message ?? 'Failed to create todo' });
+
           return of(null);
         }
 
-        // If creation was successful, fetch the newly created Todo
         return _todoService.getTodo(createResult.value).pipe(take(1));
       }),
-      tap((loadedTodo: BaseResponse<TodoDto> | null) => {
-        if (!loadedTodo) return;
+      tap((result: BaseResponse<TodoDto> | null) => {
+        if (!result) return;
 
-        if (loadedTodo.isSuccess) {
-          patchState(store, addEntity(loadedTodo.value));
+        if (result.isSuccess) {
+          return patchState(
+            store,
+            addEntity({
+              ...result.value,
+              id: result.value.todoId,
+            })
+          );
         } else {
-          patchState(store, { error: loadedTodo.message ?? 'Failed to load created todo' });
+          patchState(store, { error: result.message ?? 'Failed to load created todo' });
         }
       }),
       catchError((error) => {
-        // Fallback in case of unexpected runtime/transport errors
         console.error('Unexpected error during create or fetch:', error);
         patchState(store, { error: 'Unexpected error while creating todo' });
-        return of(); // prevent further errors
+
+        return of();
       })
     )
     .subscribe();

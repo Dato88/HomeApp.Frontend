@@ -25,7 +25,7 @@ import { TodoStore } from './+store/todo-store';
 export class TodoComponent {
   readonly #todoStore = inject(TodoStore);
 
-  todos = computed(() => Object.values(this.#todoStore.entityMap()));
+  todos = computed(() => this.#todoStore.todoEntities());
   loading = computed(() => this.#todoStore.isLoading);
 
   private touchStartX: number = 0;
