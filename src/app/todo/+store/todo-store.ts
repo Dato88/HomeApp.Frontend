@@ -33,5 +33,5 @@ export const TodoStore = signalStore(
       console.log('TodoStore destroyed');
     },
   }),
-  withDevtools('todos)
+  withDevtools('todos')
 );
