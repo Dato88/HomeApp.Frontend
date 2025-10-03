@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { signalStore, withProps, withMethods, withHooks, type } from '@ngrx/signals';
+import { signalStore, withProps, withMethods, withHooks, type, withState } from '@ngrx/signals';
 import { entityConfig, withEntities } from '@ngrx/signals/entities';
 import { TodoDto } from '../../shared/_interfaces/todo/todo-dto';
 import { TodoService } from '../../shared/services/person/todo.service';
@@ -9,15 +9,15 @@ import { loadTodos } from './methods/load-todos';
 import { createTodo } from './methods/create-todo';
 import { withDevtools } from '@angular-architects/ngrx-toolkit';
 
-const todoConfig = entityConfig({
+export const todoEntities = entityConfig({
   entity: type<TodoDto>(),
   collection: 'todo',
-  selectId: (todo) => todo.todoId,
+  selectId: (t) => t.todoId,
 });
 
 export const TodoStore = signalStore(
   { providedIn: 'root' },
-  withEntities(todoConfig),
+  withEntities(todoEntities),
   withProps(() => ({ _todoService: inject(TodoService), isLoading: false, error: null })),
   withMethods((store) => ({
     loadTodos: () => loadTodos(store, store._todoService),

@@ -4,12 +4,12 @@ import { catchError, of, switchMap, take, tap } from 'rxjs';
 import { TodoDto } from '../../../shared/_interfaces/todo/todo-dto';
 import { TodoService } from '../../../shared/services/person/todo.service';
 import { BaseResponse } from '../../../shared/_interfaces/base-response';
+import { todoEntities } from '../todo-store';
 
 export function createTodo(store: any, _todoService: TodoService, todo: TodoDto) {
   _todoService
-    .create(todo)
+    .createTodo(todo)
     .pipe(
-      take(1),
       switchMap((createResult: BaseResponse<number>) => {
         if (!createResult.isSuccess) {
           patchState(store, { error: createResult.message ?? 'Failed to create todo' });
@@ -17,7 +17,7 @@ export function createTodo(store: any, _todoService: TodoService, todo: TodoDto)
           return of(null);
         }
 
-        return _todoService.getTodo(createResult.value).pipe(take(1));
+        return _todoService.getTodo(createResult.value);
       }),
       tap((result: BaseResponse<TodoDto> | null) => {
         if (!result) return;
@@ -25,10 +25,13 @@ export function createTodo(store: any, _todoService: TodoService, todo: TodoDto)
         if (result.isSuccess) {
           return patchState(
             store,
-            addEntity({
-              ...result.value,
-              id: result.value.todoId,
-            })
+            addEntity(
+              {
+                ...result.value,
+                id: result.value.todoId,
+              },
+              todoEntities
+            )
           );
         } else {
           patchState(store, { error: result.message ?? 'Failed to load created todo' });

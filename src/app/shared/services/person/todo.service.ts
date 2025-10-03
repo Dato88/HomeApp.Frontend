@@ -1,11 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import { TodoDto } from '../../_interfaces/todo/todo-dto';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import { API_TODO_ENDPOINTS } from '../../../../api-endpoints/api-todo-endpoints';
 import { catchError, Observable, of } from 'rxjs';
-import { BaseResponse } from '../../_interfaces/base-response';
 import { handleHttpError, handleHttpErrorArray } from '../helper/http-error-utils';
+import { BaseResponse } from '../../_interfaces/base-response';
 
 @Injectable({
   providedIn: 'root',
@@ -13,37 +13,38 @@ import { handleHttpError, handleHttpErrorArray } from '../helper/http-error-util
 export class TodoService {
   readonly #http = inject(HttpClient);
 
-  public create(todo: TodoDto): Observable<BaseResponse<number>> {
+  public createTodo(todo: TodoDto): Observable<BaseResponse<number>> {
     return this.#http
       .post<BaseResponse<number>>(`${environment.backendUrl}/${API_TODO_ENDPOINTS.todo}`, todo)
-      .pipe(catchError(handleHttpError<number>(-1)));
+      .pipe(catchError(handleHttpError<number>()));
   }
 
-  public update(todo: TodoDto): Observable<BaseResponse<boolean>> {
+  public updateTodo(todo: TodoDto): Observable<BaseResponse<boolean>> {
     return this.#http
       .patch<BaseResponse<boolean>>(`${environment.backendUrl}/${API_TODO_ENDPOINTS.todo}`, todo)
-      .pipe(catchError(handleHttpError<boolean>(false)));
+      .pipe(catchError(handleHttpError<boolean>()));
   }
 
-  public delete(id: number): Observable<BaseResponse<boolean>> {
+  public deleteTodo(todoId: number): Observable<BaseResponse<boolean>> {
     return this.#http
       .delete<
         BaseResponse<boolean>
-      >(`${environment.backendUrl}/${API_TODO_ENDPOINTS.todo}/?todoId=${id}`)
-      .pipe(catchError(handleHttpError<boolean>(false)));
+      >(`${environment.backendUrl}/${API_TODO_ENDPOINTS.todo}/?todoId=${todoId}`)
+      .pipe(catchError(handleHttpError<boolean>()));
   }
 
-  public getTodo(id: number): Observable<BaseResponse<TodoDto>> {
+  public getTodo(todoId: number): Observable<BaseResponse<TodoDto>> {
     return this.#http
       .get<
         BaseResponse<TodoDto>
-      >(`${environment.backendUrl}/${API_TODO_ENDPOINTS.todo}/?todoId=${id}`)
-      .pipe(catchError(handleHttpError<TodoDto>({} as TodoDto)));
+      >(`${environment.backendUrl}/${API_TODO_ENDPOINTS.todo}/?todoId=${todoId}`)
+      .pipe(catchError(handleHttpError<TodoDto>()));
   }
 
-  public getTodos(): Observable<BaseResponse<TodoDto[]>> {
-    return this.#http
-      .get<BaseResponse<TodoDto[]>>(`${environment.backendUrl}/${API_TODO_ENDPOINTS.todos}`)
-      .pipe(catchError(handleHttpErrorArray<TodoDto>()));
+  public getAllTodos(): Observable<BaseResponse<TodoDto[]>> {
+    return this.#http.get<BaseResponse<TodoDto[]>>(
+      `${environment.backendUrl}/${API_TODO_ENDPOINTS.todos}`
+    );
+    // .pipe(catchError(handleHttpErrorArray<TodoDto>()));
   }
 }

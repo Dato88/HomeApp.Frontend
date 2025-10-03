@@ -2,16 +2,15 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { BaseError } from '../../_interfaces/base-error';
 import { BaseResponse } from '../../_interfaces/base-response';
+import { ErrorType } from '../../_interfaces/base-error-type.enum';
 
 /**
  * Handles HTTP errors with a custom fallback value.
  * @param defaultValue - Fallback for the `data` field.
  */
-export function handleHttpError<T>(
-  defaultValue: T
-): (error: HttpErrorResponse) => Observable<BaseResponse<T>> {
+export function handleHttpError<T>(): (error: HttpErrorResponse) => Observable<BaseResponse<T>> {
   return (err: HttpErrorResponse) => {
-    return of(createBaseErrorResponse<T>(defaultValue, err));
+    return of(createBaseErrorResponse<T>(err));
   };
 }
 
@@ -22,7 +21,7 @@ export function handleHttpErrorArray<T>(): (
   error: HttpErrorResponse
 ) => Observable<BaseResponse<T[]>> {
   return (err: HttpErrorResponse) => {
-    return of(createBaseErrorResponse<T[]>([], err));
+    return of(createBaseErrorResponse<T[]>(err));
   };
 }
 
@@ -32,23 +31,24 @@ export function handleHttpErrorArray<T>(): (
 export function handleHttpErrorNull<T>(): (
   error: HttpErrorResponse
 ) => Observable<BaseResponse<T>> {
-  return handleHttpError<T>(null as unknown as T);
+  return handleHttpError<T>();
 }
 
 /**
  * Creates a standardized BaseResponse<T> from a HttpErrorResponse.
  */
-function createBaseErrorResponse<T>(defaultValue: T, err: HttpErrorResponse): BaseResponse<T> {
+function createBaseErrorResponse<T>(err: HttpErrorResponse): BaseResponse<T> {
   const fallbackMessage = 'An unknown error occurred.';
+
   const error: BaseError = {
     code: err.error?.code ?? 'Unknown',
-    message: err.error?.description ?? fallbackMessage,
+    description: err.error?.description ?? fallbackMessage,
+    type: ErrorType.Failure,
   };
 
   return {
     isSuccess: false,
-    value: defaultValue,
-    message: error.message,
-    errors: [error],
+    message: error.description,
+    error: error,
   };
 }

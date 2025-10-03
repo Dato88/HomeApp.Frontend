@@ -1,8 +1,17 @@
 import { BaseError } from './base-error';
 
-export interface BaseResponse<T> {
-  isSuccess: boolean;
+interface Success<T> {
+  isSuccess: true;
   value: T;
-  message?: string;
-  errors?: BaseError[];
+  message?: never;
+  error?: never;
 }
+
+interface Failure {
+  isSuccess: false;
+  message: string;
+  error?: BaseError;
+  value?: never;
+}
+
+export type BaseResponse<T> = Success<T> | Failure;

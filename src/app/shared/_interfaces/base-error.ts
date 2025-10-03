@@ -1,4 +1,7 @@
+import { ErrorType } from './base-error-type.enum';
+
 export interface BaseError {
   code: string;
-  message: string;
+  description: string;
+  type: ErrorType;
 }
