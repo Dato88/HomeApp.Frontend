@@ -21,14 +21,14 @@
             [ngStyle]="{ 'background-color': backgroundColor }"
             (click)="completeTodoToggle(todoDto)">
             @if (todoDto.isLoading) {
-              <div class="skeleton skeleton-text"></div>
+              <hoa-skeleton></hoa-skeleton>
             } @else {
               <div class="todo-name">
                 <h3>{{ todoDto.name }}</h3>
               </div>
             }
             @if (todoDto.isLoading) {
-              <div class="skeleton skeleton-text"></div>
+              <hoa-skeleton></hoa-skeleton>
             } @else {
               <div class="todo-infos">
                 <div class="todo-execution-date">
