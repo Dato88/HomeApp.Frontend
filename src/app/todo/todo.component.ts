@@ -28,8 +28,6 @@ export class TodoComponent {
   todos = computed(() => this.#todoStore.todoEntities());
   loading = computed(() => this.#todoStore.isLoading);
 
-  private touchStartX: number = 0;
-
   @ViewChild(TodoFormComponent) todoFormComponent!: TodoFormComponent;
 
   onDialogClose(): void {
@@ -42,30 +40,7 @@ export class TodoComponent {
     this.#todoStore.completeTodo(todo);
   }
 
-  deleteTodo(id: number): void {
-    this.#todoStore.deleteTodo(id);
+  deleteTodo(todoId: number): void {
+    this.#todoStore.deleteTodo(todoId);
   }
-
-  onTouchStart(event: TouchEvent, todoId: number): void {
-    this.touchStartX = event.touches[0].clientX;
-  }
-
-  onTouchMove(event: TouchEvent, todoId: number): void {
-    const touchEndX = event.touches[0].clientX;
-    const todoElement = document
-      .getElementById(`todo-item-${todoId}`)
-      ?.getElementsByClassName('delete-button')[0];
-
-    if (this.touchStartX - touchEndX > 10) {
-      if (todoElement && !todoElement.classList.contains('swiped')) {
-        todoElement.classList.toggle('swiped');
-      }
-    } else if (touchEndX - this.touchStartX > 10) {
-      if (todoElement && todoElement.classList.contains('swiped')) {
-        todoElement.classList.toggle('swiped');
-      }
-    }
-  }
-
-  onTouchEnd(event: TouchEvent, todoId: number): void {}
 }

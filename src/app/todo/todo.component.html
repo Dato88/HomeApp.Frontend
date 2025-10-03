@@ -12,10 +12,7 @@
 
         <tr
           [ngStyle]="{ 'background-color': backgroundColor }"
-          [id]="'todo-item-' + todoDto.todoId"
-          (touchstart)="onTouchStart($event, todoDto.todoId)"
-          (touchmove)="onTouchMove($event, todoDto.todoId)"
-          (touchend)="onTouchEnd($event, todoDto.todoId)">
+          [id]="'todo-item-' + todoDto.todoId">
           @if (todoDto.isLoading) {
             <div class="loader">
               <mat-spinner></mat-spinner>
