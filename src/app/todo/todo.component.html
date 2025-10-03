@@ -10,24 +10,26 @@
       @for (todoDto of todos; track todoDto.todoId) {
         @let backgroundColor = todoDto.done ? 'green' : '';
 
-        <tr
-          [ngStyle]="{ 'background-color': backgroundColor }"
-          [id]="'todo-item-' + todoDto.todoId">
-          @if (todoDto.isLoading) {
-            <div class="loader">
-              <mat-spinner></mat-spinner>
-            </div>
-          } @else {
-            <div
-              class="todo-item"
-              (click)="completeTodoToggle(todoDto)">
-              @if (todoDto.done) {
-                <mat-icon>check</mat-icon>
-              }
+        <tr [id]="'todo-item-' + todoDto.todoId">
+          <div class="todo-done-icon">
+            @if (todoDto.done) {
+              <mat-icon>check</mat-icon>
+            }
+          </div>
+          <div
+            class="todo-item"
+            [ngStyle]="{ 'background-color': backgroundColor }"
+            (click)="completeTodoToggle(todoDto)">
+            @if (todoDto.isLoading) {
+              <div class="skeleton skeleton-text"></div>
+            } @else {
               <div class="todo-name">
                 <h3>{{ todoDto.name }}</h3>
               </div>
-
+            }
+            @if (todoDto.isLoading) {
+              <div class="skeleton skeleton-text"></div>
+            } @else {
               <div class="todo-infos">
                 <div class="todo-execution-date">
                   <p>{{ todoDto.lastModified | date: 'dd.MM.yyyy HH:mm' }}</p>
@@ -45,13 +47,13 @@
                   }
                 </div>
               </div>
-            </div>
-            <button
-              class="delete-button"
-              (click)="deleteTodo(todoDto.todoId)">
-              Delete
-            </button>
-          }
+            }
+          </div>
+          <button
+            class="delete-button"
+            (click)="deleteTodo(todoDto.todoId)">
+            Delete
+          </button>
         </tr>
       }
     }

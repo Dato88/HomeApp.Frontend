@@ -11,14 +11,7 @@ import { TodoStore } from './+store/todo-store';
 
 @Component({
   selector: 'hoa-todo',
-  imports: [
-    DatePipe,
-    MatIconModule,
-    MatProgressSpinnerModule,
-    NgStyle,
-    ReactiveFormsModule,
-    TodoCreateFormComponent,
-  ],
+  imports: [DatePipe, MatIconModule, NgStyle, ReactiveFormsModule, TodoCreateFormComponent],
   templateUrl: './todo.component.html',
   styleUrl: './todo.component.scss',
 })
