@@ -1,6 +1,6 @@
 import { patchState } from '@ngrx/signals';
 import { addEntity } from '@ngrx/signals/entities';
-import { catchError, of, switchMap, take, tap } from 'rxjs';
+import { catchError, of, switchMap, tap } from 'rxjs';
 import { TodoDto } from '../../../shared/_interfaces/todo/todo-dto';
 import { TodoService } from '../../../shared/services/person/todo.service';
 import { BaseResponse } from '../../../shared/_interfaces/base-response';

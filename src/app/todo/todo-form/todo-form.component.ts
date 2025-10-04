@@ -26,7 +26,7 @@ export class TodoFormComponent {
   ngOnInit(): void {
     this.todoForm = this.#fb.group({
       id: this.#fb.control<number>(0, { validators: [Validators.required], nonNullable: true }),
-      name: this.#fb.control<string>('', { validators: [Validators.required], nonNullable: true }),
+      title: this.#fb.control<string>('', { validators: [Validators.required], nonNullable: true }),
       done: this.#fb.control<boolean>(false, {
         validators: [Validators.required],
         nonNullable: true,
@@ -57,7 +57,7 @@ export class TodoFormComponent {
   resetForm(): void {
     this.todoForm.reset({
       id: 0,
-      name: '',
+      title: '',
       done: false,
       priority: 0,
       executionDate: null,

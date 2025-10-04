@@ -6,6 +6,7 @@ hoa-todo {
   display: grid;
   width: 100%;
   gap: 0.5rem;
+  margin-bottom: 3.3rem;
 
   tr {
     display: flex;
@@ -45,7 +46,7 @@ hoa-todo {
         grid-column: span 2;
       }
 
-      .todo-name {
+      .todo-title {
         h3 {
           margin: 0;
         }
