@@ -53,7 +53,7 @@ $navbar-desktop-closed-width: 78px;
     }
 
     .bx-menu {
-      transform: rotate(-90deg);
+      transform: rotate(90deg);
       transition: all $transition-time ease;
     }
 
@@ -161,7 +161,7 @@ $navbar-desktop-closed-width: 78px;
 
   &.close {
     .logo-details .bx-menu {
-      transform: rotate(90deg);
+      transform: rotate(0);
       transition: all $transition-time ease;
     }
 
@@ -255,6 +255,7 @@ $navbar-desktop-closed-width: 78px;
       }
 
       .bx-menu {
+        display: block;
         transform: rotate(0deg);
         cursor: pointer;
       }
@@ -303,17 +304,15 @@ $navbar-desktop-closed-width: 78px;
       height: 100vh;
 
       .logo-details {
-        div {
+        justify-content: flex-end;
+
+        div:first-child {
           display: none;
           transition: all $transition-time ease;
         }
 
-        mat-icon {
-          width: 100%;
-        }
-
         .bx-menu {
-          transform: rotate(180deg);
+          transform: rotate(90deg);
         }
       }
 
