@@ -28,15 +28,15 @@ $navbar-desktop-closed-width: 78px;
   position: fixed;
   top: 0;
   left: 0;
-  height: max-content;
   width: 100vw;
   background: $sidebar-bg;
   z-index: 100;
   transition: all $transition-time ease;
 
   .logo-details {
-    height: 100%;
+    height: 3rem;
     width: 100%;
+    padding-inline: 1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -44,17 +44,12 @@ $navbar-desktop-closed-width: 78px;
     div {
       display: flex;
       align-items: center;
-    }
+      gap: 1rem;
 
-    div mat-icon,
-    mat-icon {
-      font-size: $font-size-large;
-      color: $font-color;
-      height: 100%;
-      width: max-content;
-      margin-inline: 1rem;
-      text-align: center;
-      line-height: 50px;
+      i {
+        font-size: $font-size-medium;
+        color: $font-color;
+      }
     }
 
     .bx-menu {
@@ -165,8 +160,6 @@ $navbar-desktop-closed-width: 78px;
   }
 
   &.close {
-    height: 3rem;
-
     .logo-details .bx-menu {
       transform: rotate(90deg);
       transition: all $transition-time ease;
@@ -254,8 +247,10 @@ $navbar-desktop-closed-width: 78px;
     width: $navbar-desktop-width;
 
     .logo-details {
-      div mat-icon,
-      mat-icon {
+      height: max-content;
+      padding-block: 0.5rem;
+
+      div i {
         font-size: $font-size-extra-small;
       }
 

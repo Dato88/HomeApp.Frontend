@@ -6,7 +6,6 @@ home-todo {
   display: grid;
   width: 100%;
   gap: 0.5rem;
-  margin-bottom: 4.3rem;
 
   tr {
     display: flex;
@@ -58,6 +57,7 @@ home-todo {
         justify-content: space-between;
         height: max-content;
         grid-column: span 2;
+        font-size: 12px;
 
         .todo-execution-date {
           p {
@@ -131,15 +131,8 @@ dialog::backdrop {
 }
 
 .add-todo {
-  position: fixed;
+  position: sticky;
   bottom: 0;
   width: 100%;
-  padding: 0.5rem;
   box-sizing: border-box;
-
-  button {
-    height: 3rem;
-    width: 100%;
-    padding: 0.5rem;
-  }
 }
