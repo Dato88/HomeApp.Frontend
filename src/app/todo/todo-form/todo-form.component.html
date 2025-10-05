@@ -2,15 +2,12 @@
   <form
     [formGroup]="todoForm"
     (ngSubmit)="submitForm()">
-    <mat-form-field appearance="outline">
-      <mat-label>New Todo</mat-label>
-      <input
-        type="text"
-        matInput
-        autofocus
-        formControlName="title"
-        placeholder="Title" />
-    </mat-form-field>
+    <input-field
+      [identifier]="'todo-create'"
+      [name]="'title'"
+      [label]="'New Todo'"
+      [placeholder]="'Title'"
+      [autofocus]="true"></input-field>
     <button
       mat-flat-button
       type="submit">

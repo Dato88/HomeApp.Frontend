@@ -1,0 +1,15 @@
+<div class="input-form-group">
+  <input
+    type="input"
+    [id]="identifier()"
+    class="input-form-field"
+    [placeholder]="placeholder()"
+    [name]="name()"
+    [required]="required()"
+    [autofocus]="autofocus()" />
+  <label
+    [for]="identifier()"
+    class="input-form-label">
+    {{ label() }}
+  </label>
+</div>

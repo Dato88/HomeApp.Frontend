@@ -3,12 +3,11 @@ import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angula
 import { TodoPriorityEnum } from '../../shared/enum/todo-priority.enum';
 import { TodoDto } from '../../shared/_interfaces/todo/todo-dto';
 import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
+import { InputFieldComponent } from '../../shared/templates/input-field/input-field.component';
 
 @Component({
   selector: 'hoa-todo-form',
-  imports: [MatButtonModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule],
+  imports: [MatButtonModule, ReactiveFormsModule, InputFieldComponent],
   templateUrl: './todo-form.component.html',
   styleUrl: './todo-form.component.scss',
 })
