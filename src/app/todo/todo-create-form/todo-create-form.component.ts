@@ -4,7 +4,7 @@ import { TodoDto } from '../../shared/_interfaces/todo/todo-dto';
 import { TodoStore } from '../+store/todo-store';
 
 @Component({
-  selector: 'hoa-todo-create-form',
+  selector: 'home-todo-create-form',
   imports: [TodoFormComponent],
   templateUrl: './todo-create-form.component.html',
   styleUrl: './todo-create-form.component.scss',

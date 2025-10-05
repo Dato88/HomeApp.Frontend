@@ -9,7 +9,7 @@ import { TodoStore } from './+store/todo-store';
 import { SkeletonComponent } from '../shared/templates/skeleton/skeleton.component';
 
 @Component({
-  selector: 'hoa-todo',
+  selector: 'home-todo',
   imports: [
     DatePipe,
     MatIconModule,

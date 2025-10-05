@@ -5,7 +5,7 @@ import { NavbarComponent } from './shared/navbar/navbar.component';
 import { LoginComponent } from './authentication/auth-user/login.component';
 
 @Component({
-  selector: 'hoa-root',
+  selector: 'home-root',
   imports: [RouterOutlet, RouterModule, NavbarComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',

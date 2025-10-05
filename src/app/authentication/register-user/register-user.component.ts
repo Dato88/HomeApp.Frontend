@@ -9,10 +9,10 @@ import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 
 @Component({
-    selector: 'hoa-register-user',
-    imports: [ReactiveFormsModule],
-    templateUrl: './register-user.component.html',
-    styleUrl: './register-user.component.scss'
+  selector: 'home-register-user',
+  imports: [ReactiveFormsModule],
+  templateUrl: './register-user.component.html',
+  styleUrl: './register-user.component.scss',
 })
 export class RegisterUserComponent implements OnInit {
   readonly #authService = inject(AuthenticationService);

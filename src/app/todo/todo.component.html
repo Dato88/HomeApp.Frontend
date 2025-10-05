@@ -21,14 +21,14 @@
             [ngStyle]="{ 'background-color': backgroundColor }"
             (click)="completeTodoToggle(todoDto)">
             @if (todoDto.isLoading) {
-              <hoa-skeleton></hoa-skeleton>
+              <home-skeleton></home-skeleton>
             } @else {
               <div class="todo-title">
                 <h3>{{ todoDto.title }}</h3>
               </div>
             }
             @if (todoDto.isLoading) {
-              <hoa-skeleton></hoa-skeleton>
+              <home-skeleton></home-skeleton>
             } @else {
               <div class="todo-infos">
                 <div class="todo-execution-date">
@@ -67,7 +67,7 @@
           <mat-icon>close</mat-icon>
         </button>
       </div>
-      <hoa-todo-create-form (closeDialog)="todoDialog.close()"></hoa-todo-create-form>
+      <home-todo-create-form (closeDialog)="todoDialog.close()"></home-todo-create-form>
     </dialog>
     <button (click)="todoDialog.showModal()">Create Todo</button>
   </div>

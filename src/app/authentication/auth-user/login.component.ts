@@ -22,7 +22,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  selector: 'hoa-login',
+  selector: 'home-login',
   imports: [
     MatButtonModule,
     MatCardModule,

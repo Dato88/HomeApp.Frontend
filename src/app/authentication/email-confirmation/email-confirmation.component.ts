@@ -4,10 +4,10 @@ import { AuthenticationService } from '../../shared/services/authentication.serv
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
-    selector: 'hoa-email-confirmation',
-    imports: [RouterModule],
-    templateUrl: './email-confirmation.component.html',
-    styleUrl: './email-confirmation.component.scss'
+  selector: 'home-email-confirmation',
+  imports: [RouterModule],
+  templateUrl: './email-confirmation.component.html',
+  styleUrl: './email-confirmation.component.scss',
 })
 export class EmailConfirmationComponent implements OnInit {
   readonly #authService = inject(AuthenticationService);

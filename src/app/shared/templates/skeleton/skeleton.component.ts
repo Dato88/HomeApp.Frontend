@@ -1,7 +1,7 @@
 import { Component, computed, input } from '@angular/core';
 
 @Component({
-  selector: 'hoa-skeleton',
+  selector: 'home-skeleton',
   imports: [],
   templateUrl: './skeleton.component.html',
   styleUrl: './skeleton.component.scss',

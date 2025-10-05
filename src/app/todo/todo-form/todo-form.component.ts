@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { InputFieldComponent } from '../../shared/templates/input-field/input-field.component';
 
 @Component({
-  selector: 'hoa-todo-form',
+  selector: 'home-todo-form',
   imports: [MatButtonModule, ReactiveFormsModule, InputFieldComponent],
   templateUrl: './todo-form.component.html',
   styleUrl: './todo-form.component.scss',

@@ -8,7 +8,7 @@ import { environment } from '../../../environments/environment';
 import { API_ACCOUNTS_ENDPOINTS } from '../../../api-endpoints/api-accounts-endpoints';
 
 @Component({
-  selector: 'hoa-forgot-password',
+  selector: 'home-forgot-password',
   imports: [ReactiveFormsModule],
   templateUrl: './forgot-password.component.html',
   styleUrl: './forgot-password.component.scss',
