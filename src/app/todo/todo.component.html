@@ -69,6 +69,8 @@
       </div>
       <home-todo-create-form (closeDialog)="todoDialog.close()"></home-todo-create-form>
     </dialog>
-    <button (click)="todoDialog.showModal()">Create Todo</button>
+    <home-button
+      [label]="'Create Todo'"
+      (clicked)="todoDialog.showModal()"></home-button>
   </div>
 </div>

@@ -35,7 +35,7 @@ $navbar-desktop-closed-width: 78px;
   transition: all $transition-time ease;
 
   .logo-details {
-    height: 60px;
+    height: 100%;
     width: 100%;
     display: flex;
     align-items: center;
@@ -50,7 +50,7 @@ $navbar-desktop-closed-width: 78px;
     mat-icon {
       font-size: $font-size-large;
       color: $font-color;
-      height: 50px;
+      height: 100%;
       width: max-content;
       margin-inline: 1rem;
       text-align: center;
@@ -165,7 +165,7 @@ $navbar-desktop-closed-width: 78px;
   }
 
   &.close {
-    height: 60px;
+    height: 3rem;
 
     .logo-details .bx-menu {
       transform: rotate(90deg);

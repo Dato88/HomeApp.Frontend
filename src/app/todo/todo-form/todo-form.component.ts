@@ -4,10 +4,11 @@ import { TodoPriorityEnum } from '../../shared/enum/todo-priority.enum';
 import { TodoDto } from '../../shared/_interfaces/todo/todo-dto';
 import { MatButtonModule } from '@angular/material/button';
 import { InputFieldComponent } from '../../shared/templates/input-field/input-field.component';
+import { ButtonComponent } from '../../shared/templates/button/button.component';
 
 @Component({
   selector: 'home-todo-form',
-  imports: [MatButtonModule, ReactiveFormsModule, InputFieldComponent],
+  imports: [MatButtonModule, ReactiveFormsModule, InputFieldComponent, ButtonComponent],
   templateUrl: './todo-form.component.html',
   styleUrl: './todo-form.component.scss',
 })

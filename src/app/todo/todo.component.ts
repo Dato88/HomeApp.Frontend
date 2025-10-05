@@ -7,6 +7,7 @@ import { TodoFormComponent } from './todo-form/todo-form.component';
 import { TodoCreateFormComponent } from './todo-create-form/todo-create-form.component';
 import { TodoStore } from './+store/todo-store';
 import { SkeletonComponent } from '../shared/templates/skeleton/skeleton.component';
+import { ButtonComponent } from '../shared/templates/button/button.component';
 
 @Component({
   selector: 'home-todo',
@@ -17,6 +18,7 @@ import { SkeletonComponent } from '../shared/templates/skeleton/skeleton.compone
     ReactiveFormsModule,
     TodoCreateFormComponent,
     SkeletonComponent,
+    ButtonComponent,
   ],
   templateUrl: './todo.component.html',
   styleUrl: './todo.component.scss',
