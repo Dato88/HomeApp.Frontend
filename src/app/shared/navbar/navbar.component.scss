@@ -72,29 +72,33 @@ $navbar-desktop-closed-width: 78px;
       list-style: none;
       transition: all 0.4s ease;
 
-      mat-icon {
-        height: max-content;
-        width: 2rem;
-        margin-inline: 1rem;
-        text-align: center;
-        line-height: 50px;
-        color: $font-color;
-        font-size: $font-size-medium;
-        transition: all 0.3s ease;
-      }
-
-      div {
-        a {
+      .icon-link {
+        .icon-link-anchor {
           display: flex;
           align-items: center;
+          padding: 0.5rem 1.5rem;
           text-decoration: none;
+          color: $font-color;
+          font-size: $font-size-extra-large;
+          gap: 1rem;
 
           .link-name {
             font-size: $font-size-small;
             font-weight: 400;
-            color: $font-color;
             white-space: nowrap;
           }
+        }
+      }
+
+      .icon-link.sub-list {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .sub-list-icon {
+          color: $font-color;
+          font-size: $font-size-medium;
+          padding-inline: 1rem;
         }
       }
 
@@ -108,7 +112,7 @@ $navbar-desktop-closed-width: 78px;
         @extend %blurBackground;
         display: none;
 
-        a {
+        .icon-link-anchor {
           color: $font-color;
           font-size: $font-size-extra-small;
           padding: 5px 0;
@@ -148,12 +152,18 @@ $navbar-desktop-closed-width: 78px;
       }
 
       &.showMenu {
-        mat-icon:last-child {
+        .sub-list-icon {
           transform: rotate(-180deg);
+          transition: all 0.3s ease;
         }
 
         .sub-menu {
           display: block;
+
+          .sub-item a {
+            font-size: $font-size-extra-small;
+            color: $font-color;
+          }
         }
       }
     }
@@ -174,16 +184,17 @@ $navbar-desktop-closed-width: 78px;
       display: none;
       transition: all $transition-time ease;
 
-      a .link-name {
+      .icon-link-anchor .link-name {
         // opacity: 0;
         pointer-events: none;
       }
 
       li {
         .icon-link {
-          display: block;
+          display: flex;
+          justify-content: center;
 
-          mat-icon:last-child {
+          div.i:last-child {
             display: none;
           }
         }
@@ -275,7 +286,7 @@ $navbar-desktop-closed-width: 78px;
           font-size: $font-size-extra-small;
         }
 
-        a {
+        .icon-link-anchor {
           .link-name {
             font-size: $font-size-extra-small;
           }

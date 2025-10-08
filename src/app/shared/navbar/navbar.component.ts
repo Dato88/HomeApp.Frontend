@@ -20,9 +20,9 @@ export class NavbarComponent {
   user = computed(() => this.#userStore.user());
   navbarListItems = computed(() => this.#navbarStore.navbarListItems());
 
-  clickNav(event: any): void {
-    let arrow = event;
-    arrow.target.parentElement.parentElement.parentElement.classList.toggle('showMenu');
+  clickNav(event: Event): void {
+    const li = (event.currentTarget as HTMLElement).closest('li');
+    li?.classList.toggle('showMenu');
   }
 
   clickNavBtn(): void {

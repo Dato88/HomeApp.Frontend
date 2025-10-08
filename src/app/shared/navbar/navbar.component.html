@@ -11,11 +11,6 @@
       (click)="clickNavBtn()">
       <i class="bi bi-chevron-double-down"></i>
     </div>
-    <!-- <mat-icon
-      class="bx-menu"
-      (click)="clickNavBtn()">
-      double_arrow
-    </mat-icon> -->
   </div>
   <div>
     <ul class="nav-links">
@@ -23,17 +18,20 @@
         <li>
           <ng-container>
             <div
-              class="icon-link"
+              [class]="item?.sublist ? 'icon-link sub-list' : 'icon-link'"
               routerLinkActive="active"
               (click)="item?.link && item?.sublist ? clickNav($event) : null">
               <a
+                class="icon-link-anchor"
                 [routerLink]="item?.link && !item?.sublist ? item.link : undefined"
                 ariaCurrentWhenActive="page">
-                <mat-icon>{{ item?.icon }}</mat-icon>
+                <div>
+                  <i [class]="item?.icon"></i>
+                </div>
                 <span class="link-name">{{ item?.name }}</span>
               </a>
               @if (item?.sublist) {
-                <mat-icon>keyboard_arrow_down</mat-icon>
+                <i class="bi bi-caret-down-fill sub-list-icon"></i>
               }
             </div>
           </ng-container>
@@ -48,7 +46,7 @@
               </li>
               @if (item?.sublist) {
                 @for (subItem of item.sublist; track subItem) {
-                  <li>
+                  <li class="sub-item">
                     <a href="{{ subItem.link }}">{{ subItem.name }}</a>
                   </li>
                 }

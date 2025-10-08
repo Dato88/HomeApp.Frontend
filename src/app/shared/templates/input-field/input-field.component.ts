@@ -1,8 +1,9 @@
 import { Component, input } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'input-field',
-  imports: [],
+  imports: [ReactiveFormsModule],
   templateUrl: './input-field.component.html',
   styleUrl: './input-field.component.scss',
 })
@@ -13,4 +14,5 @@ export class InputFieldComponent {
   placeholder = input<string>('');
   required = input<boolean>(false);
   autofocus = input<boolean>(false);
+  controlName = input<string>('');
 }
