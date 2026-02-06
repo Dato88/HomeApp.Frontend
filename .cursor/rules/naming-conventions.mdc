@@ -1,0 +1,19 @@
+---
+description: Naming conventions
+globs: **/*.{ts,html,scss}
+alwaysApply: false
+---
+
+# Naming Conventions
+
+- **Files:** `kebab-case.ext` (`.ts`, `.html`, `.scss`)
+- **Services:** `kebab-case-service.ts`
+- **Modules:** `kebab-case.module.ts`
+- **Directives:** `kebab-case.directive.ts`
+- **Pipes:** `kebab-case.pipe.ts`
+- **Guards:** `kebab-case.guard.ts`
+- **Connectors:** `kebab-case.connector.ts`
+- **Models / Enums / Constants:**
+  - `kebab-case.interface.ts`
+  - `kebab-case.enum.ts`
+  - `kebab-case.ts` for constants

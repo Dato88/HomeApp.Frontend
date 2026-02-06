@@ -1,0 +1,10 @@
+---
+description: Templates & accessibility
+globs: **/*.{ts,html,scss}
+alwaysApply: false
+---
+
+# Templates & Accessibility
+
+- Use **semantic HTML** elements.
+- Avoid hard-coded text; prepare for localization where possible.

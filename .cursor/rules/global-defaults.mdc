@@ -1,0 +1,16 @@
+---
+description: Global defaults for Angular and TypeScript development
+globs: **/*.{ts,html,scss}
+alwaysApply: false
+---
+
+# Global Defaults
+
+1. Use **modern Angular 20 APIs**:
+   - `signal`, `computed`, `input`, `model`, `output`, `inject`
+   - standalone components (no legacy NgModules for new code, except where strictly required)
+2. **Code and comments must be in English.**
+3. Keep files **small**, **single-responsibility**, and follow the **member ordering rules** defined
+   below.
+4. Prefer **stateless, dumb templates** and push logic into TypeScript using signals/computed.
+5. Follow a **reactive programming style** (signals and RxJS where needed).

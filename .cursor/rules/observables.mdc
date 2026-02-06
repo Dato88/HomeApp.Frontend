@@ -1,0 +1,235 @@
+---
+description: Observables (RxJS) fundamentals, operators, and Angular best practices
+globs: **/*.ts
+alwaysApply: false
+---
+
+# Observables & RxJS Guidelines
+
+- Use Observables for async streams (HTTP, events, timers, WebSockets, forms).
+- Observables are lazy: no values flow until `subscribe()` is called.
+- Keep logic in `pipe()` using operators; keep `subscribe()` minimal and imperative.
+- In Components, prefer `AsyncPipe` and `takeUntilDestroyed()`; avoid manual `unsubscribe()` fields.
+- Convert Observables to signals at boundaries using `toSignal()` when it improves local state
+  ergonomics.
+- Components must not call `httpResource()` directly — use Services to fetch data and expose state.
+
+## Fundamentals
+
+- **Observable** produces values over time; **Observer** consumes them via `next`, `error`,
+  `complete`.
+- **`subscribe()`** starts the stream and connects Observer to Observable.
+  - `next(value)` → new value
+  - `error(err)` → stream terminates with error (no `complete` afterwards)
+  - `complete()` → stream ends cleanly
+- Without `subscribe()`, no data flows.
+
+```ts
+const observer = {
+  next: v => console.log('NEXT:', v),
+  error: e => console.error('ERROR:', e),
+  complete: () => console.log('COMPLETE'),
+};
+
+source$.subscribe(observer);
+// or
+source$.subscribe(v => console.log(v));
+```
+
+### Angular specifics
+
+- `HttpClient` Observables complete after one emission; they usually do not need manual
+  `unsubscribe()`.
+- Use `AsyncPipe` in templates to auto-subscribe/unsubscribe and trigger change detection.
+- For long-lived streams (events, intervals, WebSockets), ensure lifecycle-safe cleanup.
+
+```ts
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
+someStream$.pipe(takeUntilDestroyed()).subscribe();
+```
+
+```html
+<div *ngFor="let user of users$ | async">{{ user.name }}</div>
+```
+
+## Pipe vs Subscribe
+
+- `pipe()` prepares data with operators; `subscribe()` starts consumption and performs side effects.
+
+```ts
+source$
+  .pipe(
+    /* operators */
+  )
+  .subscribe();
+```
+
+Keep logic in `pipe()`; keep `subscribe()` minimal (trigger, dispatch, navigation).
+
+## Flow Modeling
+
+Model async flows in the stream rather than imperatively inside `subscribe()`.
+
+```ts
+save()
+  .pipe(switchMap(() => load()))
+  .subscribe();
+```
+
+## Operator Catalog
+
+Use operators to transform, filter, combine, control timing, handle errors, and manage lifecycle.
+
+### Transform
+
+- **`map`**: transform each value.
+
+```ts
+numbers$.pipe(map((v) => v * 3));
+```
+
+- **`scan`**: accumulate over time (continuous reduce).
+
+```ts
+score$.pipe(scan((acc, v) => acc + v, 0));
+```
+
+### Side Effects
+
+- **`tap`**: perform side effects without changing values (logging, store updates).
+
+```ts
+stream$.pipe(tap((v) => console.debug('DEBUG:', v)));
+```
+
+### Filter
+
+- **`filter`**: pass values that match a predicate.
+
+```ts
+numbers$.pipe(filter((v) => v % 2 === 0));
+```
+
+- **`distinctUntilChanged`**: prevent identical consecutive emissions.
+
+```ts
+input$.pipe(distinctUntilChanged());
+```
+
+### Timing
+
+- **`debounceTime`**: wait for silence, then emit the latest.
+
+```ts
+search$.pipe(debounceTime(300), distinctUntilChanged());
+```
+
+### Combine
+
+- **`combineLatest`**: combine latest from multiple sources once each emitted.
+
+```ts
+combineLatest([a$, b$]).pipe(map(([a, b]) => a * b));
+```
+
+### Higher-Order Mapping
+
+- **`mergeMap`** (parallel): project to inner Observables; run in parallel; no cancellation; order
+  not guaranteed.
+
+```ts
+ids$.pipe(mergeMap((id) => http.get(`/users/${id}`)));
+```
+
+- **`switchMap`** (switch): switch to latest; cancel previous; avoids race conditions.
+
+```ts
+search$.pipe(switchMap((term) => http.get(`/api?q=${term}`)));
+```
+
+- **`concatMap`** (sequential): queue inner Observables; preserve order.
+
+```ts
+tasks$.pipe(concatMap((task) => save(task)));
+```
+
+- **`exhaustMap`** (ignore while busy): ignore new emissions until current inner completes; great
+  for submit buttons.
+
+```ts
+clicks$.pipe(exhaustMap(() => save()));
+```
+
+### Errors & Cleanup
+
+- **`catchError`**: handle errors and replace with a fallback.
+
+```ts
+http$.pipe(
+  catchError((err) => {
+    console.error(err);
+    return of([]);
+  })
+);
+```
+
+- **`finalize`**: run cleanup on complete, error, or unsubscribe (e.g., loaders).
+
+```ts
+request$.pipe(finalize(() => loader.hide()));
+```
+
+### Lifecycle Control
+
+- **`take`**: limit emissions; auto-unsubscribe after N values.
+
+```ts
+source$.pipe(take(1));
+```
+
+- **`takeUntil`**: end when another Observable emits (e.g., `destroy$`).
+
+```ts
+source$.pipe(takeUntil(destroy$));
+```
+
+## Best Practices
+
+- Prefer `AsyncPipe` in templates; avoid manual `Subscription` fields in Components.
+- Use `takeUntilDestroyed()` for long-lived streams; avoid holding `Subscription` references.
+- Keep business logic in `pipe()`; keep `subscribe()` minimal and imperative.
+- Do not nest `subscribe()`; model flows with higher-order mapping operators.
+- Operator order matters: e.g., `filter` before `map` to avoid unnecessary transforms.
+- Operators produce new streams; they do not mutate the original.
+- In Services, expose readonly streams or convert to signals; keep side-effects localized.
+
+## Angular + Signals Interop
+
+- Convert Observables to signals when local derivation benefits template simplicity:
+
+```ts
+import { toSignal } from '@angular/core/rxjs-interop';
+
+export class UsersService {
+  readonly usersSig = toSignal(this.users$, { initialValue: [] });
+}
+```
+
+- Keep shared state in Services; Components consume via signals or Observables exposed by Services.
+- Components must never call `httpResource()` directly — only Services should own data fetching.
+
+## Quick Cheats
+
+- **map**: transform
+- **tap**: side effects
+- **switchMap**: switch to latest (cancels previous)
+- **mergeMap**: parallel
+- **concatMap**: sequential
+- **exhaustMap**: ignore while busy
+- **filter**: pass matching values
+- **distinctUntilChanged**: dedupe consecutive
+- **debounceTime**: wait for silence
+- **catchError**: handle errors
+- **finalize**: cleanup
+- **take/takeUntil**: limit/end stream

@@ -1,0 +1,173 @@
+---
+description: Vertical Slice Architecture & Frontend-CQRS principles
+globs: **/*.{ts,html,scss}
+alwaysApply: false
+---
+
+# Architecture Principles
+
+This project follows **Vertical Slice Architecture** with **Frontend-CQRS** principles.
+
+## Core Principles
+
+### Vertical Slice Architecture
+
+- Each business function is a standalone **Slice**
+- Everything a use case needs is **colocated**
+- Focus on **Use Cases**, not technical layers
+- No implicit dependencies across global services or stores
+- Refactoring-friendly: delete slice = remove feature
+
+> **Slices represent Use Cases – not UI screens or technical layers**
+
+### Feature-based Organization
+
+- Organize by features, not by `services/`, `models/`, `utils/`
+- Each feature encapsulates:
+  - Domain models & DTOs
+  - Entity state
+  - Feature HTTP adapter
+  - Feature utilities
+- Features remain **isolated, testable, and replaceable**
+
+### Frontend-CQRS (mandatory)
+
+| CQRS Role       | Frontend Primitive        |
+| --------------- | ------------------------- |
+| Command         | `rxMethod`                |
+| Command Handler | Use-Case Store / Facade   |
+| Query           | `resource` / `rxResource` |
+| Read Model      | Signals / Computed        |
+| State           | SignalStore               |
+
+> **Not the HTTP method decides – but whether state is mutated**
+
+## Architecture Rules (mandatory)
+
+### ✅ Allowed
+
+- Component → UI Sub-Store
+- UI Sub-Store → Facade
+- Facade → `rxMethod`
+- `rxMethod` → Service
+- Queries → Resource API
+- Store Methods → `patchState` only
+
+### ❌ Forbidden
+
+- Service → Service orchestration
+- Store → Store direct calls
+- Query → State mutation
+- Component → Business logic
+- Feature chains without Facade
+- Implicit orchestration
+- Direct Signal mutation (use `patchState` or `rxMethod`)
+
+## Store & Feature Types
+
+### 1. Root Feature Store (Business Truth)
+
+- Owns business state (Entities)
+- Enforces invariants & consistency
+- Pure state mutation only
+- No UI logic
+- No orchestration
+- Equivalent to **Aggregate Root**
+
+### 2. Entity Features (Domain Building Blocks)
+
+- Use `signalStoreFeature`
+- `withEntities`, `entityConfig`
+- Mutation only via `patchState`
+- No IO
+- No orchestration
+
+### 3. Actions Features (Command Building Blocks)
+
+- Use `rxMethod` for commands
+- Calls exactly **one** service
+- Manages loading & error state
+- No business decisions
+- No cross-feature flows
+
+### 4. UI Sub-Stores (Presenter)
+
+- Component- or Route-scoped
+- Selection, Filter, Sorting
+- Derived state via `computed`
+- No HTTP
+- No business knowledge
+
+### 5. Facade / Use-Case Store (Command Handler)
+
+**Central Orchestrator**
+
+- Sequences & decisions
+- Error & permission handling
+- Navigation
+- Cross-feature flows
+
+> **Facade = Frontend Command Handler**
+
+### 6. Resource API (Query Side)
+
+- Use `resource`, `rxResource`
+- Pure reading
+- No `patchState`
+- Automatic refetching
+- Cache & lifecycle management
+
+## Lifecycle Scope
+
+**Scope is an architectural decision – not convenience**
+
+### Application-Scope (Root Stores)
+
+- Lifetime: entire app session
+- Provision: `providedIn: 'root'`
+- Suitable for: Auth, User Identity, Core Domain Entities
+
+### Route-Scope (Feature Stores)
+
+- Lifetime: while route is active
+- Provision: Route Provider
+- Suitable for: Detail views, Workflow state, Page-specific queries
+- Auto-reset on navigation
+
+### Component-Scope (UI Sub-Stores)
+
+- Lifetime: component lifetime
+- Provision: Component Provider
+- Suitable for: Selection, Sorting, Pagination, UI flags
+- No manual cleanup needed
+
+> ❌ **Short-lived UI state in Root Store**
+> ❌ **Globalizing route state**
+> ❌ **Manual cleanup via `ngOnDestroy`**
+> ✅ **Scope decides – not convenience**
+
+## Cross-Feature Orchestration
+
+### Facade (mandatory)
+
+- Business decisions
+- Sequences
+- Navigation
+- Cross-feature use cases
+
+```
+Component → Facade → Commands → Stores → Services
+```
+
+### Events (optional)
+
+- Logging, Analytics, Telemetry only
+- ❌ Never for business logic
+
+## Final Rule
+
+> ❌ **A service must not orchestrate another service**
+> ❌ **A store must not directly call another store**
+> ❌ **Features must not orchestrate business logic**
+> ❌ **Queries must not trigger state mutation**
+> ✅ **Orchestration lives exclusively in Facades / Use-Case Stores**

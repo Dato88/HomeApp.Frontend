@@ -1,0 +1,193 @@
+---
+description: State management with CQRS & lifecycle scoping
+globs: **/*.{ts,html,scss}
+alwaysApply: false
+---
+
+# State Management
+
+## Core Principle: Frontend-CQRS
+
+This architecture implements **strict CQRS** in the frontend:
+
+| Concern         | Implementation            |
+| --------------- | ------------------------- |
+| Commands        | `rxMethod`                |
+| Command Handler | Facade / Use-Case Store   |
+| Queries         | `resource` / `rxResource` |
+| Read Model      | Signals / Computed        |
+| State           | SignalStore               |
+
+## State Management Rules
+
+### Signal Rules
+
+- Signals are **read-only** – never mutate directly
+- **Mutation exclusively via `patchState` or `rxMethod`**
+- **Asynchronous mutation = always `rxMethod`**
+- Use **`computed()`** for derived state
+- Keep transformations **pure and predictable**
+
+```ts
+// ❌ BAD - Direct mutation
+store.users.set([...users, newUser]);
+
+// ✅ GOOD - Via patchState
+patchState(store, { users: [...users, newUser] });
+
+// ✅ GOOD - Via rxMethod for async
+store.loadUsers(); // triggers rxMethod
+```
+
+### Commands vs Queries
+
+**Commands (State Mutation)**
+
+- Use `rxMethod`
+- Can mutate state
+- Handle side effects
+- Manage loading/error state
+
+**Queries (Pure Reading)**
+
+- Use `resource` / `rxResource`
+- No state mutation
+- Automatic refetching
+- Lifecycle-bound
+
+```ts
+// Command - loads AND mutates state
+loadUsers: rxMethod<void>(
+  pipe(
+    tap(() => patchState(store, { loading: true })),
+    switchMap(() => service.getUsers()),
+    tap((users) => patchState(store, { users }))
+  )
+);
+
+// Query - pure reading
+readonly users = rxResource({
+  loader: () => service.getUsers(),
+});
+```
+
+## Lifecycle Scoping
+
+**Not all state should live equally long.**
+
+### Application-Scope (Root Stores)
+
+```ts
+export const AuthStore = signalStore(
+  { providedIn: 'root' }
+  // Lives entire app session
+);
+```
+
+**Use for:**
+
+- Authentication state
+- User identity
+- Core domain entities
+- Long-term caches
+
+### Route-Scope (Feature Stores)
+
+```ts
+export const routes: Routes = [{
+  path: 'users',
+  providers: [UserDetailsStore], // Lives while route active
+}];
+```
+
+**Use for:**
+
+- Detail views
+- Workflow state
+- Page-specific data
+- Temporary feature state
+
+### Component-Scope (UI Sub-Stores)
+
+```ts
+@Component({
+  providers: [UserListUiStore], // Lives with component
+})
+```
+
+**Use for:**
+
+- Selection state
+- Sorting/filtering
+- Pagination
+- UI flags
+
+### Critical Rule
+
+> ❌ **Short-lived UI state in Root Store**
+> ❌ **Globalizing route-specific state**
+> ❌ **Manual cleanup via `ngOnDestroy`**
+> ✅ **Scope is an architectural decision**
+
+## Store Types
+
+### 1. Root Feature Store (Business Truth)
+
+- Owns domain entities
+- Enforces invariants
+- No UI logic
+- No orchestration
+- Equivalent to **Aggregate Root**
+
+### 2. Entity Features
+
+- Use `withEntities()` with `entityConfig`
+- Mutation only via `patchState`
+- No IO, no orchestration
+
+### 3. Actions Features
+
+- Commands via `rxMethod`
+- Call exactly one service
+- Loading & error state
+- No business decisions
+
+### 4. UI Sub-Stores
+
+- Component/Route scoped
+- Derived state via `computed`
+- No HTTP, no business logic
+
+### 5. Facades (Command Handlers)
+
+- Orchestrate multiple commands
+- Business decisions
+- Navigation
+- Cross-feature flows
+
+## State Isolation
+
+- Avoid circular dependencies
+- One Store owns one piece of state
+- Cross-store communication via Facades only
+- No Store → Store direct calls
+
+## Best Practices
+
+```ts
+// ✅ GOOD - Clear state ownership
+export const UserStore = signalStore(
+  { providedIn: 'root' },
+  withState({ users: [] as User[] }),
+  withMethods((store) => ({
+    addUser(user: User) {
+      patchState(store, { users: [...store.users(), user] });
+    },
+  }))
+);
+
+// ❌ BAD - Mixed concerns
+export const UserStore = signalStore(
+  withState({ users: [], selectedId: null, loading: false }), // ❌ UI + Domain mixed
+);
+```

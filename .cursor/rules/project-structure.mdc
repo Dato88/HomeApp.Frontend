@@ -1,0 +1,178 @@
+---
+description: Vertical Slice Architecture & project structure
+globs: **/*.{ts,html,scss}
+alwaysApply: false
+---
+
+# Project Structure
+
+This project follows **Vertical Slice Architecture** – organize by features, not technical layers.
+
+## Core Principles
+
+- **Features over layers** – each feature is self-contained
+- **Colocate by use case** – everything a feature needs lives together
+- **No global god-objects** – no shared `services/`, `models/`, `utils/` folders
+- **Feature independence** – features don't depend on each other (use Facades for orchestration)
+
+## Feature Structure (Vertical Slice)
+
+```text
+/feature-name/                    # Fachliche Feature (z.B. user-management)
+  /+state/                        # State Management
+    /models/                      # Domain Models & DTOs
+      user.interface.ts
+      user-dto.ts
+      index.ts
+    /configs/                     # Entity Configs
+      user.config.ts
+    /features/                    # SignalStore Features
+      user-entities.feature.ts    # Entity Feature (Aggregate)
+      user-actions.feature.ts     # Actions Feature (Commands)
+    /facades/                     # Orchestration (optional)
+      user-management.facade.ts
+    feature.store.ts              # Root Store
+    index.ts
+  /services/                      # HTTP Services (Repositories)
+    user.service.ts
+  /components/                    # Feature Components
+    /user-list/
+      /+store/                    # UI Sub-Store (optional)
+        user-list-ui.store.ts
+      user-list.component.ts
+      user-list.component.html
+      user-list.component.scss
+  /constants/                     # Feature Constants
+    api-endpoints.ts
+  /helpers/                       # Feature Utilities
+    user-utils.ts
+  /pipes/                         # Feature Pipes
+  /directives/                    # Feature Directives
+  index.ts                        # Public API
+```
+
+## Store Organization
+
+```text
+/+state/
+  /models/              # Domain & DTOs
+  /configs/             # Entity Configs
+  /features/            # Reusable SignalStore Features
+    entities.feature.ts
+    actions.feature.ts
+    ui.feature.ts
+  /facades/             # Orchestration Stores
+    feature.facade.ts
+  feature.store.ts      # Root Feature Store
+```
+
+## Core Folder (Cross-Cutting Concerns)
+
+```text
+/core/
+  /models/              # Shared interfaces (BaseResponse, etc.)
+  /helpers/             # Shared utilities (http-error-utils, etc.)
+  /guards/              # Route guards
+  /interceptors/        # HTTP interceptors
+  /pipes/               # Global pipes
+  /directives/          # Global directives
+  /constants/           # Global constants
+  index.ts
+```
+
+## API Endpoints (Feature-Scoped)
+
+Keep API endpoints within features:
+
+```ts
+// ✅ GOOD - Feature-scoped
+// user-management/constants/api-endpoints.ts
+export const API_USER_ENDPOINTS = {
+  users: 'users',
+  activeUsers: 'users/active',
+} as const;
+
+// ❌ BAD - Global god-object
+// constants/api-endpoints.ts
+export const API_ENDPOINTS = {
+  users: 'users',
+  orders: 'orders',
+  products: 'products',
+  // ... 500 more endpoints
+};
+```
+
+## Example: Complete Feature Layout
+
+```text
+/user-management/
+  /+state/
+    /models/
+      user.interface.ts
+      user-dto.ts
+      index.ts
+    /configs/
+      user.config.ts
+    /features/
+      user-entities.feature.ts      # withUserEntities()
+      user-actions.feature.ts       # withUserActions()
+    user-management.store.ts        # Root Store
+    index.ts
+  /services/
+    user.service.ts                 # Pure HTTP adapter
+  /components/
+    /user-list/
+      /+store/
+        user-list-ui.store.ts       # Component-scoped UI store
+      user-list.component.ts
+      user-list.component.html
+      user-list.component.scss
+    /user-detail/
+      user-detail.component.ts
+  /constants/
+    api-endpoints.ts
+  /helpers/
+    user-utils.ts
+  index.ts                          # Public API of feature
+```
+
+## Import Rules
+
+### ✅ Allowed
+
+- Feature → Core (shared utilities)
+- Component → Feature Store
+- Store → Service (same feature)
+- Facade → Multiple Stores
+
+### ❌ Forbidden
+
+- Feature → Feature (direct import)
+- Service → Service
+- Store → Store (without Facade)
+- Component → Service (direct HTTP)
+
+## Public API (index.ts)
+
+Each feature exports a public API:
+
+```ts
+// user-management/index.ts
+export * from './+state/user-management.store';
+export * from './+state/models';
+export { UserService } from './services/user.service';
+
+// Don't export internals:
+// ❌ export * from './+state/features/...';
+// ❌ export * from './helpers/...';
+```
+
+## Refactoring Benefits
+
+With Vertical Slices:
+
+- Delete feature = delete folder
+- No "dead code archaeology"
+- Clear feature boundaries
+- Easy to move/split features
+- No implicit coupling

@@ -1,0 +1,17 @@
+---
+description: Example alignment
+globs: **/*.{ts,html,scss}
+alwaysApply: false
+---
+
+# Example Alignment
+
+When Copilot suggests code:
+
+- **Stateful Services** should follow:
+  - signals → computed → httpResource → public methods → private helpers
+- **Components** should:
+  - inject services via `inject()`
+  - access service state via signals/computed
+  - interact using public service methods (`setQuery()`, `toggleCompleted()`)
+  - use modern inputs/outputs/models

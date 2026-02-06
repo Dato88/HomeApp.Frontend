@@ -1,0 +1,139 @@
+---
+description: Components guidelines
+globs: **/*.{ts,html,scss}
+alwaysApply: false
+---
+
+# Components
+
+## General Rules
+
+- Keep components small and focused on a single responsibility.
+- Components are **triggers and presenters** – never orchestrators
+- Use `input()`, `model()`, and `output()` instead of decorators.
+- Use inline templates for **small UI components** only.
+- Keep logic in TypeScript, not in templates.
+- Use **computed signals** for derived state instead of methods or pipes in templates.
+- Declare all component inputs (using `input()`), model inputs (using `model()`), and outputs (using
+  `output()`) as public readonly.
+- Use only **Custom CSS classes** for styling.
+
+## Component → Store/Facade Interaction
+
+**Components are dumb triggers:**
+
+```ts
+// ✅ GOOD - Component triggers Store commands
+@Component({ ... })
+export class UserListComponent {
+  readonly store = inject(UserManagementStore);
+
+  ngOnInit() {
+    this.store.loadUsers(); // Trigger command
+  }
+
+  onCreateUser(dto: CreateUserDto) {
+    this.store.createUser(dto); // Trigger command
+  }
+}
+```
+
+### ❌ Components Must NOT
+
+- Call HTTP services directly
+- Orchestrate multiple stores
+- Contain business logic
+- Make business decisions
+- Handle navigation (unless simple `routerLink`)
+- Manage complex state
+
+### ✅ Components Should
+
+- Inject Stores/Facades via `inject()`
+- Trigger commands via Store methods
+- Read state via Store signals
+- Handle user interaction
+- Present data from stores
+
+## View Components (Smart Components)
+
+- Inject and interact with **Stores/Facades**
+- Orchestrate UI components
+- Must **not** contain business logic
+- Must **not** make HTTP calls directly
+- Must **not** contain inline templates
+- Should end with **`View` suffix**
+- Trigger Store commands via methods
+
+```ts
+// ✅ GOOD - View Component
+@Component({
+  selector: 'app-user-list-view',
+  templateUrl: './user-list-view.component.html',
+})
+export class UserListViewComponent {
+  readonly store = inject(UserManagementStore);
+
+  ngOnInit() {
+    this.store.init(); // Trigger initialization
+  }
+}
+```
+
+## UI Components (Dumb Components)
+
+- Should **not** inject Stores or Services
+- Must contain **inline templates**
+- The interface must be defined using `input()`, `model()`, and `output()`
+- Behaviors like **debouncing** should be handled inside the UI component itself
+- Avoid template complexity — use signals/computed for view logic
+- Pure presentation logic only
+
+```ts
+// ✅ GOOD - UI Component
+@Component({
+  selector: 'app-user-card',
+  standalone: true,
+  template: `
+    <div class="user-card">
+      <h3>{{ user().name }}</h3>
+      <button (click)="edit.emit(user())">Edit</button>
+    </div>
+  `,
+})
+export class UserCardComponent {
+  readonly user = input.required<User>();
+  readonly edit = output<User>();
+}
+```
+
+## Member Ordering
+
+1. **Inputs / Models**
+   - Use `input()` instead of `@Input()` and `model()` for two-way binding.
+   - Always declare as public readonly.
+2. **Outputs**
+   - Use `output()` instead of `@Output()`.
+   - Always declare as public readonly.
+3. **Dependency Injection (DI)**
+   - Use `inject()` for services.
+   - Private services must be declared as private `#name = inject(ServiceType);`.
+4. **View / Content Queries & Forms**
+   - Access to views and content projections (e.g., `viewChild`, `contentChild`, `contentChildren`)
+     and form-related references (e.g., form groups/controls).
+   - Group by visibility: Public → Protected → Private.
+5. **Properties**
+   1. **Reactive values (signals, computed, observables)**
+      - Group by visibility: Public → Protected → Private.
+   2. **Normal properties**
+      - Group by visibility: Public → Protected → Private.
+6. **Lifecycle hooks (execution order)**
+   - `constructor` (only if needed)
+   - `ngOnChanges`
+   - `ngOnInit`
+   - `ngAfterViewInit`
+   - `ngOnDestroy`
+7. **Getters**
+   - Group by visibility: Public → Protected → Private.
+8. **Methods**
+   - Group by visibility: Public → Protected → Private.

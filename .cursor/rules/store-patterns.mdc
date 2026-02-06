@@ -1,0 +1,203 @@
+---
+description: NgRx SignalStore patterns & best practices
+globs: **/*.ts
+alwaysApply: false
+---
+
+# SignalStore Patterns
+
+## General Rules
+
+- Signals are **read-only** – never mutate directly
+- **Mutation exclusively via `patchState` or `rxMethod`**
+- **Asynchronous mutation = always `rxMethod`**
+- Pure reading (no side effects) = Resource API where applicable
+- Use **Custom SignalStore Features** for reusability
+- Explicit **Type Requirements** for feature dependencies
+
+## rxMethod (Commands)
+
+`rxMethod` is the **Command pattern** in this architecture.
+
+### When to use rxMethod
+
+- Any operation that **mutates state**
+- Asynchronous operations
+- Operations requiring loading/error handling
+- Operations that need cancellation
+
+### Example
+
+```ts
+withMethods((store) => {
+  const service = inject(UserService);
+
+  return {
+    loadUsers: rxMethod<void>(
+      pipe(
+        tap(() => patchState(store, { loading: true, error: null })),
+        switchMap(() =>
+          service.getAllUsers().pipe(
+            tapResponse({
+              next: (response) => {
+                if (response.success) {
+                  store.setUsers(response.data);
+                }
+                patchState(store, { loading: false });
+              },
+              error: (error) =>
+                patchState(store, {
+                  loading: false,
+                  error: 'Failed to load users',
+                }),
+            })
+          )
+        )
+      )
+    ),
+  };
+});
+```
+
+### Rules for rxMethod
+
+- ✅ Call exactly **one** service
+- ✅ Handle loading & error state
+- ✅ Use `patchState` for state updates
+- ❌ No nested `subscribe()`
+- ❌ No business decisions (belongs in Facade)
+- ❌ No cross-feature orchestration
+
+## Resource API (Queries)
+
+Use `resource` or `rxResource` for **pure reading** without side effects.
+
+### When to use Resource API
+
+- Data fetching without state mutation
+- Automatic refetching based on dependencies
+- Cache management
+- Lifecycle-bound queries
+
+### Example
+
+```ts
+readonly users = rxResource({
+  request: () => ({ refresh: this.refreshTrigger() }),
+  loader: ({ request }) =>
+    this.userService.getAllUsers().pipe(map((res) => res.data)),
+});
+```
+
+### Rules for Resource API
+
+- ✅ Pure reading only
+- ✅ Automatic lifecycle management
+- ❌ No `patchState` in resource loader
+- ❌ No side effects beyond reading
+
+## Entity Configuration
+
+Use `entityConfig` for multiple collections with custom IDs.
+
+```ts
+export const activeUsersConfig = entityConfig({
+  entity: type<User>(),
+  collection: 'activeUsers',
+  selectId: (user) => user.uuid,
+});
+```
+
+## Store Composition
+
+Compose stores from features:
+
+```ts
+export const UserManagementStore = signalStore(
+  { providedIn: 'root' },
+  withUserEntities(),
+  withUserActions(),
+  withUserListFeature()
+);
+```
+
+### Rules
+
+- ✅ Clear composition
+- ✅ Each feature has single responsibility
+- ❌ No feature chains
+- ❌ No hidden use cases
+
+## Type Requirements
+
+Use `type<T>()` for feature dependencies:
+
+```ts
+export function withUserActions() {
+  return signalStoreFeature(
+    { methods: type<EntityMethods>() },
+    // ... feature implementation
+  );
+}
+```
+
+## State Updates
+
+### Always use patchState
+
+```ts
+// ✅ GOOD
+patchState(store, { loading: true });
+patchState(store, { users: [...users, newUser] });
+
+// ❌ BAD - Direct mutation
+store.loading.set(true);
+```
+
+### Use update for complex transformations
+
+```ts
+patchState(store, {
+  users: store.users().map((u) => (u.id === id ? { ...u, ...updates } : u)),
+});
+```
+
+## Custom Features
+
+Create reusable features for common patterns:
+
+```ts
+export function withLoadingState() {
+  return signalStoreFeature(
+    withState({ loading: false, error: null as string | null }),
+    withMethods((store) => ({
+      setLoading(loading: boolean) {
+        patchState(store, { loading });
+      },
+      setError(error: string | null) {
+        patchState(store, { error });
+      },
+    }))
+  );
+}
+```
+
+## Computed Signals
+
+Use `computed` for derived state:
+
+```ts
+withComputed((store) => ({
+  filteredUsers: computed(() => {
+    const users = store.users();
+    const query = store.searchQuery();
+    return users.filter((u) => u.name.includes(query));
+  }),
+}));
+```
+
+### Rules
+
+- ✅ Pure derivations only
+- ✅ No side effects
+- ❌ No async operations in computed

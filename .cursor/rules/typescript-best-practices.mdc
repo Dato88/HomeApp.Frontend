@@ -1,0 +1,16 @@
+---
+description: TypeScript best practices
+globs: **/*.ts
+alwaysApply: false
+---
+
+# TypeScript Best Practices
+
+- Enable **strict type checking** (`"strict": true` in `tsconfig.json`).
+- Prefer **type inference** when the type is obvious.
+- Avoid the `any` type; use `unknown` when type is uncertain.
+- Always use **explicit access modifiers** (`public`, `private`, `protected`).
+- Use `readonly` wherever values should not change.
+- Prefer **immutable data structures** where practical.
+- Use **pure functions** for transformations and helpers.
+- Avoid side effects in functions used by signals or computed properties.

@@ -1,0 +1,11 @@
+---
+description: Linting & style expectations
+globs: **/*.{ts,html,scss}
+alwaysApply: false
+---
+
+# Linting & Style Expectations
+
+1. Use **private `#fields`** for injected dependencies.
+2. Avoid unused imports, dead code, and large files.
+3. Code must be formatted with **Prettier** consistently.

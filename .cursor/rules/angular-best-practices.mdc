@@ -1,0 +1,18 @@
+---
+description: Angular best practices
+globs: **/*.{ts,html,scss}
+alwaysApply: false
+---
+
+# Angular Best Practices
+
+- Always use **standalone components** over NgModules.
+- Do **NOT** set `standalone: true` manually — it is the default in Angular 20+.
+- Use **signals** for local state and `computed()` for derived state.
+- Prefer **Reactive Forms** over Template-driven forms.
+- Use **inject()** for dependency injection.
+- Use **RxJS only when needed** (HTTP, streams); convert to signals at boundaries.
+- Do **NOT** use `ngClass`; use `[class]` bindings.
+- Do **NOT** use `ngStyle`; use `[style]` bindings.
+- Separate **container (logic)** and **presentational (UI)** components.
+- Always set `changeDetection: ChangeDetectionStrategy.OnPush`.
