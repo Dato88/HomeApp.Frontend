@@ -6,7 +6,7 @@ import { NavbarComponent } from './shared/navbar/navbar.component';
   selector: 'home-root',
   imports: [RouterOutlet, RouterModule, NavbarComponent],
   templateUrl: './app.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './app.component.scss',
 })
 export class AppComponent {}

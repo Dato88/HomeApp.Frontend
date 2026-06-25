@@ -4,7 +4,7 @@ import { Component, input, output, ChangeDetectionStrategy } from '@angular/core
   selector: 'home-button',
   imports: [],
   templateUrl: './button.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './button.component.scss',
 })
 export class ButtonComponent {

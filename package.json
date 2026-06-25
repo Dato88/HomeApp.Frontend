@@ -6,7 +6,8 @@
     "start": "ng serve --configuration production",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "e2e": "playwright test"
   },
   "private": true,
   "dependencies": {
@@ -22,11 +23,9 @@
     "@angular/platform-browser": "^22.0.3",
     "@angular/platform-browser-dynamic": "^22.0.3",
     "@angular/router": "^22.0.3",
-    "@ngrx/effects": "^21.1.1",
     "@ngrx/entity": "^21.1.1",
+    "@ngrx/operators": "^21.1.1",
     "@ngrx/signals": "^21.1.1",
-    "@ngrx/store": "^21.1.1",
-    "@ngrx/store-devtools": "^21.1.1",
     "bootstrap-icons": "^1.13.1",
     "rxjs": "~7.8.2",
     "tslib": "^2.8.1",
@@ -37,18 +36,14 @@
     "@angular/cli": "^22.0.4",
     "@angular/compiler-cli": "^22.0.3",
     "@ngrx/schematics": "^21.1.1",
-    "@types/jasmine": "~5.1.7",
+    "@playwright/test": "^1.57.0",
     "eslint-config-prettier": "^10.0.2",
     "eslint-plugin-prettier": "^5.2.3",
     "istanbul-lib-instrument": "^6.0.3",
-    "jasmine-core": "~5.6.0",
-    "karma": "~6.4.4",
-    "karma-chrome-launcher": "~3.2.0",
-    "karma-coverage": "~2.2.1",
-    "karma-jasmine": "~5.1.0",
-    "karma-jasmine-html-reporter": "~2.1.0",
+    "jsdom": "^27.4.0",
     "prettier-eslint": "^16.3.0",
-    "typescript": "~6.0.3"
+    "typescript": "~6.0.3",
+    "vitest": "^4.0.8"
   },
   "overrides": {
     "@angular-architects/ngrx-toolkit": {
@@ -59,19 +54,11 @@
       "@angular/common": "$@angular/common",
       "@angular/core": "$@angular/core"
     },
-    "@ngrx/store": {
-      "@angular/common": "$@angular/common",
-      "@angular/core": "$@angular/core"
-    },
-    "@ngrx/effects": {
-      "@angular/common": "$@angular/common",
-      "@angular/core": "$@angular/core"
-    },
     "@ngrx/entity": {
       "@angular/common": "$@angular/common",
       "@angular/core": "$@angular/core"
     },
-    "@ngrx/store-devtools": {
+    "@ngrx/operators": {
       "@angular/common": "$@angular/common",
       "@angular/core": "$@angular/core"
     }

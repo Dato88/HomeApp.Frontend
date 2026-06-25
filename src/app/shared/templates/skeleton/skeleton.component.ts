@@ -4,7 +4,7 @@ import { Component, computed, input, ChangeDetectionStrategy } from '@angular/co
   selector: 'home-skeleton',
   imports: [],
   templateUrl: './skeleton.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './skeleton.component.scss',
 })
 export class SkeletonComponent {

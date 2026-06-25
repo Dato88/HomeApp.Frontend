@@ -55,8 +55,17 @@ export class UserService {
   createUser(dto: CreateUserDto): Observable<BaseResponse<User>> {
     return this.#http.post<BaseResponse<User>>(this.#baseUrl, dto);
   }
+
+  // Resource factory for Query stores
+  getUserResource() {
+    return rxResource({
+      stream: () => this.getUser().pipe(map((r) => (r.isSuccess ? r.value : null))),
+    });
+  }
 }
 ```
+
+Stores expose `userResource` from `withProps` — services own the Resource factory.
 
 ## Orchestration Belongs in Facades
 

@@ -6,9 +6,12 @@ alwaysApply: false
 
 # Global Defaults
 
-1. Use **modern Angular 20 APIs**:
-   - `signal`, `computed`, `input`, `model`, `output`, `inject`
-   - standalone components (no legacy NgModules for new code, except where strictly required)
+1. Use **modern Angular 22 APIs**:
+   - `signal`, `computed`, `input`, `model`, `output`, `inject`, `viewChild`
+   - `httpResource` / `rxResource` for queries, `rxMethod` for commands
+   - Signal Forms (`form()`, `schema()`, `[formField]`) for new forms
+   - Vitest for unit tests, Playwright for E2E
+   - `provideZonelessChangeDetection()` (zoneless)
 2. **Code and comments must be in English.**
 3. Keep files **small**, **single-responsibility**, and follow the **member ordering rules** defined
    below.

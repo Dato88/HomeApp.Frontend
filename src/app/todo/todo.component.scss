@@ -6,18 +6,15 @@ home-todo {
   display: grid;
   width: 100%;
   gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 
-  tr {
+  .todo-list-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 0.2rem;
-
-    .loader {
-      display: flex;
-      justify-content: center;
-      width: 100%;
-    }
 
     .todo-done-icon {
       display: flex;
@@ -40,15 +37,22 @@ home-todo {
       padding: 0.5rem;
       width: 100%;
       height: 3rem;
+      background: transparent;
+      cursor: pointer;
+      text-align: left;
+
+      &.done {
+        background-color: green;
+      }
 
       home-skeleton {
         grid-column: span 2;
       }
 
-      .todo-title {
-        h3 {
-          margin: 0;
-        }
+      .todo-title-text {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 600;
       }
 
       .todo-infos {
@@ -59,12 +63,6 @@ home-todo {
         grid-column: span 2;
         font-size: 12px;
 
-        .todo-execution-date {
-          p {
-            margin: 0;
-          }
-        }
-
         .todo-priority-icons {
           width: max-content;
           height: max-content;
@@ -73,24 +71,24 @@ home-todo {
     }
 
     .delete-button {
-      border: solid 1px;
       border-radius: 0.25rem;
       background-color: red;
       color: white;
       border: none;
       padding: 10px 2rem;
       cursor: pointer;
-
-      &.swiped {
-        display: block;
-        transition: right 0.3s ease-in-out;
-      }
     }
 
     button {
       height: 100%;
     }
   }
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 dialog {
@@ -126,8 +124,8 @@ dialog {
 }
 
 dialog::backdrop {
-  background: rgba(0, 0, 0, 0.7); /* Abdunkeln auf 70% */
-  transition: background 0.3s ease-in-out; /* Animation für weiche Übergänge */
+  background: rgba(0, 0, 0, 0.7);
+  transition: background 0.3s ease-in-out;
 }
 
 .add-todo {
@@ -135,4 +133,10 @@ dialog::backdrop {
   bottom: 0;
   width: 100%;
   box-sizing: border-box;
+}
+
+.field-error {
+  color: #b00020;
+  font-size: 0.875rem;
+  margin: 0.25rem 0 0;
 }

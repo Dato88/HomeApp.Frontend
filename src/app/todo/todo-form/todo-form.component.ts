@@ -1,67 +1,64 @@
-import { Component, EventEmitter, inject, Output, ChangeDetectionStrategy } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Component, output, signal, ChangeDetectionStrategy } from '@angular/core';
+import { form, FormField, required, schema } from '@angular/forms/signals';
 import { TodoPriorityEnum } from '../../shared/enum/todo-priority.enum';
 import { TodoDto } from '../../shared/_interfaces/todo/todo-dto';
-import { MatButtonModule } from '@angular/material/button';
-import { InputFieldComponent } from '../../shared/templates/input-field/input-field.component';
 import { ButtonComponent } from '../../shared/templates/button/button.component';
+
+interface TodoFormModel {
+  todoId: number;
+  title: string;
+  done: boolean;
+  priority: TodoPriorityEnum;
+}
 
 @Component({
   selector: 'home-todo-form',
-  imports: [MatButtonModule, ReactiveFormsModule, InputFieldComponent, ButtonComponent],
+  imports: [FormField, ButtonComponent],
   templateUrl: './todo-form.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './todo-form.component.scss',
 })
 export class TodoFormComponent {
-  #fb = inject(FormBuilder);
+  readonly submitTodo = output<TodoDto>();
 
-  public todoForm: FormGroup;
+  private readonly todoModel = signal<TodoFormModel>({
+    todoId: 0,
+    title: '',
+    done: false,
+    priority: TodoPriorityEnum.Normal,
+  });
 
-  @Output() submitTodo: EventEmitter<TodoDto> = new EventEmitter<TodoDto>();
+  readonly todoForm = form(
+    this.todoModel,
+    schema((path) => {
+      required(path.title);
+    })
+  );
 
-  constructor() {
-    this.todoForm = this.#fb.group({});
-  }
+  submitForm(event: Event): void {
+    event.preventDefault();
+    this.todoForm().markAsTouched();
 
-  ngOnInit(): void {
-    this.todoForm = this.#fb.group({
-      id: this.#fb.control<number>(0, { validators: [Validators.required], nonNullable: true }),
-      title: this.#fb.control<string>('', { validators: [Validators.required], nonNullable: true }),
-      done: this.#fb.control<boolean>(false, {
-        validators: [Validators.required],
-        nonNullable: true,
-      }),
-      priority: this.#fb.control<TodoPriorityEnum>(0, {
-        validators: [Validators.required],
-        nonNullable: true,
-      }),
-      executionDate: this.#fb.control<Date | null>(null, {
-        validators: [Validators.required],
-        nonNullable: true,
-      }),
-    });
-  }
+    if (this.todoForm().invalid()) {
+      return;
+    }
 
-  submitForm() {
-    const formValue = this.todoForm.getRawValue();
-
+    const formValue = this.todoForm().value();
     const newTodo: TodoDto = {
       ...formValue,
+      isLoading: false,
     };
 
     this.submitTodo.emit(newTodo);
-
     this.resetForm();
   }
 
   resetForm(): void {
-    this.todoForm.reset({
-      id: 0,
+    this.todoForm().reset({
+      todoId: 0,
       title: '',
       done: false,
-      priority: 0,
-      executionDate: null,
+      priority: TodoPriorityEnum.Normal,
     });
   }
 }

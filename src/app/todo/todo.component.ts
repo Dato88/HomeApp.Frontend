@@ -1,8 +1,12 @@
-import { Component, computed, inject, ViewChild, ChangeDetectionStrategy } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { TodoDto } from '../shared/_interfaces/todo/todo-dto';
+import {
+  Component,
+  inject,
+  viewChild,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { DatePipe, NgStyle } from '@angular/common';
+import { DatePipe } from '@angular/common';
+import { TodoDto } from '../shared/_interfaces/todo/todo-dto';
 import { TodoFormComponent } from './todo-form/todo-form.component';
 import { TodoCreateFormComponent } from './todo-create-form/todo-create-form.component';
 import { TodoStore } from './+store/todo-store';
@@ -14,35 +18,28 @@ import { ButtonComponent } from '../shared/templates/button/button.component';
   imports: [
     DatePipe,
     MatIconModule,
-    NgStyle,
-    ReactiveFormsModule,
     TodoCreateFormComponent,
     SkeletonComponent,
     ButtonComponent,
   ],
   templateUrl: './todo.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './todo.component.scss',
 })
 export class TodoComponent {
-  readonly #todoStore = inject(TodoStore);
+  readonly store = inject(TodoStore);
 
-  todos = computed(() => this.#todoStore.todoEntities());
-  loading = computed(() => this.#todoStore.isLoading);
-
-  @ViewChild(TodoFormComponent) todoFormComponent!: TodoFormComponent;
+  readonly todoFormComponent = viewChild(TodoFormComponent);
 
   onDialogClose(): void {
-    if (this.todoFormComponent) {
-      this.todoFormComponent.resetForm();
-    }
+    this.todoFormComponent()?.resetForm();
   }
 
   completeTodoToggle(todo: TodoDto): void {
-    this.#todoStore.completeTodo(todo);
+    this.store.completeTodo(todo);
   }
 
   deleteTodo(todoId: number): void {
-    this.#todoStore.deleteTodo(todoId);
+    this.store.deleteTodo(todoId);
   }
 }

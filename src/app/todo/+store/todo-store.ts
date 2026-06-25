@@ -1,13 +1,23 @@
-import { inject } from '@angular/core';
-import { signalStore, withProps, withMethods, withHooks, type, withState } from '@ngrx/signals';
+import { inject, isDevMode } from '@angular/core';
+import {
+  signalStore,
+  signalStoreFeature,
+  type,
+  withProps,
+  withState,
+} from '@ngrx/signals';
 import { entityConfig, withEntities } from '@ngrx/signals/entities';
+import { withDevtools } from '@angular-architects/ngrx-toolkit';
 import { TodoDto } from '../../shared/_interfaces/todo/todo-dto';
 import { TodoService } from '../../shared/services/person/todo.service';
-import { completeTodo } from './methods/complete-todo';
-import { deleteTodo } from './methods/delete-todo';
-import { loadTodos } from './methods/load-todos';
-import { createTodo } from './methods/create-todo';
-import { withDevtools } from '@angular-architects/ngrx-toolkit';
+import { withErrorHandling } from '../../+store/features/with-error.feature';
+import { withTodoQueries } from './features/with-todo-queries.feature';
+import { withTodoEntitySync } from './features/with-todo-entity-sync.feature';
+import { withTodoCommands } from './features/with-todo-commands.feature';
+
+export interface TodoState {
+  isSaving: boolean;
+}
 
 export const todoEntities = entityConfig({
   entity: type<TodoDto>(),
@@ -15,23 +25,22 @@ export const todoEntities = entityConfig({
   selectId: (t) => t.todoId,
 });
 
+const todoStoreFeatures = [
+  withState<TodoState>({ isSaving: false }),
+  withProps(() => ({ _todoService: inject(TodoService) })),
+  withEntities(todoEntities),
+  withErrorHandling(),
+  withTodoQueries(),
+  withTodoEntitySync(),
+  withTodoCommands(),
+] as const;
+
+const devtoolsFeature = isDevMode()
+  ? withDevtools('todos')
+  : signalStoreFeature(withState({}));
+
 export const TodoStore = signalStore(
   { providedIn: 'root' },
-  withEntities(todoEntities),
-  withProps(() => ({ _todoService: inject(TodoService), isLoading: false, error: null })),
-  withMethods((store) => ({
-    loadTodos: () => loadTodos(store, store._todoService),
-    completeTodo: (todo: TodoDto) => completeTodo(store, store._todoService, todo),
-    createTodo: (todo: TodoDto) => createTodo(store, store._todoService, todo),
-    deleteTodo: (todoId: number) => deleteTodo(store, store._todoService, todoId),
-  })),
-  withHooks({
-    onInit({ loadTodos }) {
-      loadTodos();
-    },
-    onDestroy() {
-      console.log('TodoStore destroyed');
-    },
-  }),
-  withDevtools('todos')
+  ...todoStoreFeatures,
+  devtoolsFeature
 );

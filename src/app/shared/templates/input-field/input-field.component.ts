@@ -5,7 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
   selector: 'input-field',
   imports: [ReactiveFormsModule],
   templateUrl: './input-field.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './input-field.component.scss',
 })
 export class InputFieldComponent {

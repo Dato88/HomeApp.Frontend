@@ -36,7 +36,7 @@ This project follows **Vertical Slice Architecture** with **Frontend-CQRS** prin
 | --------------- | ------------------------- |
 | Command         | `rxMethod`                |
 | Command Handler | Use-Case Store / Facade   |
-| Query           | `resource` / `rxResource` |
+| Query           | `httpResource` / `rxResource` / `resource` |
 | Read Model      | Signals / Computed        |
 | State           | SignalStore               |
 

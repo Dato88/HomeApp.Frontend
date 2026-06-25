@@ -1,44 +1,26 @@
+import { inject, isDevMode } from '@angular/core';
 import {
-  patchState,
   signalStore,
-  withHooks,
-  withMethods,
+  signalStoreFeature,
   withProps,
   withState,
 } from '@ngrx/signals';
-import { inject } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
-import { initialNavbarState } from './models/navbar.state';
+import { withDevtools } from '@angular-architects/ngrx-toolkit';
 import { NavbarStoreService } from './services/navbar-store.service';
+
+const navbarStoreFeatures = [
+  withProps(() => ({
+    _navbarStoreService: inject(NavbarStoreService),
+    navbarResource: inject(NavbarStoreService).getNavbarResource(),
+  })),
+] as const;
+
+const navbarDevtools = isDevMode()
+  ? withDevtools('navbar')
+  : signalStoreFeature(withState({}));
 
 export const NavbarStore = signalStore(
   { providedIn: 'root' },
-  withState(initialNavbarState),
-  withProps(() => ({
-    _navbarStoreService: inject(NavbarStoreService),
-  })),
-  withMethods((store) => {
-    return {
-      async _getNavbarItems() {
-        patchState(store, { isLoading: true });
-        try {
-          const result = await firstValueFrom(store._navbarStoreService.getNavbarItems());
-
-          patchState(store, { navbarListItems: result });
-        } catch (error) {
-          console.error('Error fetching navbarListItems:', error);
-        } finally {
-          patchState(store, { isLoading: false });
-        }
-      },
-    };
-  }),
-  withHooks({
-    onInit({ _getNavbarItems }) {
-      _getNavbarItems();
-    },
-    onDestroy() {
-      console.log('NavbarStore destroyed');
-    },
-  })
+  ...navbarStoreFeatures,
+  navbarDevtools
 );

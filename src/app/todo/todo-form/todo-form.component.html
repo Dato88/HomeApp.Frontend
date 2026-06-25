@@ -1,16 +1,24 @@
 <div class="todo-form">
-  <form
-    [formGroup]="todoForm"
-    (ngSubmit)="submitForm()">
-    <input-field
-      [identifier]="'todo-create'"
-      [name]="'title'"
-      [label]="'New Todo'"
-      [placeholder]="'Title'"
-      [autofocus]="true"
-      [controlName]="'title'"></input-field>
-    <home-button
-      [type]="'submit'"
-      [label]="'Add'"></home-button>
+  <form (submit)="submitForm($event)" novalidate>
+    <div class="input-form-group">
+      <input
+        type="text"
+        id="todo-create-title"
+        class="input-form-field"
+        placeholder="Title"
+        autofocus
+        [formField]="todoForm.title"
+        [attr.aria-invalid]="todoForm.title().invalid()"
+        [attr.aria-errormessage]="'todo-title-error'" />
+      <label for="todo-create-title" class="input-form-label">New Todo</label>
+      @if (todoForm.title().invalid() && todoForm.title().touched()) {
+        <p id="todo-title-error" role="alert" class="field-error">
+          @for (error of todoForm.title().errors(); track error.kind) {
+            <span>{{ error.message }}</span>
+          }
+        </p>
+      }
+    </div>
+    <home-button [type]="'submit'" [label]="'Add'"></home-button>
   </form>
 </div>

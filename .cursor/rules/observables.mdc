@@ -12,7 +12,19 @@ alwaysApply: false
 - In Components, prefer `AsyncPipe` and `takeUntilDestroyed()`; avoid manual `unsubscribe()` fields.
 - Convert Observables to signals at boundaries using `toSignal()` when it improves local state
   ergonomics.
-- Components must not call `httpResource()` directly — use Services to fetch data and expose state.
+- Components must not call `httpResource()` directly — use Store Resource signals or Service factories.
+
+## CQRS vs RxJS
+
+| Use RxJS (`rxMethod`) | Use Resource API |
+|-----------------------|------------------|
+| POST/PUT/DELETE | GET / declarative reads |
+| Orchestrated side effects | Automatic reload on dependency change |
+| `isSaving` UX state | `isLoading()` on resource |
+
+- **Stores**: no `.subscribe()` — use `rxMethod` + `tapResponse` for commands
+- **Components**: `store.createTodo(dto)` — fire-and-forget, no subscribe
+- **Queries**: `rxResource` in `withProps`, not `rxMethod`
 
 ## Fundamentals
 

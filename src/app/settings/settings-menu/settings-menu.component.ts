@@ -6,7 +6,7 @@ import { MatListModule } from '@angular/material/list';
   selector: 'home-settings-menu',
   imports: [MatCardModule, MatListModule],
   templateUrl: './settings-menu.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './settings-menu.component.scss',
 })
 export class SettingsMenuComponent {}

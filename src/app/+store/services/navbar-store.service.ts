@@ -1,3 +1,4 @@
+import { rxResource } from '@angular/core/rxjs-interop';
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { API_NAVBAR_ENDPOINTS } from '../../../api-endpoints/api-navbar-endpoints';
@@ -15,5 +16,11 @@ export class NavbarStoreService {
     return this.#http.get<NavbarListItem[]>(
       `${environment.backendUrl}/${API_NAVBAR_ENDPOINTS.navbar}`
     );
+  }
+
+  public getNavbarResource() {
+    return rxResource({
+      stream: () => this.getNavbarItems(),
+    });
   }
 }

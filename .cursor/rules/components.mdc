@@ -14,6 +14,8 @@ alwaysApply: false
 - Use inline templates for **small UI components** only.
 - Keep logic in TypeScript, not in templates.
 - Use **computed signals** for derived state instead of methods or pipes in templates.
+- **Do not wrap store signals in local `computed()`** — use store/resource signals directly in templates.
+- `ChangeDetectionStrategy.OnPush` is mandatory.
 - Declare all component inputs (using `input()`), model inputs (using `model()`), and outputs (using
   `output()`) as public readonly.
 - Use only **Custom CSS classes** for styling.
@@ -23,19 +25,27 @@ alwaysApply: false
 **Components are dumb triggers:**
 
 ```ts
-// ✅ GOOD - Component triggers Store commands
-@Component({ ... })
-export class UserListComponent {
-  readonly store = inject(UserManagementStore);
+// ✅ GOOD - Component triggers Store commands, reads Resource signals
+@Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    @if (store.todosResource.isLoading()) { <home-skeleton /> }
+    @for (todo of store.todoEntities(); track todo.todoId) { ... }
+  `,
+})
+export class TodoComponent {
+  readonly store = inject(TodoStore);
 
-  ngOnInit() {
-    this.store.loadUsers(); // Trigger command
-  }
-
-  onCreateUser(dto: CreateUserDto) {
-    this.store.createUser(dto); // Trigger command
+  completeTodo(todo: TodoDto): void {
+    this.store.completeTodo(todo); // Command — no subscribe
   }
 }
+```
+
+```ts
+// ❌ BAD — do not trigger queries in ngOnInit
+ngOnInit() { this.store.loadUsers(); }
+loading = computed(() => this.store.isLoading); // isLoading belongs on Resource
 ```
 
 ### ❌ Components Must NOT

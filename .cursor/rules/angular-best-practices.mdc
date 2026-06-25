@@ -9,7 +9,9 @@ alwaysApply: false
 - Always use **standalone components** over NgModules.
 - Do **NOT** set `standalone: true` manually — it is the default in Angular 20+.
 - Use **signals** for local state and `computed()` for derived state.
-- Prefer **Reactive Forms** over Template-driven forms.
+- Prefer **Signal Forms** (`form()`, `schema()`, `[formField]`) for new forms.
+- Use **Reactive Forms** only for legacy components not yet migrated.
+- Use **Vitest** (`ng test`) for unit tests.
 - Use **inject()** for dependency injection.
 - Use **RxJS only when needed** (HTTP, streams); convert to signals at boundaries.
 - Do **NOT** use `ngClass`; use `[class]` bindings.
