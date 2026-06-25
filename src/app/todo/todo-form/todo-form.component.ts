@@ -1,8 +1,8 @@
 import { Component, output, signal, ChangeDetectionStrategy } from '@angular/core';
-import { form, FormField, required, schema } from '@angular/forms/signals';
+import { form, required, schema } from '@angular/forms/signals';
+import { ButtonComponent, InputFieldComponent } from '@Dato88/homeapp-lib';
 import { TodoPriorityEnum } from '../../shared/enum/todo-priority.enum';
 import { TodoDto } from '../../shared/_interfaces/todo/todo-dto';
-import { ButtonComponent } from '../../shared/templates/button/button.component';
 
 interface TodoFormModel {
   todoId: number;
@@ -13,7 +13,7 @@ interface TodoFormModel {
 
 @Component({
   selector: 'home-todo-form',
-  imports: [FormField, ButtonComponent],
+  imports: [InputFieldComponent, ButtonComponent],
   templateUrl: './todo-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './todo-form.component.scss',

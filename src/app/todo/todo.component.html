@@ -25,7 +25,7 @@
           [attr.aria-label]="'Todo ' + todoDto.title + (todoDto.done ? ' erledigt' : ' offen')"
           (click)="completeTodoToggle(todoDto)">
           @if (todoDto.isLoading) {
-            <home-skeleton aria-hidden="true"></home-skeleton>
+            <lib-skeleton aria-hidden="true"></lib-skeleton>
           } @else {
             <div class="todo-title">
               <h2 class="todo-title-text">{{ todoDto.title }}</h2>
@@ -68,8 +68,8 @@
       </div>
       <home-todo-create-form (closeDialog)="todoDialog.close()"></home-todo-create-form>
     </dialog>
-    <home-button
+    <lib-button
       [label]="'Create Todo'"
-      (clicked)="todoDialog.showModal()"></home-button>
+      (clicked)="todoDialog.showModal()"></lib-button>
   </div>
 </section>

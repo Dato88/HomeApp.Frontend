@@ -12,15 +12,14 @@ describe('AppComponent', () => {
 
   it('should create the app', () => {
     const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+    expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('should render navbar and main outlet', () => {
+  it('should render lib-navigation with router outlet', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('am-navbar')).toBeTruthy();
-    expect(compiled.querySelector('main router-outlet, main > router-outlet')).toBeTruthy();
+    expect(compiled.querySelector('lib-navigation')).toBeTruthy();
+    expect(compiled.querySelector('router-outlet')).toBeTruthy();
   });
 });

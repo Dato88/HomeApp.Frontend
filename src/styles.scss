@@ -1,16 +1,13 @@
 @use 'bootstrap-icons/font/bootstrap-icons';
 
+html,
 body {
-  margin: 0;
+  height: 100%;
 }
 
-main {
-  display: flex;
-  margin-top: 3rem;
-
-  home-todo {
-    width: 100vw;
-  }
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
 .content {
@@ -20,17 +17,6 @@ main {
   gap: 0.5rem;
 }
 
-@media only screen and (min-width: 768px) {
-  main {
-    margin-top: 0;
-  }
-}
-
-html,
-body {
-  height: 100%;
-}
-body {
-  margin: 0;
-  font-family: Roboto, 'Helvetica Neue', sans-serif;
+home-todo {
+  width: 100%;
 }

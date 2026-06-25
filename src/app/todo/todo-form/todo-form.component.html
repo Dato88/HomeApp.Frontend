@@ -1,24 +1,19 @@
 <div class="todo-form">
   <form (submit)="submitForm($event)" novalidate>
-    <div class="input-form-group">
-      <input
-        type="text"
-        id="todo-create-title"
-        class="input-form-field"
-        placeholder="Title"
-        autofocus
-        [formField]="todoForm.title"
-        [attr.aria-invalid]="todoForm.title().invalid()"
-        [attr.aria-errormessage]="'todo-title-error'" />
-      <label for="todo-create-title" class="input-form-label">New Todo</label>
-      @if (todoForm.title().invalid() && todoForm.title().touched()) {
-        <p id="todo-title-error" role="alert" class="field-error">
-          @for (error of todoForm.title().errors(); track error.kind) {
-            <span>{{ error.message }}</span>
-          }
-        </p>
-      }
-    </div>
-    <home-button [type]="'submit'" [label]="'Add'"></home-button>
+    <lib-input-field
+      label="New Todo"
+      placeholder="Title"
+      [autofocus]="true"
+      [required]="true"
+      effectStyle="box"
+      [value]="todoForm.title().value()"
+      (valueChange)="todoForm.title().value.set($event)"
+      [validationState]="todoForm.title().invalid() && todoForm.title().touched() ? 'error' : null"
+      [errorMessage]="
+        todoForm.title().invalid() && todoForm.title().touched()
+          ? (todoForm.title().errors()[0]?.message ?? 'Title is required')
+          : ''
+      " />
+    <lib-button [type]="'submit'" [label]="'Add'"></lib-button>
   </form>
 </div>

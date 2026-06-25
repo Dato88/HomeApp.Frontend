@@ -6,12 +6,11 @@ import {
 } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { DatePipe } from '@angular/common';
+import { ButtonComponent, SkeletonComponent } from '@Dato88/homeapp-lib';
 import { TodoDto } from '../shared/_interfaces/todo/todo-dto';
 import { TodoFormComponent } from './todo-form/todo-form.component';
 import { TodoCreateFormComponent } from './todo-create-form/todo-create-form.component';
 import { TodoStore } from './+store/todo-store';
-import { SkeletonComponent } from '../shared/templates/skeleton/skeleton.component';
-import { ButtonComponent } from '../shared/templates/button/button.component';
 
 @Component({
   selector: 'home-todo',
