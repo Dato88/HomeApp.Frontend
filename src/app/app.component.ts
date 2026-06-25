@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { AuthenticationService } from './shared/services/authentication.service';
 import { NavbarComponent } from './shared/navbar/navbar.component';
@@ -8,6 +8,7 @@ import { LoginComponent } from './authentication/auth-user/login.component';
   selector: 'home-root',
   imports: [RouterOutlet, RouterModule, NavbarComponent],
   templateUrl: './app.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {

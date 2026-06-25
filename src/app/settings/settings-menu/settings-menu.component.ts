@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 
@@ -6,6 +6,7 @@ import { MatListModule } from '@angular/material/list';
   selector: 'home-settings-menu',
   imports: [MatCardModule, MatListModule],
   templateUrl: './settings-menu.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './settings-menu.component.scss',
 })
 export class SettingsMenuComponent {}

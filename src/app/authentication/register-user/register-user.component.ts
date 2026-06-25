@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthenticationService } from '../../shared/services/authentication.service';
 import { UserForRegistrationDto } from '../../shared/_interfaces/authentication/auth/register/user-for-registration-dto';
@@ -12,6 +12,7 @@ import { environment } from '../../../environments/environment';
   selector: 'home-register-user',
   imports: [ReactiveFormsModule],
   templateUrl: './register-user.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './register-user.component.scss',
 })
 export class RegisterUserComponent implements OnInit {

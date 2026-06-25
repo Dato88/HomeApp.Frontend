@@ -1,10 +1,11 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'input-field',
   imports: [ReactiveFormsModule],
   templateUrl: './input-field.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './input-field.component.scss',
 })
 export class InputFieldComponent {

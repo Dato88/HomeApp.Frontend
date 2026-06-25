@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Output, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TodoPriorityEnum } from '../../shared/enum/todo-priority.enum';
 import { TodoDto } from '../../shared/_interfaces/todo/todo-dto';
@@ -10,6 +10,7 @@ import { ButtonComponent } from '../../shared/templates/button/button.component'
   selector: 'home-todo-form',
   imports: [MatButtonModule, ReactiveFormsModule, InputFieldComponent, ButtonComponent],
   templateUrl: './todo-form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './todo-form.component.scss',
 })
 export class TodoFormComponent {

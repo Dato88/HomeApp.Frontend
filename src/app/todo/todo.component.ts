@@ -1,4 +1,4 @@
-import { Component, computed, inject, ViewChild } from '@angular/core';
+import { Component, computed, inject, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TodoDto } from '../shared/_interfaces/todo/todo-dto';
 import { MatIconModule } from '@angular/material/icon';
@@ -21,6 +21,7 @@ import { ButtonComponent } from '../shared/templates/button/button.component';
     ButtonComponent,
   ],
   templateUrl: './todo.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './todo.component.scss',
 })
 export class TodoComponent {

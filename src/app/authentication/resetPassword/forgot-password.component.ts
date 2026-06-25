@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthenticationService } from '../../shared/services/authentication.service';
 import { ForgotPasswordDto } from '../../shared/_interfaces/authentication/auth/resetPassword/forgot-password-dto';
@@ -11,6 +11,7 @@ import { API_ACCOUNTS_ENDPOINTS } from '../../../api-endpoints/api-accounts-endp
   selector: 'home-forgot-password',
   imports: [ReactiveFormsModule],
   templateUrl: './forgot-password.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './forgot-password.component.scss',
 })
 export class ForgotPasswordComponent implements OnInit {

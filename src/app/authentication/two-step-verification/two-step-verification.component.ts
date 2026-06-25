@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthenticationService } from '../../shared/services/authentication.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -11,6 +11,7 @@ import { FormHelperService } from '../../shared/services/helper/form-helper.serv
   selector: 'home-two-step-verification',
   imports: [ReactiveFormsModule],
   templateUrl: './two-step-verification.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './two-step-verification.component.scss',
 })
 export class TwoStepVerificationComponent implements OnInit {

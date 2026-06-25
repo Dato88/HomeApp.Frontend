@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthenticationService } from '../../shared/services/authentication.service';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -7,6 +7,7 @@ import { HttpErrorResponse } from '@angular/common/http';
   selector: 'home-email-confirmation',
   imports: [RouterModule],
   templateUrl: './email-confirmation.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './email-confirmation.component.scss',
 })
 export class EmailConfirmationComponent implements OnInit {

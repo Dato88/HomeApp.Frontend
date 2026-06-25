@@ -1,9 +1,10 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'home-skeleton',
   imports: [],
   templateUrl: './skeleton.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './skeleton.component.scss',
 })
 export class SkeletonComponent {
