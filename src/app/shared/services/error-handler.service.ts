@@ -33,23 +33,7 @@ export class ErrorHandlerService implements HttpInterceptor {
       return this.handleBadRequest(error);
     }
 
-    if (error.status === 401) {
-      return this.handleUnauthorized(error);
-    }
-
-    return '';
-  };
-
-  private handleUnauthorized = (error: HttpErrorResponse) => {
-    if (
-      this.#router.url === '/authentication' ||
-      this.#router.url.startsWith('/authentication/resetpassword')
-    ) {
-      return error.error.errorMessage;
-    } else {
-      this.#router.navigate(['/authentication']);
-      return error.message;
-    }
+    return error.error ? error.error : error?.message;
   };
 
   private handleNotFound = (error: HttpErrorResponse): string => {
@@ -59,16 +43,6 @@ export class ErrorHandlerService implements HttpInterceptor {
   };
 
   private handleBadRequest = (error: HttpErrorResponse): string => {
-    if (this.#router.url === '/registration') {
-      let message = '';
-      const values: any = Object.values(error?.error?.errors);
-
-      values.map((m: string) => {
-        message += m + '<br>';
-      });
-      return message.slice(0, -4);
-    }
-
     return error.error ? error.error : error?.message;
   };
 }

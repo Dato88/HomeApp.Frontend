@@ -1,7 +1,6 @@
 import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { AuthenticationService } from '../services/authentication.service';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { UserStore } from '../../+store/user-store';
 import { NavbarStore } from '../../+store/navbar-store';
 
@@ -13,8 +12,6 @@ import { NavbarStore } from '../../+store/navbar-store';
   styleUrl: './navbar.component.scss',
 })
 export class NavbarComponent {
-  readonly #authService = inject(AuthenticationService);
-  readonly #router = inject(Router);
   readonly #userStore = inject(UserStore);
   readonly #navbarStore = inject(NavbarStore);
 
@@ -29,10 +26,5 @@ export class NavbarComponent {
   clickNavBtn(): void {
     let sidebar = document.querySelector('.sidebar');
     sidebar?.classList.toggle('close');
-  }
-
-  public logout(): void {
-    this.#authService.logout();
-    this.#router.navigate(['authentication']);
   }
 }

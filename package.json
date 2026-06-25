@@ -22,7 +22,6 @@
     "@angular/platform-browser": "^22.0.3",
     "@angular/platform-browser-dynamic": "^22.0.3",
     "@angular/router": "^22.0.3",
-    "@auth0/angular-jwt": "^5.2.0",
     "@ngrx/effects": "^21.1.1",
     "@ngrx/entity": "^21.1.1",
     "@ngrx/signals": "^21.1.1",
