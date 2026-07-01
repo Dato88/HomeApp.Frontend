@@ -15,13 +15,13 @@ export class TodoService {
 
   public createTodo(todo: TodoDto): Observable<BaseResponse<number>> {
     return this.#http
-      .post<BaseResponse<number>>(`${environment.backendUrl}/${API_TODO_ENDPOINTS.todo}`, todo)
+      .post<BaseResponse<number>>(`${environment.apiBaseUrl}/${API_TODO_ENDPOINTS.todo}`, todo)
       .pipe(catchError(handleHttpError<number>()));
   }
 
   public updateTodo(todo: TodoDto): Observable<BaseResponse<boolean>> {
     return this.#http
-      .patch<BaseResponse<boolean>>(`${environment.backendUrl}/${API_TODO_ENDPOINTS.todo}`, todo)
+      .patch<BaseResponse<boolean>>(`${environment.apiBaseUrl}/${API_TODO_ENDPOINTS.todo}`, todo)
       .pipe(catchError(handleHttpError<boolean>()));
   }
 
@@ -29,7 +29,7 @@ export class TodoService {
     return this.#http
       .delete<
         BaseResponse<boolean>
-      >(`${environment.backendUrl}/${API_TODO_ENDPOINTS.todo}/?todoId=${todoId}`)
+      >(`${environment.apiBaseUrl}/${API_TODO_ENDPOINTS.todo}/?todoId=${todoId}`)
       .pipe(catchError(handleHttpError<boolean>()));
   }
 
@@ -37,13 +37,13 @@ export class TodoService {
     return this.#http
       .get<
         BaseResponse<TodoDto>
-      >(`${environment.backendUrl}/${API_TODO_ENDPOINTS.todo}/?todoId=${todoId}`)
+      >(`${environment.apiBaseUrl}/${API_TODO_ENDPOINTS.todo}/?todoId=${todoId}`)
       .pipe(catchError(handleHttpError<TodoDto>()));
   }
 
   public getAllTodos(): Observable<BaseResponse<TodoDto[]>> {
     return this.#http.get<BaseResponse<TodoDto[]>>(
-      `${environment.backendUrl}/${API_TODO_ENDPOINTS.todos}`
+      `${environment.apiBaseUrl}/${API_TODO_ENDPOINTS.todos}`
     );
     // .pipe(catchError(handleHttpErrorArray<TodoDto>()));
   }

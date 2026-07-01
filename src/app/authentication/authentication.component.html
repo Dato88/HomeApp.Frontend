@@ -1,0 +1,9 @@
+<section class="authentication">
+  @if (authStore.authStatusResource.isLoading()) {
+    <p>Sitzung wird geprüft …</p>
+  } @else if (isLogoutAction()) {
+    <p>Abmeldung …</p>
+  } @else {
+    <p>Weiterleitung zur Anmeldung …</p>
+  }
+</section>

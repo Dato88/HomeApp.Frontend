@@ -16,7 +16,7 @@ export class UserStoreService {
 
   public getUser(): Observable<BaseResponse<PersonDto>> {
     return this.#http
-      .get<BaseResponse<PersonDto>>(`${environment.backendUrl}/${API_PERSON_ENDPOINTS.person}`)
+      .get<BaseResponse<PersonDto>>(`${environment.apiBaseUrl}/${API_PERSON_ENDPOINTS.person}`)
       .pipe(catchError(handleHttpErrorNull<PersonDto>()));
   }
 

@@ -3,17 +3,48 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 
-function handleError(error: HttpErrorResponse, router: Router): string {
+function formatErrorMessage(error: HttpErrorResponse): string {
+  if (error.status === 401) {
+    return error.message;
+  }
+
   if (error.status === 404) {
-    router.navigate(['/404']);
     return error.message;
   }
 
   if (error.status === 400) {
-    return error.error ? error.error : error?.message;
+    const payload = error.error;
+    if (typeof payload === 'string') {
+      return payload;
+    }
+    if (payload?.description) {
+      return payload.description;
+    }
+    if (payload?.message) {
+      return payload.message;
+    }
   }
 
-  return error.error ? error.error : error?.message;
+  const payload = error.error;
+  if (typeof payload === 'string') {
+    return payload;
+  }
+  if (payload?.description) {
+    return payload.description;
+  }
+  if (payload?.message) {
+    return payload.message;
+  }
+
+  return error.message || 'An unknown error occurred.';
+}
+
+function handleError(error: HttpErrorResponse, router: Router): string {
+  if (error.status === 404 && !error.url?.includes('/auth/')) {
+    router.navigate(['/404']);
+  }
+
+  return formatErrorMessage(error);
 }
 
 export const errorHandlerInterceptor: HttpInterceptorFn = (req, next) => {

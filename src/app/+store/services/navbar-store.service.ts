@@ -14,7 +14,7 @@ export class NavbarStoreService {
 
   public getNavbarItems(): Observable<NavbarListItem[]> {
     return this.#http.get<NavbarListItem[]>(
-      `${environment.backendUrl}/${API_NAVBAR_ENDPOINTS.navbar}`
+      `${environment.apiBaseUrl}/${API_NAVBAR_ENDPOINTS.navbar}`
     );
   }
 
