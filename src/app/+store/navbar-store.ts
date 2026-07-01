@@ -18,7 +18,7 @@ const navbarStoreFeatures = [
     return {
       _navbarStoreService: navbarStoreService,
       navbarResource: rxResource({
-        params: () => (authStore.isAuthenticated() ? true : undefined),
+        params: () => (authStore.shouldLoadSessionData() ? true : undefined),
         stream: () => navbarStoreService.getNavbarItems(),
       }),
     };

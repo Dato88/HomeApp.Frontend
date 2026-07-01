@@ -1,12 +1,1 @@
-@if (showNavigation() && authStore.isAuthenticated()) {
-  <lib-navigation
-    logoName="CodingLab"
-    [user]="userStore.userResource.hasValue() ? userStore.userResource.value()! : undefined"
-    [navbarListItems]="
-      navbarStore.navbarResource.hasValue() ? navbarStore.navbarResource.value()! : undefined
-    ">
-    <router-outlet />
-  </lib-navigation>
-} @else {
-  <router-outlet />
-}
+<router-outlet />

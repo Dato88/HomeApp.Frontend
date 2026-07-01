@@ -1,50 +1,13 @@
 import { TestBed } from '@angular/core/testing';
-import { provideRouter, Router } from '@angular/router';
-import { of } from 'rxjs';
+import { provideRouter } from '@angular/router';
 import { AppComponent } from './app.component';
-import { AuthStore } from './core/auth/auth-store';
-import { UserStore } from './+store/user-store';
-import { NavbarStore } from './+store/navbar-store';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
-      providers: [
-        provideRouter([{ path: 'authentication', component: AppComponent }]),
-        {
-          provide: AuthStore,
-          useValue: {
-            isAuthenticated: () => false,
-            authStatusResource: {
-              hasValue: () => false,
-              isLoading: () => false,
-            },
-          },
-        },
-        {
-          provide: UserStore,
-          useValue: {
-            userResource: {
-              hasValue: () => false,
-              value: () => null,
-            },
-          },
-        },
-        {
-          provide: NavbarStore,
-          useValue: {
-            navbarResource: {
-              hasValue: () => false,
-              value: () => [],
-            },
-          },
-        },
-      ],
+      providers: [provideRouter([])],
     }).compileComponents();
-
-    const router = TestBed.inject(Router);
-    await router.navigateByUrl('/authentication');
   });
 
   it('should create the app', () => {
@@ -52,11 +15,11 @@ describe('AppComponent', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('should render router outlet without navigation on authentication route', () => {
+  it('should render only the root router outlet', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('lib-navigation')).toBeNull();
     expect(compiled.querySelector('router-outlet')).toBeTruthy();
+    expect(compiled.querySelector('lib-navigation')).toBeNull();
   });
 });

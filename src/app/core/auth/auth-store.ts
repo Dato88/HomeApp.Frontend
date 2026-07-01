@@ -34,6 +34,13 @@ export const AuthStore = signalStore(
     isAuthenticated: computed(() =>
       store.authStatusResource.hasValue() ? store.authStatusResource.value() === true : false
     ),
+    shouldLoadSessionData: computed(() => {
+      if (!store.authStatusResource.hasValue()) {
+        return true;
+      }
+
+      return store.authStatusResource.value() === true;
+    }),
   })),
   withMethods((store) => ({
     login(): void {

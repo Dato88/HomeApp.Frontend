@@ -20,7 +20,7 @@ const userStoreFeatures = [
     return {
       _userStoreService: userStoreService,
       userResource: rxResource({
-        params: () => (authStore.isAuthenticated() ? true : undefined),
+        params: () => (authStore.shouldLoadSessionData() ? true : undefined),
         stream: () =>
           userStoreService.getUser().pipe(
             map((result) => (result.isSuccess ? result.value : (null as PersonDto | null)))
