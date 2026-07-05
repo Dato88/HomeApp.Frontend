@@ -1,0 +1,19 @@
+<div class="todo-form">
+  <form (submit)="submitForm($event)" novalidate>
+    <lib-input-field
+      label="New Todo"
+      placeholder="Title"
+      [autofocus]="true"
+      [required]="true"
+      effectStyle="box"
+      [value]="todoForm.title().value()"
+      (valueChange)="todoForm.title().value.set($event)"
+      [validationState]="todoForm.title().invalid() && todoForm.title().touched() ? 'error' : null"
+      [errorMessage]="
+        todoForm.title().invalid() && todoForm.title().touched()
+          ? (todoForm.title().errors()[0]?.message ?? 'Title is required')
+          : ''
+      " />
+    <lib-button [type]="'submit'" [label]="'Add'"></lib-button>
+  </form>
+</div>

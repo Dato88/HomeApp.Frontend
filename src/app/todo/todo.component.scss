@@ -1,0 +1,142 @@
+home-todo {
+  width: 100%;
+}
+
+.todo-list {
+  display: grid;
+  width: 100%;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  .todo-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.2rem;
+
+    .todo-done-icon {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: solid 3px;
+      border-radius: 1.5rem;
+      min-height: 1.8rem;
+      min-width: 1.8rem;
+      margin-right: 0.2rem;
+    }
+
+    .todo-item {
+      position: relative;
+      display: grid;
+      align-content: space-between;
+      grid-template-columns: max-content 1fr;
+      border: solid 1px;
+      border-radius: 0.25rem;
+      padding: 0.5rem;
+      width: 100%;
+      height: 3rem;
+      background: transparent;
+      cursor: pointer;
+      text-align: left;
+
+      &.done {
+        background-color: green;
+      }
+
+      lib-skeleton {
+        grid-column: span 2;
+      }
+
+      .todo-title-text {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 600;
+      }
+
+      .todo-infos {
+        display: grid;
+        grid-template-columns: 1fr max-content max-content;
+        justify-content: space-between;
+        height: max-content;
+        grid-column: span 2;
+        font-size: 12px;
+
+        .todo-priority-icons {
+          width: max-content;
+          height: max-content;
+        }
+      }
+    }
+
+    .delete-button {
+      border-radius: 0.25rem;
+      background-color: red;
+      color: white;
+      border: none;
+      padding: 10px 2rem;
+      cursor: pointer;
+    }
+
+    button {
+      height: 100%;
+    }
+  }
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+dialog {
+  height: max-content;
+  width: 95vw;
+  padding: 0;
+  border-radius: 0.25rem;
+  overflow: hidden;
+  border: 1px solid #676767;
+  box-shadow: 2px -2px 3px 2px rgba(0, 0, 0, 0.5);
+
+  .dialog-header {
+    display: flex;
+    flex-direction: row-reverse;
+    background-color: #d3d3d3;
+    height: max-content;
+
+    button {
+      height: 1.8rem;
+      width: 1.8rem;
+      padding: 0;
+      margin: 0.3rem;
+      border: none;
+      border-radius: 0.25rem;
+
+      mat-icon {
+        height: max-content;
+        width: max-content;
+        font-size: 1.8rem;
+      }
+    }
+  }
+}
+
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.7);
+  transition: background 0.3s ease-in-out;
+}
+
+.add-todo {
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.field-error {
+  color: #b00020;
+  font-size: 0.875rem;
+  margin: 0.25rem 0 0;
+}

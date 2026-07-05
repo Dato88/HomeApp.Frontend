@@ -1,0 +1,19 @@
+---
+description: Global defaults for Angular and TypeScript development
+globs: **/*.{ts,html,scss}
+alwaysApply: false
+---
+
+# Global Defaults
+
+1. Use **modern Angular 22 APIs**:
+   - `signal`, `computed`, `input`, `model`, `output`, `inject`, `viewChild`
+   - `httpResource` / `rxResource` for queries, `rxMethod` for commands
+   - Signal Forms (`form()`, `schema()`, `[formField]`) for new forms
+   - Vitest for unit tests, Playwright for E2E
+   - `provideZonelessChangeDetection()` (zoneless)
+2. **Code and comments must be in English.**
+3. Keep files **small**, **single-responsibility**, and follow the **member ordering rules** defined
+   below.
+4. Prefer **stateless, dumb templates** and push logic into TypeScript using signals/computed.
+5. Follow a **reactive programming style** (signals and RxJS where needed).

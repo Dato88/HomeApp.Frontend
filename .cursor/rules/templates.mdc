@@ -1,0 +1,17 @@
+---
+description: Templates guidelines
+globs: **/*.{ts,html,scss}
+alwaysApply: false
+---
+
+# Templates
+
+- Keep templates simple — no business logic.
+- Use **native control flow syntax** (`@if`, `@for`, `@switch`) instead of `*ngIf`, `*ngFor`,
+  `*ngSwitch`.
+- Use the **async pipe** for observables.
+- Use `[class]` and `[style]` bindings; avoid structural or dynamic directives like `ngClass`,
+  `ngStyle`.
+- **Never call methods in bindings** — precompute values in signals or computed.
+- Use **Custom CSS** only.
+- Prefer declarative markup; avoid structural complexity.

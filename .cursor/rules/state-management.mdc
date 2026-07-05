@@ -1,0 +1,105 @@
+---
+description: State management with CQRS & lifecycle scoping
+globs: **/*.{ts,html,scss}
+alwaysApply: false
+---
+
+# State Management
+
+## Core Principle: Frontend-CQRS
+
+| Concern | Implementation |
+|---------|----------------|
+| **Commands** | `rxMethod` + `tapResponse` |
+| **Queries** | `httpResource` / `rxResource` / `resource` |
+| **Read Model** | Resource signals + `withEntities` |
+| **UI State** | `withState` (`error`, `isSaving`, filters) |
+| **State Container** | NgRx SignalStore |
+
+## Commands vs Queries
+
+### Commands — `rxMethod`
+
+Imperative, fire-and-forget. Used for POST/PUT/DELETE and orchestrated side effects.
+
+```ts
+// ✅ Command
+store.createTodo(dto);
+
+createTodo: rxMethod<TodoDto>(
+  pipe(
+    exhaustMap((dto) => service.createTodo(dto).pipe(tapResponse({ ... })))
+  )
+);
+```
+
+### Queries — Resource API
+
+Declarative loading. No `rxMethod` for pure GET.
+
+```ts
+// ✅ Query in withProps
+todosResource: rxResource({
+  stream: () => service.getAllTodos().pipe(map((r) => r.value)),
+}),
+
+// ✅ Template
+@if (store.userResource.hasValue()) {
+  {{ store.userResource.value()?.firstName }}
+}
+```
+
+```ts
+// ❌ Anti-pattern — do not use
+loadUsers: rxMethod<void>(pipe(switchMap(() => service.getUsers())));
+ngOnInit() { this.store.loadUsers(); }
+```
+
+## Signal Rules
+
+- Signals are read-only — mutate via `patchState` or `rxMethod` only
+- No `.subscribe()` in stores or components for store commands
+- `hasValue()` before `value()` on resources
+- After command: `resource.reload()` or optimistic entity patch
+
+## Lifecycle Scoping
+
+### Application-Scope (Root Stores)
+
+```ts
+export const TodoStore = signalStore({ providedIn: 'root' }, ...);
+```
+
+Use for: domain entities, shared read models, user/navbar data.
+
+### Route-Scope
+
+```ts
+{ path: 'users', providers: [UserDetailsStore] }
+```
+
+### Component-Scope
+
+```ts
+@Component({ providers: [UserListUiStore] })
+```
+
+Use for: selection, sorting, pagination, UI flags.
+
+### Critical Rules
+
+> ❌ Short-lived UI state in root store (`isLoading` in `withProps`)
+> ❌ Mirroring server data in `withState` when a Resource exists
+> ❌ `firstValueFrom` / imperative fetch in stores
+> ✅ Scope matches data lifetime
+
+## Store Types
+
+1. **Query Store** — `withProps` + Resource only (UserStore, NavbarStore)
+2. **CQRS Store** — Resource (query) + rxMethod (commands) + Entities (TodoStore)
+3. **UI Sub-Store** — route/component scoped, `computed` only
+
+## Cross-Store Communication
+
+- No Store → Store direct calls
+- Components inject multiple stores or use a facade for orchestration

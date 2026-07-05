@@ -1,0 +1,22 @@
+@use 'bootstrap-icons/font/bootstrap-icons';
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+
+.content {
+  display: grid;
+  justify-items: center;
+  margin: 0.5rem;
+  gap: 0.5rem;
+}
+
+home-todo {
+  width: 100%;
+}

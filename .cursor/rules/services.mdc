@@ -1,0 +1,146 @@
+---
+description: Services guidelines
+globs: **/*.{ts,html,scss}
+alwaysApply: false
+---
+
+# Services
+
+## Architecture Role: Repository Pattern
+
+Services in this architecture are **pure IO adapters (Repositories)**:
+
+- Handle HTTP communication
+- Transform Backend DTOs ↔ Domain Models
+- No state management
+- No orchestration
+- No business logic
+- No cross-service calls
+
+> **Services don't know if they're used for Commands or Queries**
+
+## Critical Architecture Rules
+
+### ❌ Services Must NOT
+
+- Orchestrate other services
+- Manage state
+- Make business decisions
+- Call other services directly
+- Contain UI logic
+- Handle navigation
+
+### ✅ Services Should
+
+- Return `Observable<BaseResponse<T>>`
+- Be stateless
+- Have single HTTP responsibility
+- Be feature-scoped (not global)
+- Use `inject()` for HttpClient
+- Handle only transport concerns
+
+## Service Structure
+
+```ts
+@Injectable({ providedIn: 'root' })
+export class UserService {
+  readonly #http = inject(HttpClient);
+  readonly #baseUrl = `${environment.backendUrl}/users`;
+
+  // Pure HTTP methods - no orchestration
+  getAllUsers(): Observable<BaseResponse<User[]>> {
+    return this.#http.get<BaseResponse<User[]>>(this.#baseUrl);
+  }
+
+  createUser(dto: CreateUserDto): Observable<BaseResponse<User>> {
+    return this.#http.post<BaseResponse<User>>(this.#baseUrl, dto);
+  }
+
+  // Resource factory for Query stores
+  getUserResource() {
+    return rxResource({
+      stream: () => this.getUser().pipe(map((r) => (r.isSuccess ? r.value : null))),
+    });
+  }
+}
+```
+
+Stores expose `userResource` from `withProps` — services own the Resource factory.
+
+## Orchestration Belongs in Facades
+
+If you need to call multiple services or make decisions, use a **Facade/Use-Case Store**:
+
+```ts
+// ❌ BAD - Service orchestrating services
+@Injectable()
+export class UserService {
+  createUserAndNotify(dto: CreateUserDto) {
+    return this.http.post('/users', dto).pipe(
+      switchMap(user => this.notificationService.notify(user)) // ❌ Orchestration
+    );
+  }
+}
+
+// ✅ GOOD - Facade orchestrating
+export const UserManagementFacade = signalStore(
+  withMethods((store) => ({
+    createUserAndNotify: rxMethod<CreateUserDto>(
+      pipe(
+        switchMap((dto) => userService.createUser(dto)),
+        tap((user) => notificationService.notify(user)) // ✅ Orchestration in Facade
+      )
+    ),
+  }))
+);
+```
+
+## Base Response Pattern
+
+All service methods should return `BaseResponse<T>`:
+
+```ts
+export interface BaseResponse<T> {
+  data: T;
+  success: boolean;
+  message?: string;
+  errors?: string[];
+}
+```
+
+## Error Handling
+
+Handle HTTP errors at service boundaries:
+
+```ts
+getAllUsers(): Observable<BaseResponse<User[]>> {
+  return this.#http.get<BaseResponse<User[]>>(this.#baseUrl).pipe(
+    catchError(handleHttpErrorArray<User>())
+  );
+}
+```
+
+## Feature-Scoped Services
+
+Organize services by feature, not globally:
+
+```
+/user-management/
+  /services/
+    user.service.ts
+  /+state/
+    user.store.ts
+```
+
+## Member Ordering in Services
+
+1. **Dependency Injection**
+   - private `#http = inject(HttpClient);`
+2. **Constants / Config**
+   - private `#baseUrl = '...';`
+3. **HTTP Methods**
+   - Public only
+   - Grouped by operation type (CRUD)
+4. **Helper Methods** (if unavoidable)
+   - Private only
+   - Transformation logic only

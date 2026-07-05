@@ -1,0 +1,141 @@
+---
+description: NgRx SignalStore patterns & CQRS best practices
+globs: **/*.ts
+alwaysApply: false
+---
+
+# SignalStore Patterns (CQRS)
+
+## Frontend-CQRS
+
+| Role | Mechanism | Example |
+|------|-----------|---------|
+| **Query** | `httpResource` / `rxResource` in `withProps` | `todosResource` |
+| **Command** | `rxMethod` in `withMethods` | `createTodo(dto)` |
+| **Sync** | `withMethods` + `patchState` | `setFilter(id)` |
+
+## Feature Responsibilities
+
+| Feature | Responsibility |
+|---------|----------------|
+| `withState` | Reactive UI state (`error`, `isSaving`) — not loaded lists |
+| `withProps` | Private infrastructure + **Resource refs** (`_todoService`, `todosResource`) |
+| `withComputed` | Derived read-only signals in the store |
+| `withMethods` | Sync writes + **rxMethod commands only** |
+| `withHooks` | Lifecycle delegation only (`onInit` → trigger query reload) |
+| `withEntities` | Normalized collections via `entityConfig` |
+| `withDevtools` | Only in `isDevMode()` |
+
+## Private Members (`_` prefix)
+
+- Services in `withProps`: `_todoService`, `_userStoreService`
+- Helpers as private methods: `_handleError()`, `_syncEntitiesFromResource()`
+- **Type Requirements** (`type<T>()`) reference only **public** members
+- Components must not access `store._todoService`
+
+## Resource API (Queries)
+
+Use `rxResource` / `httpResource` in `withProps` — **not** in `withMethods`.
+
+```ts
+// Service factory
+getUserResource() {
+  return rxResource({
+    stream: () => this.getUser().pipe(map((r) => (r.isSuccess ? r.value : null))),
+  });
+}
+
+// Store
+withProps(() => ({
+  _userStoreService: inject(UserStoreService),
+  userResource: inject(UserStoreService).getUserResource(),
+})),
+```
+
+### Template usage
+
+```html
+@if (store.todosResource.isLoading()) { <home-skeleton /> }
+@if (store.todosResource.hasValue()) {
+  @for (todo of store.todoEntities(); track todo.todoId) { ... }
+}
+```
+
+### Rules
+
+- ✅ GET → Resource API (declarative)
+- ✅ `hasValue()` before `value()`
+- ✅ `reload()` after mutations when needed
+- ❌ No `loadX()` as `rxMethod` for pure GET
+- ❌ No `.subscribe()` in stores
+- ❌ No `patchState` inside resource stream
+
+## rxMethod (Commands)
+
+```ts
+createTodo: rxMethod<TodoDto>(
+  pipe(
+    tap(() => patchState(store, { isSaving: true, error: null })),
+    exhaustMap((dto) =>
+      store._todoService.createTodo(dto).pipe(
+        tapResponse({
+          next: () => store.todosResource.reload(),
+          error: (err) => store._handleError(err),
+          finalize: () => patchState(store, { isSaving: false }),
+        })
+      )
+    )
+  )
+),
+```
+
+### Rules
+
+- ✅ `tapResponse` for next/error/finalize
+- ✅ `exhaustMap` for save/submit (prevent double-click)
+- ✅ `switchMap` for fast filter changes
+- ✅ Naming: `createTodo`, `deleteTodo` — not `loadTodos`
+- ❌ No `.subscribe()` at call site: `store.createTodo(dto)` only
+- ❌ No nested `subscribe()` inside store
+
+## Feature Composition & Order
+
+```
+withState → withProps → withEntities → withErrorHandling →
+withTodoQueries → withTodoEntitySync → withTodoCommands → withDevtools (dev only)
+```
+
+```ts
+export function withTodoCommands() {
+  return signalStoreFeature(
+    {
+      props: type<{ _todoService: TodoService; todosResource: ResourceRef<TodoDto[]> }>(),
+      methods: type<{ _handleError: (error: unknown) => void }>(),
+      state: type<{ isSaving: boolean; error: string | null } & NamedEntityState<TodoDto, 'todo'>>(),
+    },
+    withMethods((store) => ({ createTodo: rxMethod<TodoDto>(...) }))
+  );
+}
+```
+
+## Entity Configuration
+
+```ts
+export const todoEntities = entityConfig({
+  entity: type<TodoDto>(),
+  collection: 'todo',
+  selectId: (t) => t.todoId,
+});
+```
+
+## State Updates
+
+```ts
+// ✅ GOOD
+patchState(store, { isSaving: true });
+patchState(store, addEntity(todo, todoEntities));
+
+// ❌ BAD
+store.isSaving.set(true);
+loadTodos: rxMethod<void>(...) // GET belongs in Resource API
+```
