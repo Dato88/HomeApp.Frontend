@@ -1,0 +1,103 @@
+@if (store.accountsResource.isLoading()) {
+  <lib-skeleton aria-hidden="true"></lib-skeleton>
+} @else if (store.accountsResource.error()) {
+  <p role="alert">Failed to load accounts.</p>
+} @else {
+  <div class="toolbar">
+    <lib-button [label]="'Add account'" (clicked)="openCreate()"></lib-button>
+  </div>
+
+  <lib-grid
+    [data]="store.accountEntities()"
+    [loading]="store.accountsResource.isLoading()"
+    [hoverable]="true"
+    [zebra]="true">
+    <lib-grid-column field="name" title="Name" [sortable]="true"></lib-grid-column>
+    <lib-grid-column field="iban" title="IBAN"></lib-grid-column>
+    <lib-grid-column field="accountType" title="Type">
+      <ng-template libGridCellTemplate let-account let-value="value">
+        {{ accountTypeLabel(account) }}
+      </ng-template>
+    </lib-grid-column>
+    <lib-grid-column field="currencyCode" title="Currency"></lib-grid-column>
+    <lib-grid-column field="sharedHouseholdIds" title="Shared with">
+      <ng-template libGridCellTemplate let-account>
+        {{ sharedHouseholdNames(account) || '—' }}
+      </ng-template>
+    </lib-grid-column>
+    <lib-grid-column field="isOwner" title="Actions">
+      <ng-template libGridCellTemplate let-account>
+        @if (account.isOwner) {
+          <div class="row-actions">
+            <lib-button [label]="'Edit'" (clicked)="openEdit(account)"></lib-button>
+            <lib-button [label]="'Share'" (clicked)="openShare(account.accountId)"></lib-button>
+            <lib-button [label]="'Delete'" (clicked)="deleteAccount(account)"></lib-button>
+          </div>
+        } @else {
+          <span>Read-only</span>
+        }
+      </ng-template>
+    </lib-grid-column>
+  </lib-grid>
+}
+
+<lib-dialog #createDialog [isModal]="true" ariaLabelledBy="account-form-title">
+  <h2 id="account-form-title">{{ editingAccount() ? 'Edit account' : 'Add account' }}</h2>
+  <form class="account-form" (submit)="$event.preventDefault(); submitAccount()" novalidate>
+    <lib-input-field
+      label="Name"
+      effectStyle="box"
+      [required]="true"
+      [value]="name()"
+      (valueChange)="name.set($event)"></lib-input-field>
+    <lib-input-field
+      label="IBAN"
+      effectStyle="box"
+      [value]="iban()"
+      (valueChange)="iban.set($event)"></lib-input-field>
+    <lib-input-field
+      label="BIC"
+      effectStyle="box"
+      [value]="bic()"
+      (valueChange)="bic.set($event)"></lib-input-field>
+    <lib-input-field
+      label="Currency"
+      effectStyle="box"
+      [value]="currencyCode()"
+      (valueChange)="currencyCode.set($event)"></lib-input-field>
+    <lib-input-field
+      label="Description"
+      effectStyle="box"
+      [value]="description()"
+      (valueChange)="description.set($event)"></lib-input-field>
+    <lib-dropdown-list
+      label="Account type"
+      defaultText="Select type"
+      [dropdownData]="accountTypeOptions()"
+      [(selectedValue)]="accountType"></lib-dropdown-list>
+    @if (!editingAccount()) {
+      <lib-input-field
+        label="Share to household IDs (comma-separated)"
+        effectStyle="box"
+        [value]="createHouseholdIds()"
+        (valueChange)="createHouseholdIds.set($event)"></lib-input-field>
+    }
+    <div class="dialog-actions">
+      <lib-button [label]="'Cancel'" (clicked)="closeCreateDialog()"></lib-button>
+      <lib-button [type]="'submit'" [label]="'Save'"></lib-button>
+    </div>
+  </form>
+</lib-dialog>
+
+<lib-dialog #shareDialog [isModal]="true" ariaLabelledBy="share-account-title">
+  <h2 id="share-account-title">Share account with household</h2>
+  <lib-dropdown-list
+    label="Household"
+    defaultText="Select household"
+    [dropdownData]="householdOptions()"
+    [(selectedValue)]="shareHouseholdId"></lib-dropdown-list>
+  <div class="dialog-actions">
+    <lib-button [label]="'Cancel'" (clicked)="closeShareDialog()"></lib-button>
+    <lib-button [label]="'Share'" (clicked)="submitShare()"></lib-button>
+  </div>
+</lib-dialog>

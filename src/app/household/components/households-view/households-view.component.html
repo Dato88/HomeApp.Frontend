@@ -1,0 +1,38 @@
+<section class="content" aria-labelledby="households-heading">
+  <h1 id="households-heading">Households</h1>
+
+  @if (store.error()) {
+    <p class="error-message" role="alert">{{ store.error() }}</p>
+  }
+
+  <home-household-create-form (create)="createHousehold($event)"></home-household-create-form>
+
+  @if (store.householdsResource.isLoading()) {
+    <lib-skeleton aria-hidden="true"></lib-skeleton>
+  } @else if (store.householdsResource.error()) {
+    <p role="alert">Failed to load households.</p>
+  }
+
+  <div class="household-list">
+    @for (household of store.householdEntities(); track household.householdId) {
+      <home-household-card
+        [household]="household"
+        (rename)="renameHousehold(household.householdId, $event)"
+        (deleteHousehold)="requestDelete($event)"
+        (invite)="inviteMember(household.householdId, $event)"
+        (removeMember)="removeMember(household.householdId, $event)"></home-household-card>
+    }
+  </div>
+
+  <lib-dialog #deleteDialog [isModal]="true" ariaLabelledBy="delete-household-title">
+    <h2 id="delete-household-title">Delete household?</h2>
+    <p>
+      Deleting a household also deletes its budgets, categories and account shares. This cannot be
+      undone.
+    </p>
+    <div class="dialog-actions">
+      <lib-button [label]="'Cancel'" (clicked)="cancelDelete()"></lib-button>
+      <lib-button [label]="'Delete'" (clicked)="confirmDelete()"></lib-button>
+    </div>
+  </lib-dialog>
+</section>

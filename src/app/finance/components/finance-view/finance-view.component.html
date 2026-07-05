@@ -1,0 +1,23 @@
+<section class="content" aria-labelledby="finance-heading">
+  <h1 id="finance-heading">Finance</h1>
+
+  @if (store.error()) {
+    <p class="error-message" role="alert">{{ store.error() }}</p>
+  }
+
+  <home-finance-tab-header
+    [activeTab]="uiStore.activeTab()"
+    (selectTab)="uiStore.setActiveTab($event)"></home-finance-tab-header>
+
+  @switch (uiStore.activeTab()) {
+    @case ('accounts') {
+      <home-accounts-view></home-accounts-view>
+    }
+    @case ('transactions') {
+      <home-transactions-view></home-transactions-view>
+    }
+    @case ('categories') {
+      <home-categories-view></home-categories-view>
+    }
+  }
+</section>

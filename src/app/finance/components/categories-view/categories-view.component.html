@@ -1,0 +1,79 @@
+<div class="filters">
+  <lib-dropdown-list
+    label="Household"
+    defaultText="Select household"
+    [dropdownData]="householdOptions()"
+    [selectedValue]="selectedHouseholdId()"
+    (selectedValueChange)="onHouseholdChange($event)"></lib-dropdown-list>
+</div>
+
+@if (selectedHouseholdId()) {
+  <div class="toolbar">
+    <lib-button [label]="'Add category'" (clicked)="openCreate()"></lib-button>
+  </div>
+
+  @if (store.categoriesResource.isLoading()) {
+    <lib-skeleton aria-hidden="true"></lib-skeleton>
+  } @else if (store.categoriesResource.error()) {
+    <p role="alert">Failed to load categories.</p>
+  } @else {
+    <h2>Income</h2>
+    <lib-grid [data]="incomeCategories()" [hoverable]="true" [zebra]="true">
+      <lib-grid-column field="name" title="Name" [sortable]="true"></lib-grid-column>
+      <lib-grid-column field="categoryType" title="Type">
+        <ng-template libGridCellTemplate let-category>
+          {{ categoryTypeLabel(category) }}
+        </ng-template>
+      </lib-grid-column>
+      <lib-grid-column field="categoryId" title="Actions">
+        <ng-template libGridCellTemplate let-category>
+          <div class="row-actions">
+            <lib-button [label]="'Edit'" (clicked)="openEdit(category)"></lib-button>
+            <lib-button [label]="'Delete'" (clicked)="deleteCategory(category)"></lib-button>
+          </div>
+        </ng-template>
+      </lib-grid-column>
+    </lib-grid>
+
+    <h2>Expense</h2>
+    <lib-grid [data]="expenseCategories()" [hoverable]="true" [zebra]="true">
+      <lib-grid-column field="name" title="Name" [sortable]="true"></lib-grid-column>
+      <lib-grid-column field="categoryType" title="Type">
+        <ng-template libGridCellTemplate let-category>
+          {{ categoryTypeLabel(category) }}
+        </ng-template>
+      </lib-grid-column>
+      <lib-grid-column field="categoryId" title="Actions">
+        <ng-template libGridCellTemplate let-category>
+          <div class="row-actions">
+            <lib-button [label]="'Edit'" (clicked)="openEdit(category)"></lib-button>
+            <lib-button [label]="'Delete'" (clicked)="deleteCategory(category)"></lib-button>
+          </div>
+        </ng-template>
+      </lib-grid-column>
+    </lib-grid>
+  }
+} @else {
+  <p>Select a household to manage categories.</p>
+}
+
+<lib-dialog #formDialog [isModal]="true" ariaLabelledBy="category-form-title">
+  <h2 id="category-form-title">{{ editingCategory() ? 'Edit category' : 'Add category' }}</h2>
+  <form class="category-form" (submit)="$event.preventDefault(); submitCategory()" novalidate>
+    <lib-input-field
+      label="Name"
+      effectStyle="box"
+      [required]="true"
+      [value]="name()"
+      (valueChange)="name.set($event)"></lib-input-field>
+    <lib-dropdown-list
+      label="Type"
+      defaultText="Select type"
+      [dropdownData]="categoryTypeOptions()"
+      [(selectedValue)]="categoryType"></lib-dropdown-list>
+    <div class="dialog-actions">
+      <lib-button [label]="'Cancel'" (clicked)="closeFormDialog()"></lib-button>
+      <lib-button [type]="'submit'" [label]="'Save'"></lib-button>
+    </div>
+  </form>
+</lib-dialog>

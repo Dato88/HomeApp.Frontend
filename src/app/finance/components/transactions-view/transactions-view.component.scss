@@ -1,0 +1,26 @@
+.filters,
+.toolbar,
+.row-actions,
+.dialog-actions,
+.transaction-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  align-items: flex-end;
+}
+
+.transaction-form {
+  flex-direction: column;
+}
+
+.checkbox-label,
+.import-label {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.import-result {
+  margin: 0 0 0.75rem;
+}

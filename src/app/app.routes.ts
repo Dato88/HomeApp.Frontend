@@ -33,7 +33,26 @@ export const routes: Routes = [
       {
         path: 'budget',
         title: 'Budget',
-        loadComponent: () => import('./budget/budget.component').then((m) => m.BudgetComponent),
+        loadComponent: () =>
+          import('./budget/components/budget-view/budget-view.component').then(
+            (m) => m.BudgetViewComponent
+          ),
+      },
+      {
+        path: 'household',
+        title: 'Households',
+        loadComponent: () =>
+          import('./household/components/households-view/households-view.component').then(
+            (m) => m.HouseholdsViewComponent
+          ),
+      },
+      {
+        path: 'finance',
+        title: 'Finance',
+        loadComponent: () =>
+          import('./finance/components/finance-view/finance-view.component').then(
+            (m) => m.FinanceViewComponent
+          ),
       },
       {
         path: 'settings',

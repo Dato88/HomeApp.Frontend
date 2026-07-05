@@ -1,0 +1,217 @@
+<section class="content" aria-labelledby="budget-heading">
+  <h1 id="budget-heading">Budget</h1>
+
+  @if (store.error()) {
+    <p class="error-message" role="alert">{{ store.error() }}</p>
+  }
+
+  <div class="selection-row">
+    <lib-dropdown-list
+      label="Household"
+      defaultText="Select household"
+      [dropdownData]="householdOptions()"
+      [(selectedValue)]="selectedHouseholdId"></lib-dropdown-list>
+    <lib-input-field
+      label="Year"
+      type="number"
+      effectStyle="box"
+      [value]="selectedYear()"
+      (valueChange)="selectedYear.set($event)"></lib-input-field>
+    <lib-button [label]="'Load'" (clicked)="applySelection()"></lib-button>
+  </div>
+
+  @if (selectedHouseholdId()) {
+    <nav class="mode-tabs" aria-label="Budget view mode">
+      <lib-button
+        [label]="'Plan editor'"
+        (clicked)="uiStore.setMode('editor')"></lib-button>
+      <lib-button
+        [label]="'E+A evaluation'"
+        (clicked)="uiStore.setMode('eva')"></lib-button>
+    </nav>
+
+    @if (store.budgetResource.isLoading() || store.evaResource.isLoading()) {
+      <lib-skeleton aria-hidden="true"></lib-skeleton>
+    } @else if (store.budgetResource.error()) {
+      <p role="alert">Failed to load budget.</p>
+    } @else if (!budget()) {
+      <p>No budget exists for this household and year.</p>
+      <lib-button [label]="'Create budget'" (clicked)="createBudget()"></lib-button>
+    } @else if (uiStore.mode() === 'editor') {
+      <div class="editor-toolbar">
+        <div class="create-group">
+          <lib-input-field
+            label="New group title"
+            effectStyle="box"
+            [value]="newGroupTitle()"
+            (valueChange)="newGroupTitle.set($event)"></lib-input-field>
+          <lib-dropdown-list
+            label="Group type"
+            defaultText="Select type"
+            [dropdownData]="groupTypeOptions()"
+            [(selectedValue)]="newGroupType"></lib-dropdown-list>
+          <lib-input-field
+            label="Target %"
+            type="number"
+            effectStyle="box"
+            [value]="newGroupTargetPercent()"
+            (valueChange)="newGroupTargetPercent.set($event)"></lib-input-field>
+          <lib-button [label]="'Add group'" (clicked)="createGroup()"></lib-button>
+        </div>
+
+        <div class="create-row">
+          <lib-dropdown-list
+            label="Group"
+            defaultText="Select group"
+            [dropdownData]="groupOptions()"
+            [(selectedValue)]="newRowGroupId"></lib-dropdown-list>
+          <lib-input-field
+            label="New row title"
+            effectStyle="box"
+            [value]="newRowTitle()"
+            (valueChange)="newRowTitle.set($event)"></lib-input-field>
+          <lib-dropdown-list
+            label="Category"
+            defaultText="No category"
+            [dropdownData]="categoryOptions()"
+            [(selectedValue)]="newRowCategoryId"></lib-dropdown-list>
+          <lib-button [label]="'Add row'" (clicked)="createRow()"></lib-button>
+        </div>
+      </div>
+
+      @for (group of budget()!.budgetGroups.slice().sort((a, b) => a.index - b.index); track group.budgetGroupId) {
+        <section class="budget-group">
+          <header class="group-header">
+            <h2>{{ group.title }} ({{ groupTypeLabel(group) }})</h2>
+            <span>Target: {{ group.targetPercent ?? '—' }}%</span>
+            <lib-button [label]="'Delete group'" (clicked)="deleteGroup(group)"></lib-button>
+          </header>
+
+          <div class="budget-table-wrapper">
+            <table class="budget-table">
+              <thead>
+                <tr>
+                  <th scope="col">Row</th>
+                  <th scope="col">Category</th>
+                  @for (month of monthLabels; track month) {
+                    <th scope="col">{{ month }}</th>
+                  }
+                  <th scope="col">Sum</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (row of rowsForGroup(group.budgetGroupId); track row.budgetRowId) {
+                  <tr>
+                    <th scope="row">{{ row.title }}</th>
+                    <td>
+                      <lib-dropdown-list
+                        label="Category"
+                        defaultText="No category"
+                        [dropdownData]="categoryOptions()"
+                        [selectedValue]="categoryValue(row.categoryId)"
+                        (selectedValueChange)="updateRowCategory(row, $event)"></lib-dropdown-list>
+                    </td>
+                    @for (month of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]; track month) {
+                      <td>
+                        <input
+                          type="number"
+                          class="cell-input"
+                          [value]="cellForRow(row.budgetRowId, month)?.amount ?? ''"
+                          (change)="createOrUpdateCell(row.budgetRowId, month, $any($event.target).value)" />
+                      </td>
+                    }
+                    <td>{{ rowYearTotal(row.budgetRowId) | number: '1.2-2' }}</td>
+                    <td>
+                      <lib-button [label]="'Delete row'" (clicked)="deleteRow(row)"></lib-button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </section>
+      }
+    } @else {
+      @if (eva()) {
+        @for (group of eva()!.groups; track group.budgetGroupId) {
+          <section class="eva-group">
+            <header class="group-header">
+              <h2>{{ group.title }}</h2>
+              <span>
+                Target {{ group.targetPercent ?? '—' }}% · Planned
+                {{ group.plannedPercentOfIncome ?? '—' }}% · Actual
+                {{ group.actualPercentOfIncome ?? '—' }}%
+              </span>
+            </header>
+
+            <div class="budget-table-wrapper">
+              <table class="budget-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Row</th>
+                    @for (month of monthLabels; track month) {
+                      <th scope="col">{{ month }} SOLL</th>
+                      <th scope="col">{{ month }} IST</th>
+                      <th scope="col">Diff</th>
+                    }
+                    <th scope="col">Year SOLL</th>
+                    <th scope="col">Year IST</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (row of group.rows; track row.budgetRowId) {
+                    <tr>
+                      <th scope="row">{{ row.title }}</th>
+                      @for (monthIndex of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]; track monthIndex) {
+                        <td>{{ row.soll[monthIndex] | number: '1.2-2' }}</td>
+                        <td>{{ row.ist[monthIndex] | number: '1.2-2' }}</td>
+                        <td>{{ row.diff[monthIndex] | number: '1.2-2' }}</td>
+                      }
+                      <td>{{ row.yearSoll | number: '1.2-2' }}</td>
+                      <td>{{ row.yearIst | number: '1.2-2' }}</td>
+                    </tr>
+                  }
+                  <tr class="group-total">
+                    <th scope="row">Group total</th>
+                    @for (monthIndex of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]; track monthIndex) {
+                      <td>{{ group.soll[monthIndex] | number: '1.2-2' }}</td>
+                      <td>{{ group.ist[monthIndex] | number: '1.2-2' }}</td>
+                      <td>{{ group.diff[monthIndex] | number: '1.2-2' }}</td>
+                    }
+                    <td>{{ group.yearSoll | number: '1.2-2' }}</td>
+                    <td>{{ group.yearIst | number: '1.2-2' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        }
+
+        <section class="eva-totals">
+          <h2>Totals</h2>
+          <p>
+            Year income SOLL {{ eva()!.totals.yearIncomeSoll | number: '1.2-2' }} · IST
+            {{ eva()!.totals.yearIncomeIst | number: '1.2-2' }}
+          </p>
+          <p>
+            Year expense SOLL {{ eva()!.totals.yearExpenseSoll | number: '1.2-2' }} · IST
+            {{ eva()!.totals.yearExpenseIst | number: '1.2-2' }}
+          </p>
+          <p>
+            Year difference SOLL {{ eva()!.totals.yearDiffSoll | number: '1.2-2' }} · IST
+            {{ eva()!.totals.yearDiffIst | number: '1.2-2' }}
+          </p>
+          <p>
+            Unassigned transactions: {{ eva()!.unassignedTransactionCount }} · Unassigned IST sum
+            {{ sumArray(eva()!.unassignedIst) | number: '1.2-2' }}
+          </p>
+        </section>
+      } @else {
+        <p>No evaluation data available.</p>
+      }
+    }
+  } @else {
+    <p>Select a household and year to manage the budget.</p>
+  }
+</section>

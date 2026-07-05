@@ -1,0 +1,136 @@
+<div class="filters">
+  <lib-dropdown-list
+    label="Account"
+    defaultText="Select account"
+    [dropdownData]="accountOptions()"
+    [selectedValue]="selectedAccountId()"
+    (selectedValueChange)="onAccountChange($event)"></lib-dropdown-list>
+  <lib-input-field
+    label="From"
+    type="date"
+    effectStyle="box"
+    [value]="fromDate()"
+    (valueChange)="fromDate.set($event)"></lib-input-field>
+  <lib-input-field
+    label="To"
+    type="date"
+    effectStyle="box"
+    [value]="toDate()"
+    (valueChange)="toDate.set($event)"></lib-input-field>
+  <label class="checkbox-label">
+    <input type="checkbox" [checked]="uncategorizedOnly()" (change)="uncategorizedOnly.set($any($event.target).checked)" />
+    Uncategorized only
+  </label>
+  <lib-button [label]="'Apply filters'" (clicked)="applyFilters()"></lib-button>
+</div>
+
+@if (selectedAccountId()) {
+  <div class="toolbar">
+    @if (canWrite()) {
+      <lib-button [label]="'Add transaction'" (clicked)="openCreate()"></lib-button>
+      <label class="import-label">
+        Import bank file
+        <input type="file" accept=".xml,.csv,.txt" (change)="onImportFileSelected($event)" />
+      </label>
+      <lib-button [label]="'Upload import'" (clicked)="submitImport()"></lib-button>
+    }
+  </div>
+
+  @if (store.lastImportResult()) {
+    <p class="import-result" role="status">
+      Imported: {{ store.lastImportResult()!.imported }},
+      skipped duplicates: {{ store.lastImportResult()!.skippedDuplicates }},
+      failed: {{ store.lastImportResult()!.failed }}
+    </p>
+  }
+
+  @if (store.transactionsResource.isLoading()) {
+    <lib-skeleton aria-hidden="true"></lib-skeleton>
+  } @else if (store.transactionsResource.error()) {
+    <p role="alert">Failed to load transactions.</p>
+  } @else {
+    <lib-grid
+      [data]="store.transactionEntities()"
+      [loading]="store.transactionsResource.isLoading()"
+      [hoverable]="true"
+      [zebra]="true">
+      <lib-grid-column field="bookingDate" title="Date" [sortable]="true"></lib-grid-column>
+      <lib-grid-column field="amount" title="Amount">
+        <ng-template libGridCellTemplate let-transaction let-value="value">
+          {{ value | number: '1.2-2' }}
+        </ng-template>
+      </lib-grid-column>
+      <lib-grid-column field="counterpartyName" title="Counterparty"></lib-grid-column>
+      <lib-grid-column field="purpose" title="Purpose"></lib-grid-column>
+      <lib-grid-column field="categoryId" title="Category">
+        <ng-template libGridCellTemplate let-transaction>
+          <lib-dropdown-list
+            label="Category"
+            defaultText="Uncategorized"
+            [dropdownData]="categoryOptions()"
+            [selectedValue]="categoryValue(transaction.categoryId)"
+            (selectedValueChange)="setCategory(transaction, $event)"></lib-dropdown-list>
+        </ng-template>
+      </lib-grid-column>
+      <lib-grid-column field="transactionId" title="Actions">
+        <ng-template libGridCellTemplate let-transaction>
+          @if (canWrite()) {
+            <div class="row-actions">
+              <lib-button [label]="'Edit'" (clicked)="openEdit(transaction)"></lib-button>
+              <lib-button [label]="'Delete'" (clicked)="deleteTransaction(transaction)"></lib-button>
+            </div>
+          }
+        </ng-template>
+      </lib-grid-column>
+    </lib-grid>
+
+    <lib-grid-pagination
+      [totalItems]="totalCount()"
+      [pageSize]="pageSize"
+      [pageIndex]="pageIndex()"
+      (pageChange)="onPageChange($event)"></lib-grid-pagination>
+  }
+} @else {
+  <p>Select an account to view transactions.</p>
+}
+
+<lib-dialog #formDialog [isModal]="true" ariaLabelledBy="transaction-form-title">
+  <h2 id="transaction-form-title">
+    {{ editingTransaction() ? 'Edit transaction' : 'Add transaction' }}
+  </h2>
+  <form class="transaction-form" (submit)="$event.preventDefault(); submitTransaction()" novalidate>
+    <lib-input-field
+      label="Booking date"
+      type="date"
+      effectStyle="box"
+      [required]="true"
+      [value]="bookingDate()"
+      (valueChange)="bookingDate.set($event)"></lib-input-field>
+    <lib-input-field
+      label="Amount (negative = expense)"
+      type="number"
+      effectStyle="box"
+      [required]="true"
+      [value]="amount()"
+      (valueChange)="amount.set($event)"></lib-input-field>
+    <lib-input-field
+      label="Counterparty"
+      effectStyle="box"
+      [value]="counterpartyName()"
+      (valueChange)="counterpartyName.set($event)"></lib-input-field>
+    <lib-input-field
+      label="Purpose"
+      effectStyle="box"
+      [value]="purpose()"
+      (valueChange)="purpose.set($event)"></lib-input-field>
+    <lib-dropdown-list
+      label="Category"
+      defaultText="Uncategorized"
+      [dropdownData]="categoryOptions()"
+      [(selectedValue)]="categoryId"></lib-dropdown-list>
+    <div class="dialog-actions">
+      <lib-button [label]="'Cancel'" (clicked)="closeFormDialog()"></lib-button>
+      <lib-button [type]="'submit'" [label]="'Save'"></lib-button>
+    </div>
+  </form>
+</lib-dialog>
