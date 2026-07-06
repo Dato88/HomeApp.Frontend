@@ -1,0 +1,153 @@
+// Kleine globale UI-Muster: Chips, Status-Banner, Fehlertext,
+// native Button-Varianten (bis die Lib einen variant-Input hat).
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--app-space-1);
+  padding: 0.1rem 0.55rem;
+  font-size: var(--app-text-sm);
+  font-weight: 500;
+  color: var(--app-text);
+  background: var(--app-surface-muted);
+  border: 1px solid var(--app-border);
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.chip--muted {
+  color: var(--app-text-muted);
+}
+
+.chip--danger {
+  color: var(--app-danger);
+  background: var(--app-danger-soft);
+  border-color: color-mix(in srgb, var(--app-danger) 25%, transparent);
+}
+
+.chip--warning {
+  color: var(--app-warning);
+  background: var(--app-warning-soft);
+  border-color: color-mix(in srgb, var(--app-warning) 30%, transparent);
+}
+
+.chip--success {
+  color: var(--app-success);
+  background: var(--app-success-soft);
+  border-color: color-mix(in srgb, var(--app-success) 25%, transparent);
+}
+
+.status-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--app-space-2);
+  padding: var(--app-space-2) var(--app-space-3);
+  font-size: var(--app-text-base);
+  background: var(--app-info-soft);
+  border: 1px solid color-mix(in srgb, var(--app-info) 25%, transparent);
+  border-radius: var(--app-radius-md);
+}
+
+.status-banner--danger {
+  background: var(--app-danger-soft);
+  border-color: color-mix(in srgb, var(--app-danger) 25%, transparent);
+}
+
+.status-banner--success {
+  background: var(--app-success-soft);
+  border-color: color-mix(in srgb, var(--app-success) 25%, transparent);
+}
+
+.error-text {
+  color: var(--app-danger);
+}
+
+// Kopf- und Aktionszeile innerhalb von lib-dialog-Inhalten
+.dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--app-space-3);
+  margin-bottom: var(--app-space-3);
+
+  h2 {
+    margin: 0;
+    font-size: var(--app-text-xl);
+  }
+}
+
+.dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--app-space-2);
+  justify-content: flex-end;
+  margin-top: var(--app-space-4);
+}
+
+.field-hint {
+  font-size: var(--app-text-sm);
+  color: var(--app-text-muted);
+}
+
+// Native Button-Basis für Fälle, die lib-button nicht abdeckt
+// (Danger-Aktionen, Icon-Buttons). Lib-Follow-up: variant-Input.
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--app-space-1);
+  padding: 0.45rem 0.9rem;
+  font: inherit;
+  color: var(--app-text);
+  cursor: pointer;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-sm);
+
+  &:hover {
+    background: var(--app-surface-muted);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+}
+
+.btn--danger {
+  color: var(--app-primary-contrast);
+  background: var(--app-danger);
+  border-color: var(--app-danger);
+
+  &:hover {
+    background: color-mix(in srgb, var(--app-danger) 85%, black);
+  }
+}
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+  padding: 0;
+  font-size: 1.1rem;
+  color: var(--app-icon);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  border-radius: var(--app-radius-sm);
+
+  &:hover {
+    background: var(--app-surface-muted);
+  }
+
+  &.icon-button--danger {
+    color: var(--app-danger);
+
+    &:hover {
+      background: var(--app-danger-soft);
+    }
+  }
+}

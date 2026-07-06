@@ -1,0 +1,67 @@
+// Geteilte Layout-Muster: Seiten-Container, Toolbar, Formular-Grid,
+// Karte, Dialog-Größen und horizontales Scroll-Pattern für Tabellen.
+@use './breakpoints' as bp;
+
+.page {
+  display: grid;
+  align-content: start;
+  gap: var(--app-space-4);
+  max-width: 1100px;
+  margin-inline: auto;
+  padding: var(--app-space-3);
+
+  @include bp.up(bp.$bp-lg) {
+    padding: var(--app-space-5);
+  }
+}
+
+// Aktions-/Filterzeile: bricht auf schmalen Screens um
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--app-space-2);
+}
+
+// Formularfelder: mobil eine Spalte, ab 600px fluides Grid
+.form-grid {
+  display: grid;
+  gap: var(--app-space-3);
+
+  @include bp.up(bp.$bp-sm) {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
+
+.card {
+  padding: var(--app-space-4);
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-md);
+  box-shadow: var(--app-shadow-1);
+}
+
+// Für lib-dialog über [dialogClass]="'app-dialog'"
+.app-dialog {
+  width: min(600px, calc(100vw - 2rem));
+  max-height: min(90dvh, 800px);
+  overflow: auto;
+}
+
+.app-dialog--narrow {
+  width: min(420px, calc(100vw - 2rem));
+}
+
+// Wrapper für breite Tabellen/Grids: eigener horizontaler Scrollbereich
+// mit Schatten-Affordance an den Kanten.
+.grid-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background:
+    linear-gradient(to right, var(--app-surface) 30%, transparent) left/40px 100%,
+    linear-gradient(to left, var(--app-surface) 30%, transparent) right/40px 100%,
+    linear-gradient(to right, rgb(0 0 0 / 12%), transparent) left/14px 100%,
+    linear-gradient(to left, rgb(0 0 0 / 12%), transparent) right/14px 100%;
+  background-repeat: no-repeat;
+  background-attachment: local, local, scroll, scroll;
+}

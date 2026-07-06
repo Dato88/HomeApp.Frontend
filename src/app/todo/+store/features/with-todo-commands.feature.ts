@@ -1,4 +1,4 @@
-import { ResourceRef } from '@angular/core';
+import { inject, ResourceRef } from '@angular/core';
 import { patchState, signalStoreFeature, type, withMethods } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { tapResponse } from '@ngrx/operators';
@@ -12,6 +12,7 @@ import { exhaustMap, of, pipe, switchMap, tap } from 'rxjs';
 import { TodoDto } from '../../../shared/_interfaces/todo/todo-dto';
 import { TodoService } from '../../../shared/services/person/todo.service';
 import { BaseResponse } from '../../../shared/_interfaces/base-response';
+import { ToastService } from '../../../shared/ui/toast/toast.service';
 import { todoEntities } from '../todo-store';
 
 export function withTodoCommands() {
@@ -27,7 +28,7 @@ export function withTodoCommands() {
           NamedEntityState<TodoDto, 'todo'>
       >(),
     },
-    withMethods((store) => ({
+    withMethods((store, toast = inject(ToastService)) => ({
       createTodo: rxMethod<TodoDto>(
         pipe(
           tap(() => patchState(store, { isSaving: true, error: null })),
@@ -36,7 +37,7 @@ export function withTodoCommands() {
               switchMap((createResult: BaseResponse<number>) => {
                 if (!createResult.isSuccess) {
                   patchState(store, {
-                    error: createResult.message ?? 'Failed to create todo',
+                    error: createResult.message ?? 'Todo konnte nicht angelegt werden',
                   });
                   return of(null);
                 }
@@ -49,9 +50,10 @@ export function withTodoCommands() {
                       store,
                       addEntity({ ...result.value }, todoEntities)
                     );
+                    toast.success('Todo angelegt');
                   } else if (result) {
                     patchState(store, {
-                      error: result.message ?? 'Failed to load created todo',
+                      error: result.message ?? 'Angelegtes Todo konnte nicht geladen werden',
                     });
                   }
                 },
@@ -102,7 +104,8 @@ export function withTodoCommands() {
                     if (getResult) {
                       patchState(store, {
                         error:
-                          getResult.message ?? 'Fetching updated todo failed',
+                          getResult.message ??
+                          'Aktualisiertes Todo konnte nicht geladen werden',
                       });
                     }
                     patchState(
@@ -158,9 +161,10 @@ export function withTodoCommands() {
                 next: (response) => {
                   if (response.isSuccess) {
                     patchState(store, removeEntities([todoId], todoEntities));
+                    toast.success('Todo gelöscht');
                   } else {
                     patchState(store, {
-                      error: response.message ?? 'Failed to delete todo',
+                      error: response.message ?? 'Todo konnte nicht gelöscht werden',
                     });
                   }
                 },

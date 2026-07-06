@@ -1,26 +1,43 @@
-.filters,
-.toolbar,
-.row-actions,
-.dialog-actions,
-.transaction-form {
+:host {
+  display: grid;
+  gap: var(--app-space-3);
+  align-content: start;
+}
+
+.row-actions {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
-  align-items: flex-end;
+  gap: var(--app-space-1);
 }
 
-.transaction-form {
-  flex-direction: column;
+.amount-cell {
+  display: block;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
 }
 
-.checkbox-label,
-.import-label {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
+.amount-cell--negative {
+  color: var(--app-danger);
 }
 
-.import-result {
-  margin: 0 0 0.75rem;
+.transaction-details {
+  display: grid;
+  gap: var(--app-space-2);
+  padding: var(--app-space-2) var(--app-space-3);
+
+  dl {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: var(--app-space-1) var(--app-space-3);
+    margin: 0;
+  }
+
+  dt {
+    color: var(--app-text-muted);
+  }
+
+  dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
 }

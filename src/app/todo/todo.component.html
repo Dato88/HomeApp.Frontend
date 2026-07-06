@@ -1,75 +1,117 @@
-<section class="content" aria-labelledby="todo-heading">
-  <h1 id="todo-heading">Todo</h1>
+<section class="page" aria-labelledby="todo-heading">
+  <home-page-header title="Todos" headingId="todo-heading">
+    <lib-button
+      [label]="'Todo anlegen'"
+      icon="bi-plus-lg"
+      (clicked)="createDialog.open()"></lib-button>
+  </home-page-header>
 
   @if (store.todosResource.isLoading()) {
-    <div class="loader" role="status" aria-live="polite">Loading...</div>
+    <ul class="todo-list" role="list" aria-hidden="true">
+      @for (row of skeletonRows; track row) {
+        <li class="todo-list-item card">
+          <lib-skeleton></lib-skeleton>
+        </li>
+      }
+    </ul>
+    <p class="visually-hidden" role="status" aria-live="polite">Todos werden geladen …</p>
   } @else if (store.todosResource.error()) {
-    <p role="alert">Fehler beim Laden der Todos.</p>
-  }
-
-  <ul class="todo-list" role="list">
-    @for (todoDto of store.todoEntities(); track todoDto.todoId) {
-      <li
-        class="todo-list-item"
-        [id]="'todo-item-' + todoDto.todoId">
-        <div class="todo-done-icon" aria-hidden="true">
-          @if (todoDto.done) {
-            <mat-icon>check</mat-icon>
-          }
-        </div>
-        <button
-          type="button"
-          class="todo-item"
-          [class.done]="todoDto.done"
-          [attr.aria-pressed]="todoDto.done"
-          [attr.aria-label]="'Todo ' + todoDto.title + (todoDto.done ? ' erledigt' : ' offen')"
-          (click)="completeTodoToggle(todoDto)">
+    <div class="status-banner status-banner--danger" role="alert">
+      <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+      <span>Todos konnten nicht geladen werden.</span>
+      <button type="button" class="btn" (click)="store.todosResource.reload()">
+        Erneut versuchen
+      </button>
+    </div>
+  } @else if (store.todoEntities().length === 0) {
+    <home-empty-state
+      icon="bi-check2-circle"
+      title="Noch keine Todos"
+      description="Lege dein erstes Todo an und behalte deine Aufgaben im Blick.">
+      <lib-button
+        [label]="'Todo anlegen'"
+        icon="bi-plus-lg"
+        (clicked)="createDialog.open()"></lib-button>
+    </home-empty-state>
+  } @else {
+    <ul class="todo-list" role="list">
+      @for (todoDto of store.todoEntities(); track todoDto.todoId) {
+        <li
+          class="todo-list-item card"
+          [class.todo-list-item--done]="todoDto.done"
+          [id]="'todo-item-' + todoDto.todoId">
           @if (todoDto.isLoading) {
             <lib-skeleton aria-hidden="true"></lib-skeleton>
           } @else {
-            <div class="todo-title">
-              <h2 class="todo-title-text">{{ todoDto.title }}</h2>
-            </div>
-            <div class="todo-infos">
-              <time class="todo-execution-date" [attr.datetime]="todoDto.lastModified?.toString()">
-                {{ todoDto.lastModified | date: 'dd.MM.yyyy HH:mm' }}
-              </time>
-              <div class="todo-priority-icons" [attr.aria-label]="'Priorität ' + todoDto.priority">
-                @if (todoDto.priority >= 1) {
-                  <span aria-hidden="true">!</span>
-                }
-                @if (todoDto.priority >= 2) {
-                  <span aria-hidden="true">!</span>
-                }
-                @if (todoDto.priority >= 3) {
-                  <span aria-hidden="true">!</span>
+            <button
+              type="button"
+              class="todo-toggle"
+              [class.todo-toggle--done]="todoDto.done"
+              [attr.aria-pressed]="todoDto.done"
+              [attr.aria-label]="
+                'Todo ' +
+                todoDto.title +
+                (todoDto.done ? ' als offen markieren' : ' als erledigt markieren')
+              "
+              (click)="completeTodoToggle(todoDto)">
+              @if (todoDto.done) {
+                <i class="bi bi-check-lg" aria-hidden="true"></i>
+              }
+            </button>
+            <div class="todo-content">
+              <h2 class="todo-title">{{ todoDto.title }}</h2>
+              <div class="todo-meta">
+                <time [attr.datetime]="todoDto.lastModified?.toString()">
+                  {{ todoDto.lastModified | date: 'dd.MM.yyyy HH:mm' }}
+                </time>
+                @switch (todoDto.priority) {
+                  @case (1) {
+                    <span class="chip chip--muted">Niedrig</span>
+                  }
+                  @case (2) {
+                    <span class="chip chip--warning">Mittel</span>
+                  }
+                  @case (3) {
+                    <span class="chip chip--danger">Hoch</span>
+                  }
                 }
               </div>
             </div>
+            <button
+              type="button"
+              class="icon-button icon-button--danger"
+              [attr.aria-label]="'Todo ' + todoDto.title + ' löschen'"
+              (click)="deleteDialog.open(todoDto)">
+              <i class="bi bi-trash" aria-hidden="true"></i>
+            </button>
           }
-        </button>
-        <button
-          type="button"
-          class="delete-button"
-          [attr.aria-label]="'Todo ' + todoDto.title + ' löschen'"
-          (click)="deleteTodo(todoDto.todoId)">
-          Delete
-        </button>
-      </li>
-    }
-  </ul>
+        </li>
+      }
+    </ul>
+  }
 
-  <div class="add-todo">
-    <dialog #todoDialog (close)="onDialogClose()">
-      <div class="dialog-header">
-        <button type="button" aria-label="Dialog schließen" (click)="todoDialog.close()">
-          <mat-icon aria-hidden="true">close</mat-icon>
-        </button>
-      </div>
-      <home-todo-create-form (closeDialog)="todoDialog.close()"></home-todo-create-form>
-    </dialog>
-    <lib-button
-      [label]="'Create Todo'"
-      (clicked)="todoDialog.showModal()"></lib-button>
-  </div>
+  <lib-dialog
+    #createDialog
+    [isModal]="true"
+    dialogClass="app-dialog"
+    ariaLabelledBy="todo-create-title"
+    (closed)="onCreateDialogClosed()">
+    <div class="dialog-header">
+      <h2 id="todo-create-title">Neues Todo</h2>
+      <button
+        type="button"
+        class="icon-button"
+        aria-label="Dialog schließen"
+        (click)="createDialog.close()">
+        <i class="bi bi-x-lg" aria-hidden="true"></i>
+      </button>
+    </div>
+    <home-todo-create-form (closeDialog)="createDialog.close()"></home-todo-create-form>
+  </lib-dialog>
+
+  <home-confirm-dialog
+    #deleteDialog
+    title="Todo löschen?"
+    message="Das Todo wird dauerhaft gelöscht."
+    (confirmed)="deleteTodo($event)"></home-confirm-dialog>
 </section>

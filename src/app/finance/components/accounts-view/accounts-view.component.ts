@@ -19,6 +19,9 @@ import {
   ShareAccountRequest,
   UpdateAccountRequest,
 } from '../../+state/models';
+import { ConfirmDialogComponent } from '../../../shared/ui/confirm-dialog/confirm-dialog.component';
+import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
+import { ViewportService } from '../../../shared/services/viewport/viewport.service';
 
 interface DropdownOption {
   value: string;
@@ -37,6 +40,8 @@ interface DropdownOption {
     GridComponent,
     InputFieldComponent,
     SkeletonComponent,
+    ConfirmDialogComponent,
+    EmptyStateComponent,
   ],
   templateUrl: './accounts-view.component.html',
   styleUrl: './accounts-view.component.scss',
@@ -44,6 +49,7 @@ interface DropdownOption {
 export class AccountsViewComponent {
   readonly store = inject(FinanceStore);
   readonly householdStore = inject(HouseholdStore);
+  readonly viewport = inject(ViewportService);
 
   readonly createDialog = viewChild.required<DialogComponent>('createDialog');
   readonly shareDialog = viewChild.required<DialogComponent>('shareDialog');
@@ -59,6 +65,10 @@ export class AccountsViewComponent {
   readonly description = signal('');
   readonly accountType = signal(String(AccountType.Checking));
   readonly createHouseholdIds = signal('');
+
+  private readonly submitted = signal(false);
+
+  readonly showNameError = computed(() => this.submitted() && !this.name().trim());
 
   readonly accountTypeOptions = computed<DropdownOption[]>(() =>
     Object.entries(ACCOUNT_TYPE_LABELS)
@@ -80,6 +90,7 @@ export class AccountsViewComponent {
 
   openCreate(): void {
     this.editingAccount.set(null);
+    this.submitted.set(false);
     this.name.set('');
     this.iban.set('');
     this.bic.set('');
@@ -96,6 +107,7 @@ export class AccountsViewComponent {
     }
 
     this.editingAccount.set(account);
+    this.submitted.set(false);
     this.name.set(account.name);
     this.iban.set(account.iban ?? '');
     this.bic.set(account.bic ?? '');
@@ -107,10 +119,15 @@ export class AccountsViewComponent {
 
   closeCreateDialog(): void {
     this.createDialog().close();
+  }
+
+  onCreateDialogClosed(): void {
     this.editingAccount.set(null);
+    this.submitted.set(false);
   }
 
   submitAccount(): void {
+    this.submitted.set(true);
     const trimmedName = this.name().trim();
 
     if (!trimmedName) {
@@ -194,7 +211,7 @@ export class AccountsViewComponent {
   }
 
   accountTypeLabel(account: AccountDto): string {
-    return ACCOUNT_TYPE_LABELS[account.accountType] ?? 'Unknown';
+    return ACCOUNT_TYPE_LABELS[account.accountType] ?? 'Unbekannt';
   }
 
   sharedHouseholdNames(account: AccountDto): string {

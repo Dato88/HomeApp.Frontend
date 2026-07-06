@@ -1,10 +1,20 @@
 @if (store.accountsResource.isLoading()) {
   <lib-skeleton aria-hidden="true"></lib-skeleton>
+  <p class="visually-hidden" role="status" aria-live="polite">Konten werden geladen …</p>
 } @else if (store.accountsResource.error()) {
-  <p role="alert">Failed to load accounts.</p>
+  <div class="status-banner status-banner--danger" role="alert">
+    <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+    <span>Konten konnten nicht geladen werden.</span>
+    <button type="button" class="btn" (click)="store.accountsResource.reload()">
+      Erneut versuchen
+    </button>
+  </div>
 } @else {
   <div class="toolbar">
-    <lib-button [label]="'Add account'" (clicked)="openCreate()"></lib-button>
+    <lib-button
+      [label]="'Konto hinzufügen'"
+      icon="bi-plus-lg"
+      (clicked)="openCreate()"></lib-button>
   </div>
 
   <lib-grid
@@ -13,43 +23,93 @@
     [hoverable]="true"
     [zebra]="true">
     <lib-grid-column field="name" title="Name" [sortable]="true"></lib-grid-column>
-    <lib-grid-column field="iban" title="IBAN"></lib-grid-column>
-    <lib-grid-column field="accountType" title="Type">
-      <ng-template libGridCellTemplate let-account let-value="value">
+    @if (viewport.isDesktop()) {
+      <lib-grid-column field="iban" title="IBAN"></lib-grid-column>
+    }
+    <lib-grid-column field="accountType" title="Typ">
+      <ng-template libGridCellTemplate let-account>
         {{ accountTypeLabel(account) }}
       </ng-template>
     </lib-grid-column>
-    <lib-grid-column field="currencyCode" title="Currency"></lib-grid-column>
-    <lib-grid-column field="sharedHouseholdIds" title="Shared with">
-      <ng-template libGridCellTemplate let-account>
-        {{ sharedHouseholdNames(account) || '—' }}
-      </ng-template>
-    </lib-grid-column>
-    <lib-grid-column field="isOwner" title="Actions">
+    @if (viewport.isDesktop()) {
+      <lib-grid-column field="currencyCode" title="Währung"></lib-grid-column>
+      <lib-grid-column field="sharedHouseholdIds" title="Geteilt mit">
+        <ng-template libGridCellTemplate let-account>
+          {{ sharedHouseholdNames(account) || '—' }}
+        </ng-template>
+      </lib-grid-column>
+    }
+    <lib-grid-column field="isOwner" title="Aktionen">
       <ng-template libGridCellTemplate let-account>
         @if (account.isOwner) {
           <div class="row-actions">
-            <lib-button [label]="'Edit'" (clicked)="openEdit(account)"></lib-button>
-            <lib-button [label]="'Share'" (clicked)="openShare(account.accountId)"></lib-button>
-            <lib-button [label]="'Delete'" (clicked)="deleteAccount(account)"></lib-button>
+            <button
+              type="button"
+              class="icon-button"
+              [attr.aria-label]="'Konto ' + account.name + ' bearbeiten'"
+              (click)="openEdit(account)">
+              <i class="bi bi-pencil" aria-hidden="true"></i>
+            </button>
+            <button
+              type="button"
+              class="icon-button"
+              [attr.aria-label]="'Konto ' + account.name + ' teilen'"
+              (click)="openShare(account.accountId)">
+              <i class="bi bi-share" aria-hidden="true"></i>
+            </button>
+            <button
+              type="button"
+              class="icon-button icon-button--danger"
+              [attr.aria-label]="'Konto ' + account.name + ' löschen'"
+              (click)="deleteDialog.open(account)">
+              <i class="bi bi-trash" aria-hidden="true"></i>
+            </button>
           </div>
         } @else {
-          <span>Read-only</span>
+          <span class="chip chip--muted">Nur Lesen</span>
         }
       </ng-template>
     </lib-grid-column>
+    <home-empty-state
+      noEntries
+      icon="bi-bank"
+      title="Noch keine Konten"
+      description="Lege dein erstes Konto an, um Buchungen zu verwalten.">
+      <lib-button
+        [label]="'Konto hinzufügen'"
+        icon="bi-plus-lg"
+        (clicked)="openCreate()"></lib-button>
+    </home-empty-state>
   </lib-grid>
 }
 
-<lib-dialog #createDialog [isModal]="true" ariaLabelledBy="account-form-title">
-  <h2 id="account-form-title">{{ editingAccount() ? 'Edit account' : 'Add account' }}</h2>
-  <form class="account-form" (submit)="$event.preventDefault(); submitAccount()" novalidate>
+<lib-dialog
+  #createDialog
+  [isModal]="true"
+  dialogClass="app-dialog"
+  ariaLabelledBy="account-form-title"
+  (closed)="onCreateDialogClosed()">
+  <div class="dialog-header">
+    <h2 id="account-form-title">
+      {{ editingAccount() ? 'Konto bearbeiten' : 'Konto hinzufügen' }}
+    </h2>
+    <button
+      type="button"
+      class="icon-button"
+      aria-label="Dialog schließen"
+      (click)="closeCreateDialog()">
+      <i class="bi bi-x-lg" aria-hidden="true"></i>
+    </button>
+  </div>
+  <form class="form-grid" (submit)="$event.preventDefault(); submitAccount()" novalidate>
     <lib-input-field
       label="Name"
       effectStyle="box"
       [required]="true"
       [value]="name()"
-      (valueChange)="name.set($event)"></lib-input-field>
+      (valueChange)="name.set($event)"
+      [validationState]="showNameError() ? 'error' : null"
+      [errorMessage]="showNameError() ? 'Name ist erforderlich' : ''"></lib-input-field>
     <lib-input-field
       label="IBAN"
       effectStyle="box"
@@ -61,43 +121,65 @@
       [value]="bic()"
       (valueChange)="bic.set($event)"></lib-input-field>
     <lib-input-field
-      label="Currency"
+      label="Währung"
       effectStyle="box"
       [value]="currencyCode()"
       (valueChange)="currencyCode.set($event)"></lib-input-field>
     <lib-input-field
-      label="Description"
+      label="Beschreibung"
       effectStyle="box"
       [value]="description()"
       (valueChange)="description.set($event)"></lib-input-field>
     <lib-dropdown-list
-      label="Account type"
-      defaultText="Select type"
+      label="Kontotyp"
+      defaultText="Typ wählen"
       [dropdownData]="accountTypeOptions()"
       [(selectedValue)]="accountType"></lib-dropdown-list>
     @if (!editingAccount()) {
-      <lib-input-field
-        label="Share to household IDs (comma-separated)"
-        effectStyle="box"
-        [value]="createHouseholdIds()"
-        (valueChange)="createHouseholdIds.set($event)"></lib-input-field>
+      <div>
+        <lib-input-field
+          label="Für Haushalte freigeben"
+          effectStyle="box"
+          [value]="createHouseholdIds()"
+          (valueChange)="createHouseholdIds.set($event)"></lib-input-field>
+        <p class="field-hint">Haushalts-IDs, kommagetrennt (z.&nbsp;B. 1, 2)</p>
+      </div>
     }
     <div class="dialog-actions">
-      <lib-button [label]="'Cancel'" (clicked)="closeCreateDialog()"></lib-button>
-      <lib-button [type]="'submit'" [label]="'Save'"></lib-button>
+      <lib-button [label]="'Abbrechen'" (clicked)="closeCreateDialog()"></lib-button>
+      <lib-button [type]="'submit'" [label]="'Speichern'"></lib-button>
     </div>
   </form>
 </lib-dialog>
 
-<lib-dialog #shareDialog [isModal]="true" ariaLabelledBy="share-account-title">
-  <h2 id="share-account-title">Share account with household</h2>
+<lib-dialog
+  #shareDialog
+  [isModal]="true"
+  dialogClass="app-dialog app-dialog--narrow"
+  ariaLabelledBy="share-account-title">
+  <div class="dialog-header">
+    <h2 id="share-account-title">Konto mit Haushalt teilen</h2>
+    <button
+      type="button"
+      class="icon-button"
+      aria-label="Dialog schließen"
+      (click)="closeShareDialog()">
+      <i class="bi bi-x-lg" aria-hidden="true"></i>
+    </button>
+  </div>
   <lib-dropdown-list
-    label="Household"
-    defaultText="Select household"
+    label="Haushalt"
+    defaultText="Haushalt wählen"
     [dropdownData]="householdOptions()"
     [(selectedValue)]="shareHouseholdId"></lib-dropdown-list>
   <div class="dialog-actions">
-    <lib-button [label]="'Cancel'" (clicked)="closeShareDialog()"></lib-button>
-    <lib-button [label]="'Share'" (clicked)="submitShare()"></lib-button>
+    <lib-button [label]="'Abbrechen'" (clicked)="closeShareDialog()"></lib-button>
+    <lib-button [label]="'Teilen'" (clicked)="submitShare()"></lib-button>
   </div>
 </lib-dialog>
+
+<home-confirm-dialog
+  #deleteDialog
+  title="Konto löschen?"
+  message="Das Konto und seine Buchungen werden dauerhaft gelöscht."
+  (confirmed)="deleteAccount($event)"></home-confirm-dialog>

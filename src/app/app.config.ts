@@ -1,4 +1,11 @@
-import { ApplicationConfig, isDevMode, provideZonelessChangeDetection } from '@angular/core';
+import {
+  ApplicationConfig,
+  LOCALE_ID,
+  isDevMode,
+  provideZonelessChangeDetection,
+} from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+import localeDe from '@angular/common/locales/de';
 import {
   PreloadAllModules,
   provideRouter,
@@ -12,8 +19,11 @@ import { authInterceptor } from './shared/http-interceptors/auth.interceptor';
 import { errorHandlerInterceptor } from './shared/http-interceptors/error-handler.interceptor';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
+registerLocaleData(localeDe);
+
 export const appConfig: ApplicationConfig = {
   providers: [
+    { provide: LOCALE_ID, useValue: 'de' },
     provideZonelessChangeDetection(),
     provideRouter(
       routes,

@@ -18,6 +18,8 @@ import {
   CreateCategoryRequest,
   UpdateCategoryRequest,
 } from '../../+state/models';
+import { ConfirmDialogComponent } from '../../../shared/ui/confirm-dialog/confirm-dialog.component';
+import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 
 interface DropdownOption {
   value: string;
@@ -36,6 +38,8 @@ interface DropdownOption {
     GridComponent,
     InputFieldComponent,
     SkeletonComponent,
+    ConfirmDialogComponent,
+    EmptyStateComponent,
   ],
   templateUrl: './categories-view.component.html',
   styleUrl: './categories-view.component.scss',
@@ -50,6 +54,10 @@ export class CategoriesViewComponent {
   readonly editingCategory = signal<CategoryDto | null>(null);
   readonly name = signal('');
   readonly categoryType = signal(String(CategoryType.Expense));
+
+  private readonly submitted = signal(false);
+
+  readonly showNameError = computed(() => this.submitted() && !this.name().trim());
 
   readonly householdOptions = computed<DropdownOption[]>(() =>
     this.householdStore.householdEntities().map((household) => ({
@@ -96,6 +104,7 @@ export class CategoriesViewComponent {
     }
 
     this.editingCategory.set(null);
+    this.submitted.set(false);
     this.name.set('');
     this.categoryType.set(String(CategoryType.Expense));
     this.formDialog().open();
@@ -103,6 +112,7 @@ export class CategoriesViewComponent {
 
   openEdit(category: CategoryDto): void {
     this.editingCategory.set(category);
+    this.submitted.set(false);
     this.name.set(category.name);
     this.categoryType.set(String(category.categoryType));
     this.formDialog().open();
@@ -110,10 +120,15 @@ export class CategoriesViewComponent {
 
   closeFormDialog(): void {
     this.formDialog().close();
+  }
+
+  onFormDialogClosed(): void {
     this.editingCategory.set(null);
+    this.submitted.set(false);
   }
 
   submitCategory(): void {
+    this.submitted.set(true);
     const trimmedName = this.name().trim();
     const householdId = Number(this.selectedHouseholdId());
     const categoryType = Number(this.categoryType()) as CategoryType;
@@ -148,6 +163,6 @@ export class CategoriesViewComponent {
   }
 
   categoryTypeLabel(category: CategoryDto): string {
-    return CATEGORY_TYPE_LABELS[category.categoryType] ?? 'Unknown';
+    return CATEGORY_TYPE_LABELS[category.categoryType] ?? 'Unbekannt';
   }
 }

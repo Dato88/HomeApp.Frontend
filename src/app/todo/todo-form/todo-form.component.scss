@@ -1,8 +1,4 @@
 .todo-form {
-  padding: 0.3rem;
-
-  form {
-    display: grid;
-    gap: 0.5rem;
-  }
+  display: grid;
+  gap: var(--app-space-3);
 }

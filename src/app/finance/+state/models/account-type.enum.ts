@@ -9,11 +9,11 @@ export enum AccountType {
 }
 
 export const ACCOUNT_TYPE_LABELS: Record<AccountType, string> = {
-  [AccountType.Unknown]: 'Unknown',
-  [AccountType.Checking]: 'Checking',
-  [AccountType.Savings]: 'Savings',
-  [AccountType.CreditCard]: 'Credit card',
+  [AccountType.Unknown]: 'Unbekannt',
+  [AccountType.Checking]: 'Girokonto',
+  [AccountType.Savings]: 'Sparkonto',
+  [AccountType.CreditCard]: 'Kreditkarte',
   [AccountType.Depot]: 'Depot',
-  [AccountType.Cash]: 'Cash',
-  [AccountType.Other]: 'Other',
+  [AccountType.Cash]: 'Bargeld',
+  [AccountType.Other]: 'Sonstiges',
 };

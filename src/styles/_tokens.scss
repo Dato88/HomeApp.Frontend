@@ -1,0 +1,60 @@
+// App-Design-Tokens als CSS Custom Properties.
+// Quelle der Farbwerte ist das SCSS-Token-System der homeapp-lib —
+// hier gebridgt, damit App-Styles zur Laufzeit themebar bleiben.
+// Regel: In Komponenten-SCSS keine Hex-Werte, nur var(--app-*).
+@use '../../node_modules/@Dato88/homeapp-lib/src/lib/styles' as lib;
+
+:root {
+  // Brand (Teal-Palette der Lib)
+  --app-primary: #{lib.$color-primary-0};
+  --app-primary-strong: #{lib.$color-primary-3}; // AA-tauglich als Text auf Weiß
+  --app-primary-soft: #{lib.$color-primary-1};
+  --app-primary-contrast: #ffffff;
+
+  // Semantische Status-Farben, jeweils mit -soft-Fläche für Chips/Banner
+  --app-danger: #{lib.$color-error};
+  --app-danger-soft: #fef2f2;
+  --app-warning: #{lib.$color-warning};
+  --app-warning-soft: #fefce8;
+  --app-success: #15803d;
+  --app-success-soft: #f0fdf4;
+  --app-info: #1d4ed8;
+  --app-info-soft: #eff6ff;
+
+  // Flächen & Text
+  --app-bg: #fafafa;
+  --app-surface: #ffffff;
+  --app-surface-muted: #{lib.$color-surface-muted};
+  --app-border: #{lib.$color-border};
+  --app-text: #222222;
+  --app-text-muted: #{lib.$color-text-muted};
+  --app-icon: #{lib.$color-icon};
+
+  // Bridge: Custom Properties, die Lib-Komponenten intern lesen
+  --text-secondary: var(--app-text-muted);
+  --border-color: var(--app-border);
+
+  // Spacing-Skala (erweitert die Lib-Skala 4/8/12)
+  --app-space-1: #{lib.$spacing-1};
+  --app-space-2: #{lib.$spacing-2};
+  --app-space-3: #{lib.$spacing-3};
+  --app-space-4: 16px;
+  --app-space-5: 24px;
+  --app-space-6: 32px;
+  --app-space-7: 48px;
+
+  // Typo-Skala (Basis 0.9rem wie Lib $font-size-base)
+  --app-text-sm: 0.8rem;
+  --app-text-base: #{lib.$font-size-base};
+  --app-text-lg: 1.05rem;
+  --app-text-xl: 1.25rem;
+  --app-text-2xl: 1.55rem;
+
+  // Radii / Elevation / Fokus
+  --app-radius-sm: #{lib.$radius-md};
+  --app-radius-md: #{lib.$radius-m};
+  --app-radius-lg: #{lib.$radius-l};
+  --app-shadow-1: 0 1px 2px rgb(0 0 0 / 6%), 0 1px 3px rgb(0 0 0 / 8%);
+  --app-shadow-2: 0 4px 12px rgb(0 0 0 / 10%);
+  --app-focus-ring: 2px solid var(--app-primary-strong);
+}

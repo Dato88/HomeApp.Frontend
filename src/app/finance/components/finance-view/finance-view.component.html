@@ -1,13 +1,18 @@
-<section class="content" aria-labelledby="finance-heading">
-  <h1 id="finance-heading">Finance</h1>
+<section class="page" aria-labelledby="finance-heading">
+  <home-page-header title="Finanzen" headingId="finance-heading"></home-page-header>
 
   @if (store.error()) {
-    <p class="error-message" role="alert">{{ store.error() }}</p>
+    <div class="status-banner status-banner--danger" role="alert">
+      <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+      <span>{{ store.error() }}</span>
+    </div>
   }
 
-  <home-finance-tab-header
-    [activeTab]="uiStore.activeTab()"
-    (selectTab)="uiStore.setActiveTab($event)"></home-finance-tab-header>
+  <home-tab-bar
+    [tabs]="tabs"
+    [activeId]="uiStore.activeTab()"
+    ariaLabel="Finanzbereiche"
+    (activeIdChange)="uiStore.setActiveTab($event)"></home-tab-bar>
 
   @switch (uiStore.activeTab()) {
     @case ('accounts') {

@@ -1,0 +1,19 @@
+// Breakpoints — abgestimmt auf die Navigation der homeapp-lib
+// (Hamburger < 900px, sekundärer Umbruch bei 768px). Mobile-first:
+// Basis-Styles gelten für Phone, up($bp) ergänzt größere Layouts.
+$bp-sm: 600px;
+$bp-md: 768px;
+$bp-lg: 900px;
+$bp-xl: 1200px;
+
+@mixin up($bp) {
+  @media (min-width: $bp) {
+    @content;
+  }
+}
+
+@mixin down($bp) {
+  @media (max-width: ($bp - 0.02px)) {
+    @content;
+  }
+}

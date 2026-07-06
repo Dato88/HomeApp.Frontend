@@ -1,8 +1,19 @@
-import { Component, output, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, output, signal, ChangeDetectionStrategy } from '@angular/core';
 import { form, required, schema } from '@angular/forms/signals';
-import { ButtonComponent, InputFieldComponent } from '@Dato88/homeapp-lib';
+import {
+  ButtonComponent,
+  DropdownListComponent,
+  InputFieldComponent,
+} from '@Dato88/homeapp-lib';
 import { TodoPriorityEnum } from '../../shared/enum/todo-priority.enum';
 import { TodoDto } from '../../shared/_interfaces/todo/todo-dto';
+
+// Struktur von DropdownData — die Lib exportiert den Typ (noch) nicht.
+interface PriorityOption {
+  trackBy: number;
+  value: string;
+  name: string;
+}
 
 interface TodoFormModel {
   todoId: number;
@@ -13,13 +24,20 @@ interface TodoFormModel {
 
 @Component({
   selector: 'home-todo-form',
-  imports: [InputFieldComponent, ButtonComponent],
+  imports: [InputFieldComponent, ButtonComponent, DropdownListComponent],
   templateUrl: './todo-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './todo-form.component.scss',
 })
 export class TodoFormComponent {
   readonly submitTodo = output<TodoDto>();
+
+  protected readonly priorityOptions: PriorityOption[] = [
+    { trackBy: TodoPriorityEnum.Normal, value: String(TodoPriorityEnum.Normal), name: 'Normal' },
+    { trackBy: TodoPriorityEnum.Low, value: String(TodoPriorityEnum.Low), name: 'Niedrig' },
+    { trackBy: TodoPriorityEnum.Medium, value: String(TodoPriorityEnum.Medium), name: 'Mittel' },
+    { trackBy: TodoPriorityEnum.High, value: String(TodoPriorityEnum.High), name: 'Hoch' },
+  ];
 
   private readonly todoModel = signal<TodoFormModel>({
     todoId: 0,
@@ -34,6 +52,12 @@ export class TodoFormComponent {
       required(path.title);
     })
   );
+
+  protected readonly priorityValue = computed(() => String(this.todoForm.priority().value()));
+
+  protected onPriorityChange(value: string): void {
+    this.todoForm.priority().value.set(Number(value) as TodoPriorityEnum);
+  }
 
   submitForm(event: Event): void {
     event.preventDefault();

@@ -1,13 +1,10 @@
-.toolbar,
-.row-actions,
-.dialog-actions,
-.account-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
+:host {
+  display: grid;
+  gap: var(--app-space-3);
+  align-content: start;
 }
 
-.account-form {
-  flex-direction: column;
+.row-actions {
+  display: flex;
+  gap: var(--app-space-1);
 }

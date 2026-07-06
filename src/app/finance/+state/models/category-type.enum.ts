@@ -5,7 +5,7 @@ export enum CategoryType {
 }
 
 export const CATEGORY_TYPE_LABELS: Record<CategoryType, string> = {
-  [CategoryType.Unknown]: 'Unknown',
-  [CategoryType.Income]: 'Income',
-  [CategoryType.Expense]: 'Expense',
+  [CategoryType.Unknown]: 'Unbekannt',
+  [CategoryType.Income]: 'Einnahme',
+  [CategoryType.Expense]: 'Ausgabe',
 };

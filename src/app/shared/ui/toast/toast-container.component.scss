@@ -1,0 +1,63 @@
+@use '../../../../styles/breakpoints' as bp;
+
+.toast-stack {
+  position: fixed;
+  inset-block-end: var(--app-space-4);
+  inset-inline: var(--app-space-3);
+  z-index: 1000;
+  display: grid;
+  gap: var(--app-space-2);
+  justify-items: center;
+  pointer-events: none;
+
+  @include bp.up(bp.$bp-lg) {
+    inset-inline: auto var(--app-space-5);
+    justify-items: end;
+  }
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--app-space-2);
+  width: min(420px, 100%);
+  padding: var(--app-space-2) var(--app-space-3);
+  color: var(--app-text);
+  pointer-events: auto;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-inline-start: 4px solid var(--app-info);
+  border-radius: var(--app-radius-md);
+  box-shadow: var(--app-shadow-2);
+
+  .toast-icon {
+    color: var(--app-info);
+  }
+}
+
+.toast--success {
+  border-inline-start-color: var(--app-success);
+
+  .toast-icon {
+    color: var(--app-success);
+  }
+}
+
+.toast--error {
+  border-inline-start-color: var(--app-danger);
+
+  .toast-icon {
+    color: var(--app-danger);
+  }
+}
+
+.toast-message {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.toast-dismiss {
+  flex-shrink: 0;
+}

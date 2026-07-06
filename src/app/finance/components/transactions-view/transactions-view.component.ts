@@ -8,6 +8,7 @@ import {
   GridColumnComponent,
   GridComponent,
   GridPaginationComponent,
+  GridRowDetailsTemplateDirective,
   InputFieldComponent,
   SkeletonComponent,
 } from '@Dato88/homeapp-lib';
@@ -20,6 +21,11 @@ import {
   UpdateTransactionRequest,
 } from '../../+state/models';
 import { HouseholdStore } from '../../../household/+state/household.store';
+import { CheckboxComponent } from '../../../shared/ui/checkbox/checkbox.component';
+import { ConfirmDialogComponent } from '../../../shared/ui/confirm-dialog/confirm-dialog.component';
+import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
+import { FileUploadComponent } from '../../../shared/ui/file-upload/file-upload.component';
+import { ViewportService } from '../../../shared/services/viewport/viewport.service';
 
 interface DropdownOption {
   value: string;
@@ -38,8 +44,13 @@ interface DropdownOption {
     GridColumnComponent,
     GridComponent,
     GridPaginationComponent,
+    GridRowDetailsTemplateDirective,
     InputFieldComponent,
     SkeletonComponent,
+    CheckboxComponent,
+    ConfirmDialogComponent,
+    EmptyStateComponent,
+    FileUploadComponent,
   ],
   templateUrl: './transactions-view.component.html',
   styleUrl: './transactions-view.component.scss',
@@ -47,8 +58,11 @@ interface DropdownOption {
 export class TransactionsViewComponent {
   readonly store = inject(FinanceStore);
   readonly householdStore = inject(HouseholdStore);
+  readonly viewport = inject(ViewportService);
 
   readonly formDialog = viewChild.required<DialogComponent>('formDialog');
+
+  private readonly fileUpload = viewChild(FileUploadComponent);
 
   readonly selectedAccountId = signal('');
   readonly fromDate = signal('');
@@ -65,6 +79,22 @@ export class TransactionsViewComponent {
   readonly categoryId = signal('');
 
   readonly importFile = signal<File | null>(null);
+
+  private readonly expandedTransactionId = signal<number | null>(null);
+  private readonly submitted = signal(false);
+
+  readonly isDetailsExpanded = (transaction: TransactionDto): boolean =>
+    transaction.transactionId === this.expandedTransactionId();
+
+  readonly showDateError = computed(() => this.submitted() && !this.bookingDate());
+  readonly showAmountError = computed(() => {
+    if (!this.submitted()) {
+      return false;
+    }
+
+    const value = this.amount().trim();
+    return !value || Number.isNaN(Number(value.replace(',', '.')));
+  });
 
   readonly accountOptions = computed<DropdownOption[]>(() =>
     this.store.accountEntities().map((account) => ({
@@ -138,6 +168,7 @@ export class TransactionsViewComponent {
   onAccountChange(accountId: string): void {
     this.selectedAccountId.set(accountId);
     this.pageIndex.set(0);
+    this.expandedTransactionId.set(null);
   }
 
   applyFilters(): void {
@@ -146,6 +177,13 @@ export class TransactionsViewComponent {
 
   onPageChange(pageIndex: number): void {
     this.pageIndex.set(pageIndex);
+    this.expandedTransactionId.set(null);
+  }
+
+  toggleDetails(transaction: TransactionDto): void {
+    this.expandedTransactionId.update((current) =>
+      current === transaction.transactionId ? null : transaction.transactionId
+    );
   }
 
   openCreate(): void {
@@ -154,6 +192,7 @@ export class TransactionsViewComponent {
     }
 
     this.editingTransaction.set(null);
+    this.submitted.set(false);
     this.bookingDate.set(new Date().toISOString().slice(0, 10));
     this.amount.set('');
     this.counterpartyName.set('');
@@ -168,6 +207,7 @@ export class TransactionsViewComponent {
     }
 
     this.editingTransaction.set(transaction);
+    this.submitted.set(false);
     this.bookingDate.set(transaction.bookingDate);
     this.amount.set(String(transaction.amount));
     this.counterpartyName.set(transaction.counterpartyName ?? '');
@@ -178,14 +218,19 @@ export class TransactionsViewComponent {
 
   closeFormDialog(): void {
     this.formDialog().close();
+  }
+
+  onFormDialogClosed(): void {
     this.editingTransaction.set(null);
+    this.submitted.set(false);
   }
 
   submitTransaction(): void {
+    this.submitted.set(true);
     const accountId = Number(this.selectedAccountId());
     const parsedAmount = Number(this.amount().replace(',', '.'));
 
-    if (!accountId || Number.isNaN(parsedAmount) || !this.bookingDate()) {
+    if (!accountId || Number.isNaN(parsedAmount) || !this.amount().trim() || !this.bookingDate()) {
       return;
     }
 
@@ -237,10 +282,8 @@ export class TransactionsViewComponent {
     });
   }
 
-  onImportFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0] ?? null;
-    this.importFile.set(file);
+  onImportFileSelected(file: File | undefined): void {
+    this.importFile.set(file ?? null);
   }
 
   submitImport(): void {
@@ -252,7 +295,7 @@ export class TransactionsViewComponent {
     }
 
     this.store.importTransactions({ accountId, file });
-    this.importFile.set(null);
+    this.fileUpload()?.clear();
   }
 
   categoryValue(categoryId: number | null): string {

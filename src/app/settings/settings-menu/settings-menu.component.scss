@@ -1,0 +1,18 @@
+.settings-list {
+  display: grid;
+  gap: var(--app-space-2);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.settings-list-item {
+  display: grid;
+  gap: var(--app-space-1);
+  padding: var(--app-space-2) 0;
+  border-bottom: 1px solid var(--app-border);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}

@@ -1,18 +1,18 @@
-.filters,
-.toolbar,
-.row-actions,
-.dialog-actions,
-.category-form {
+:host {
+  display: grid;
+  gap: var(--app-space-3);
+  align-content: start;
+}
+
+.row-actions {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
+  gap: var(--app-space-1);
 }
 
-.category-form {
-  flex-direction: column;
-}
-
-h2 {
-  margin: 1rem 0 0.5rem;
+.category-section-heading {
+  display: flex;
+  gap: var(--app-space-2);
+  align-items: center;
+  margin: var(--app-space-3) 0 0;
+  font-size: var(--app-text-lg);
 }

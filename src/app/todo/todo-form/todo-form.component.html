@@ -1,19 +1,25 @@
-<div class="todo-form">
-  <form (submit)="submitForm($event)" novalidate>
-    <lib-input-field
-      label="New Todo"
-      placeholder="Title"
-      [autofocus]="true"
-      [required]="true"
-      effectStyle="box"
-      [value]="todoForm.title().value()"
-      (valueChange)="todoForm.title().value.set($event)"
-      [validationState]="todoForm.title().invalid() && todoForm.title().touched() ? 'error' : null"
-      [errorMessage]="
-        todoForm.title().invalid() && todoForm.title().touched()
-          ? (todoForm.title().errors()[0]?.message ?? 'Title is required')
-          : ''
-      " />
-    <lib-button [type]="'submit'" [label]="'Add'"></lib-button>
-  </form>
-</div>
+<form class="todo-form" (submit)="submitForm($event)" novalidate>
+  <lib-input-field
+    label="Titel"
+    placeholder="Was ist zu tun?"
+    [autofocus]="true"
+    [required]="true"
+    effectStyle="box"
+    [value]="todoForm.title().value()"
+    (valueChange)="todoForm.title().value.set($event)"
+    [validationState]="todoForm.title().invalid() && todoForm.title().touched() ? 'error' : null"
+    [errorMessage]="
+      todoForm.title().invalid() && todoForm.title().touched()
+        ? (todoForm.title().errors()[0]?.message ?? 'Titel ist erforderlich')
+        : ''
+    " />
+  <lib-dropdown-list
+    label="Priorität"
+    dropdownName="todo-priority"
+    [dropdownData]="priorityOptions"
+    [selectedValue]="priorityValue()"
+    (selectedValueChange)="onPriorityChange($event)"></lib-dropdown-list>
+  <div class="dialog-actions">
+    <lib-button [type]="'submit'" [label]="'Hinzufügen'"></lib-button>
+  </div>
+</form>

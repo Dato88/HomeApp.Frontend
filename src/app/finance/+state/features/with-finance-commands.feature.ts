@@ -1,9 +1,10 @@
-import { ResourceRef } from '@angular/core';
+import { inject, ResourceRef } from '@angular/core';
 import { patchState, signalStoreFeature, type, withMethods } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { tapResponse } from '@ngrx/operators';
 import { concatMap, exhaustMap, pipe, tap } from 'rxjs';
 import { Result } from '../../../core/models';
+import { ToastService } from '../../../shared/ui/toast/toast.service';
 import { AccountService } from '../../services/account.service';
 import { CategoryService } from '../../services/category.service';
 import { TransactionService } from '../../services/transaction.service';
@@ -43,7 +44,7 @@ export function withFinanceCommands() {
       methods: type<{ _handleError: (error: unknown) => void }>(),
       state: type<FinanceCommandState>(),
     },
-    withMethods((store) => {
+    withMethods((store, toast = inject(ToastService)) => {
       const handleIdResult = (result: Result<number>, fallbackMessage: string): void => {
         if (result.isSuccess) {
           return;
@@ -67,7 +68,8 @@ export function withFinanceCommands() {
       const command = <TRequest>(
         execute: (request: TRequest) => ReturnType<AccountService['createAccount']>,
         fallbackMessage: string,
-        onSuccess: () => void
+        onSuccess: () => void,
+        successMessage?: string
       ) =>
         rxMethod<TRequest>(
           pipe(
@@ -80,6 +82,10 @@ export function withFinanceCommands() {
 
                     if (result.isSuccess) {
                       onSuccess();
+
+                      if (successMessage) {
+                        toast.success(successMessage);
+                      }
                     }
                   },
                   error: (err) => store._handleError(err),
@@ -93,62 +99,73 @@ export function withFinanceCommands() {
       return {
         createAccount: command<CreateAccountRequest>(
           (request) => store._accountService.createAccount(request),
-          'Failed to create account',
-          reloadAccounts
+          'Konto konnte nicht angelegt werden',
+          reloadAccounts,
+          'Konto angelegt'
         ),
         updateAccount: command<UpdateAccountRequest>(
           (request) => store._accountService.updateAccount(request),
-          'Failed to update account',
-          reloadAccounts
+          'Konto konnte nicht aktualisiert werden',
+          reloadAccounts,
+          'Konto gespeichert'
         ),
         deleteAccount: command<number>(
           (accountId) => store._accountService.deleteAccount(accountId),
-          'Failed to delete account',
-          reloadAccounts
+          'Konto konnte nicht gelöscht werden',
+          reloadAccounts,
+          'Konto gelöscht'
         ),
         shareAccount: command<ShareAccountRequest>(
           (request) => store._accountService.shareAccount(request),
-          'Failed to share account',
-          reloadAccounts
+          'Konto konnte nicht geteilt werden',
+          reloadAccounts,
+          'Konto geteilt'
         ),
         unshareAccount: command<ShareAccountRequest>(
           (request) => store._accountService.unshareAccount(request),
-          'Failed to unshare account',
-          reloadAccounts
+          'Freigabe konnte nicht entfernt werden',
+          reloadAccounts,
+          'Freigabe entfernt'
         ),
         createCategory: command<CreateCategoryRequest>(
           (request) => store._categoryService.createCategory(request),
-          'Failed to create category',
-          reloadCategories
+          'Kategorie konnte nicht angelegt werden',
+          reloadCategories,
+          'Kategorie angelegt'
         ),
         updateCategory: command<UpdateCategoryRequest>(
           (request) => store._categoryService.updateCategory(request),
-          'Failed to update category',
-          reloadCategories
+          'Kategorie konnte nicht aktualisiert werden',
+          reloadCategories,
+          'Kategorie gespeichert'
         ),
         deleteCategory: command<number>(
           (categoryId) => store._categoryService.deleteCategory(categoryId),
-          'Failed to delete category',
-          reloadCategories
+          'Kategorie konnte nicht gelöscht werden',
+          reloadCategories,
+          'Kategorie gelöscht'
         ),
         createTransaction: command<CreateTransactionRequest>(
           (request) => store._transactionService.createTransaction(request),
-          'Failed to create transaction',
-          reloadTransactions
+          'Buchung konnte nicht angelegt werden',
+          reloadTransactions,
+          'Buchung angelegt'
         ),
         updateTransaction: command<UpdateTransactionRequest>(
           (request) => store._transactionService.updateTransaction(request),
-          'Failed to update transaction',
-          reloadTransactions
+          'Buchung konnte nicht aktualisiert werden',
+          reloadTransactions,
+          'Buchung gespeichert'
         ),
         deleteTransaction: command<number>(
           (transactionId) => store._transactionService.deleteTransaction(transactionId),
-          'Failed to delete transaction',
-          reloadTransactions
+          'Buchung konnte nicht gelöscht werden',
+          reloadTransactions,
+          'Buchung gelöscht'
         ),
         setTransactionCategory: command<SetTransactionCategoryRequest>(
           (request) => store._transactionService.setCategory(request),
-          'Failed to set transaction category',
+          'Kategorie konnte nicht zugewiesen werden',
           reloadTransactions
         ),
         importTransactions: rxMethod<ImportTransactionsRequest>(
@@ -161,8 +178,9 @@ export function withFinanceCommands() {
                     if (result.isSuccess) {
                       patchState(store, { lastImportResult: result.value });
                       reloadTransactions();
+                      toast.success(`Import abgeschlossen: ${result.value.imported} übernommen`);
                     } else {
-                      patchState(store, { error: result.message ?? 'Import failed' });
+                      patchState(store, { error: result.message ?? 'Import fehlgeschlagen' });
                     }
                   },
                   error: (err) => store._handleError(err),
