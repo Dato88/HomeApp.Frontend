@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, effect, inject, signal, viewChild } from '@angular/core';
 import {
   ButtonComponent,
   DialogComponent,
@@ -20,7 +20,6 @@ import {
 } from '../../+state/models';
 import { ConfirmDialogComponent } from '../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
-import { FinanceUiStore } from '../finance-view/+store/finance-ui.store';
 
 interface DropdownOption {
   value: string;
@@ -47,13 +46,11 @@ interface DropdownOption {
 })
 export class CategoriesViewComponent {
   readonly store = inject(FinanceStore);
-  readonly uiStore = inject(FinanceUiStore);
   readonly householdStore = inject(HouseholdStore);
 
   readonly formDialog = viewChild.required<DialogComponent>('formDialog');
 
-  readonly selectedHouseholdId = computed(() => this.uiStore.categoriesHouseholdId());
-
+  readonly selectedHouseholdId = signal('');
   readonly editingCategory = signal<CategoryDto | null>(null);
   readonly name = signal('');
   readonly categoryType = signal(String(CategoryType.Expense));
@@ -79,7 +76,9 @@ export class CategoriesViewComponent {
   );
 
   readonly incomeCategories = computed(() =>
-    this.store.categoryEntities().filter((category) => category.categoryType === CategoryType.Income)
+    this.store
+      .categoryEntities()
+      .filter((category) => category.categoryType === CategoryType.Income)
   );
 
   readonly expenseCategories = computed(() =>
@@ -88,18 +87,17 @@ export class CategoriesViewComponent {
       .filter((category) => category.categoryType === CategoryType.Expense)
   );
 
+  constructor() {
+    effect(() => {
+      const householdId = Number(this.selectedHouseholdId());
+      this.store.setCategoryHouseholdId(
+        householdId && !Number.isNaN(householdId) ? householdId : undefined
+      );
+    });
+  }
+
   onHouseholdChange(householdId: string): void {
-    if (!householdId || householdId === this.uiStore.categoriesHouseholdId()) {
-      return;
-    }
-
-    const id = Number(householdId);
-
-    if (Number.isNaN(id)) {
-      return;
-    }
-
-    this.uiStore.setCategoriesHouseholdId(householdId);
+    this.selectedHouseholdId.set(householdId);
   }
 
   openCreate(): void {

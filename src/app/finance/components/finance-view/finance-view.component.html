@@ -1,9 +1,17 @@
-<section class="page" aria-labelledby="finance-heading">
-  <home-page-header title="Finanzen" headingId="finance-heading"></home-page-header>
+<section
+  class="page page--wide"
+  aria-labelledby="finance-heading">
+  <home-page-header
+    title="Finanzen"
+    headingId="finance-heading"></home-page-header>
 
   @if (store.error()) {
-    <div class="status-banner status-banner--danger" role="alert">
-      <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+    <div
+      class="status-banner status-banner--danger"
+      role="alert">
+      <i
+        class="bi bi-exclamation-triangle-fill"
+        aria-hidden="true"></i>
       <span>{{ store.error() }}</span>
     </div>
   }
@@ -14,24 +22,15 @@
     ariaLabel="Finanzbereiche"
     (activeIdChange)="uiStore.setActiveTab($event)"></home-tab-bar>
 
-  <div
-    class="finance-tab-panel"
-    [class.finance-tab-panel--hidden]="uiStore.activeTab() !== 'accounts'"
-    [attr.hidden]="uiStore.activeTab() !== 'accounts' ? true : null">
-    <home-accounts-view></home-accounts-view>
-  </div>
-
-  <div
-    class="finance-tab-panel"
-    [class.finance-tab-panel--hidden]="uiStore.activeTab() !== 'transactions'"
-    [attr.hidden]="uiStore.activeTab() !== 'transactions' ? true : null">
-    <home-transactions-view></home-transactions-view>
-  </div>
-
-  <div
-    class="finance-tab-panel"
-    [class.finance-tab-panel--hidden]="uiStore.activeTab() !== 'categories'"
-    [attr.hidden]="uiStore.activeTab() !== 'categories' ? true : null">
-    <home-categories-view></home-categories-view>
-  </div>
+  @switch (uiStore.activeTab()) {
+    @case ('accounts') {
+      <home-accounts-view></home-accounts-view>
+    }
+    @case ('transactions') {
+      <home-transactions-view></home-transactions-view>
+    }
+    @case ('categories') {
+      <home-categories-view></home-categories-view>
+    }
+  }
 </section>

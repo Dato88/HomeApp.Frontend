@@ -1,4 +1,7 @@
-<div class="toolbar" role="group" aria-label="Buchungsfilter">
+<div
+  class="toolbar"
+  role="group"
+  aria-label="Buchungsfilter">
   <lib-dropdown-list
     label="Konto"
     defaultText="Konto wählen"
@@ -10,18 +13,19 @@
     type="date"
     effectStyle="box"
     [value]="fromDate()"
-    (valueChange)="onFromDateChange($event)"></lib-input-field>
+    (valueChange)="fromDate.set($event)"></lib-input-field>
   <lib-input-field
     label="Bis"
     type="date"
     effectStyle="box"
     [value]="toDate()"
-    (valueChange)="onToDateChange($event)"></lib-input-field>
+    (valueChange)="toDate.set($event)"></lib-input-field>
   <home-checkbox
     label="Nur ohne Kategorie"
-    [checked]="uncategorizedOnly()"
-    (checkedChange)="onUncategorizedChange($event)"></home-checkbox>
-  <lib-button [label]="'Filter anwenden'" (clicked)="applyFilters()"></lib-button>
+    [(checked)]="uncategorizedOnly"></home-checkbox>
+  <lib-button
+    [label]="'Filter anwenden'"
+    (clicked)="applyFilters()"></lib-button>
 </div>
 
 @if (selectedAccountId()) {
@@ -43,8 +47,12 @@
   }
 
   @if (store.lastImportResult()) {
-    <p class="status-banner status-banner--success" role="status">
-      <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+    <p
+      class="status-banner status-banner--success"
+      role="status">
+      <i
+        class="bi bi-check-circle-fill"
+        aria-hidden="true"></i>
       Import: {{ store.lastImportResult()!.imported }} übernommen,
       {{ store.lastImportResult()!.skippedDuplicates }} Duplikate übersprungen,
       {{ store.lastImportResult()!.failed }} fehlgeschlagen
@@ -53,12 +61,24 @@
 
   @if (store.transactionsResource.isLoading()) {
     <lib-skeleton aria-hidden="true"></lib-skeleton>
-    <p class="visually-hidden" role="status" aria-live="polite">Buchungen werden geladen …</p>
+    <p
+      class="visually-hidden"
+      role="status"
+      aria-live="polite">
+      Buchungen werden geladen …
+    </p>
   } @else if (store.transactionsResource.error()) {
-    <div class="status-banner status-banner--danger" role="alert">
-      <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+    <div
+      class="status-banner status-banner--danger"
+      role="alert">
+      <i
+        class="bi bi-exclamation-triangle-fill"
+        aria-hidden="true"></i>
       <span>Buchungen konnten nicht geladen werden.</span>
-      <button type="button" class="btn" (click)="store.transactionsResource.reload()">
+      <button
+        type="button"
+        class="btn"
+        (click)="store.transactionsResource.reload()">
         Erneut versuchen
       </button>
     </div>
@@ -70,19 +90,37 @@
         [hoverable]="true"
         [zebra]="true"
         [detailsExpandedBy]="isDetailsExpanded">
-        <lib-grid-column field="bookingDate" title="Datum" [sortable]="true"></lib-grid-column>
-        <lib-grid-column field="amount" title="Betrag">
-          <ng-template libGridCellTemplate let-transaction let-value="value">
-            <span class="amount-cell" [class.amount-cell--negative]="transaction.amount < 0">
+        <lib-grid-column
+          field="bookingDate"
+          title="Datum"
+          [sortable]="true"></lib-grid-column>
+        <lib-grid-column
+          field="amount"
+          title="Betrag">
+          <ng-template
+            libGridCellTemplate
+            let-transaction
+            let-value="value">
+            <span
+              class="amount-cell"
+              [class.amount-cell--negative]="transaction.amount < 0">
               {{ value | number: '1.2-2' }}
             </span>
           </ng-template>
         </lib-grid-column>
         @if (viewport.isDesktop()) {
-          <lib-grid-column field="counterpartyName" title="Empfänger"></lib-grid-column>
-          <lib-grid-column field="purpose" title="Verwendungszweck"></lib-grid-column>
-          <lib-grid-column field="categoryId" title="Kategorie">
-            <ng-template libGridCellTemplate let-transaction>
+          <lib-grid-column
+            field="counterpartyName"
+            title="Empfänger"></lib-grid-column>
+          <lib-grid-column
+            field="purpose"
+            title="Verwendungszweck"></lib-grid-column>
+          <lib-grid-column
+            field="categoryId"
+            title="Kategorie">
+            <ng-template
+              libGridCellTemplate
+              let-transaction>
               <lib-dropdown-list
                 label="Kategorie"
                 defaultText="Ohne Kategorie"
@@ -93,8 +131,12 @@
             </ng-template>
           </lib-grid-column>
         }
-        <lib-grid-column field="transactionId" title="Aktionen">
-          <ng-template libGridCellTemplate let-transaction>
+        <lib-grid-column
+          field="transactionId"
+          title="Aktionen">
+          <ng-template
+            libGridCellTemplate
+            let-transaction>
             <div class="row-actions">
               @if (!viewport.isDesktop()) {
                 <button
@@ -120,20 +162,26 @@
                   class="icon-button"
                   [attr.aria-label]="'Buchung vom ' + transaction.bookingDate + ' bearbeiten'"
                   (click)="openEdit(transaction)">
-                  <i class="bi bi-pencil" aria-hidden="true"></i>
+                  <i
+                    class="bi bi-pencil"
+                    aria-hidden="true"></i>
                 </button>
                 <button
                   type="button"
                   class="icon-button icon-button--danger"
                   [attr.aria-label]="'Buchung vom ' + transaction.bookingDate + ' löschen'"
                   (click)="deleteDialog.open(transaction)">
-                  <i class="bi bi-trash" aria-hidden="true"></i>
+                  <i
+                    class="bi bi-trash"
+                    aria-hidden="true"></i>
                 </button>
               }
             </div>
           </ng-template>
         </lib-grid-column>
-        <ng-template libGridRowDetailsTemplate let-transaction>
+        <ng-template
+          libGridRowDetailsTemplate
+          let-transaction>
           <div class="transaction-details">
             <dl>
               <dt>Empfänger</dt>
@@ -153,8 +201,7 @@
           noEntries
           icon="bi-receipt"
           title="Keine Buchungen gefunden"
-          description="Für die gewählten Filter gibt es keine Buchungen.">
-        </home-empty-state>
+          description="Für die gewählten Filter gibt es keine Buchungen."></home-empty-state>
       </lib-grid>
     </div>
 
@@ -186,10 +233,15 @@
       class="icon-button"
       aria-label="Dialog schließen"
       (click)="closeFormDialog()">
-      <i class="bi bi-x-lg" aria-hidden="true"></i>
+      <i
+        class="bi bi-x-lg"
+        aria-hidden="true"></i>
     </button>
   </div>
-  <form class="form-grid" (submit)="$event.preventDefault(); submitTransaction()" novalidate>
+  <form
+    class="form-grid"
+    (submit)="$event.preventDefault(); submitTransaction()"
+    novalidate>
     <lib-input-field
       label="Buchungsdatum"
       type="date"
@@ -207,7 +259,9 @@
       [value]="amount()"
       (valueChange)="amount.set($event)"
       [validationState]="showAmountError() ? 'error' : null"
-      [errorMessage]="showAmountError() ? 'Gültiger Betrag ist erforderlich' : ''"></lib-input-field>
+      [errorMessage]="
+        showAmountError() ? 'Gültiger Betrag ist erforderlich' : ''
+      "></lib-input-field>
     <lib-input-field
       label="Empfänger"
       effectStyle="box"
@@ -224,8 +278,12 @@
       [dropdownData]="categoryOptions()"
       [(selectedValue)]="categoryId"></lib-dropdown-list>
     <div class="dialog-actions">
-      <lib-button [label]="'Abbrechen'" (clicked)="closeFormDialog()"></lib-button>
-      <lib-button [type]="'submit'" [label]="'Speichern'"></lib-button>
+      <lib-button
+        [label]="'Abbrechen'"
+        (clicked)="closeFormDialog()"></lib-button>
+      <lib-button
+        [type]="'submit'"
+        [label]="'Speichern'"></lib-button>
     </div>
   </form>
 </lib-dialog>

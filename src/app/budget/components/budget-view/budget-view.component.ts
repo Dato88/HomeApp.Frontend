@@ -61,12 +61,7 @@ export class BudgetViewComponent {
   readonly financeStore = inject(FinanceStore);
   readonly viewport = inject(ViewportService);
 
-  readonly selectedHouseholdId = computed(() => {
-    const householdId = this.financeStore.selectedCategoryHouseholdId();
-
-    return householdId != null ? String(householdId) : '';
-  });
-
+  readonly selectedHouseholdId = signal('');
   readonly selectedYear = signal(String(new Date().getFullYear()));
   readonly monthLabels = MONTH_LABELS;
   readonly months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as const;
@@ -123,11 +118,7 @@ export class BudgetViewComponent {
   });
 
   readonly categoryOptions = computed<DropdownOption[]>(() => {
-    const householdId = this.financeStore.selectedCategoryHouseholdId();
-
-    if (!householdId) {
-      return [];
-    }
+    const householdId = Number(this.selectedHouseholdId());
 
     return this.financeStore
       .categoryEntities()
@@ -179,45 +170,32 @@ export class BudgetViewComponent {
 
   constructor() {
     effect(() => {
-      const householdId = this.financeStore.selectedCategoryHouseholdId();
+      const householdId = Number(this.selectedHouseholdId());
       const year = Number(this.selectedYear());
 
-      if (householdId && year && !Number.isNaN(year)) {
+      if (householdId && !Number.isNaN(householdId) && year && !Number.isNaN(year)) {
         this.store.setSelection({ householdId, year });
+        this.financeStore.setCategoryHouseholdId(householdId);
       } else {
         this.store.setSelection(undefined);
       }
     });
   }
 
-  onHouseholdChange(householdId: string): void {
-    if (!householdId || householdId === this.selectedHouseholdId()) {
-      return;
-    }
-
-    const id = Number(householdId);
-
-    if (Number.isNaN(id)) {
-      return;
-    }
-
-    this.financeStore.setCategoryHouseholdId(id);
-  }
-
   applySelection(): void {
-    const householdId = this.financeStore.selectedCategoryHouseholdId();
+    const householdId = Number(this.selectedHouseholdId());
     const year = Number(this.selectedYear());
 
-    if (householdId && year && !Number.isNaN(year)) {
+    if (householdId && !Number.isNaN(householdId) && year && !Number.isNaN(year)) {
       this.store.setSelection({ householdId, year });
     }
   }
 
   createBudget(): void {
-    const householdId = this.financeStore.selectedCategoryHouseholdId();
+    const householdId = Number(this.selectedHouseholdId());
     const year = Number(this.selectedYear());
 
-    if (householdId && year && !Number.isNaN(year)) {
+    if (householdId && !Number.isNaN(householdId) && year && !Number.isNaN(year)) {
       this.store.createBudget({ householdId, year });
     }
   }
@@ -235,9 +213,7 @@ export class BudgetViewComponent {
       index: budget.budgetGroups.length + 1,
       title,
       budgetGroupType: Number(this.newGroupType()) as BudgetGroupType,
-      targetPercent: this.newGroupTargetPercent()
-        ? Number(this.newGroupTargetPercent())
-        : null,
+      targetPercent: this.newGroupTargetPercent() ? Number(this.newGroupTargetPercent()) : null,
     };
 
     this.store.createGroup(request);

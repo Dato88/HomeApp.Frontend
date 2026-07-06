@@ -15,6 +15,13 @@
   }
 }
 
+// Breite Tabellen/Grids: volle Shell-Breite ohne seitliche Zentrierung.
+.page--wide {
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+}
+
 // Aktions-/Filterzeile: bricht auf schmalen Screens um
 .toolbar {
   display: flex;

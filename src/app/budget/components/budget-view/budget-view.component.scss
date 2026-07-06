@@ -20,16 +20,56 @@
 }
 
 .budget-table {
-  width: 100%;
-  border-collapse: collapse;
+  --budget-col-row-width: 9rem;
+  --budget-col-category-width: 13rem;
+  --budget-col-month-width: 6rem;
+  --budget-col-sum-width: 6.5rem;
+  --budget-col-actions-width: 8rem;
+
+  width: max(
+    100%,
+    calc(
+      var(--budget-col-row-width) + var(--budget-col-category-width) +
+        12 * var(--budget-col-month-width) + var(--budget-col-sum-width) +
+        var(--budget-col-actions-width)
+    )
+  );
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+
+  th,
+  td {
+    padding: var(--app-space-1) var(--app-space-2);
+    text-align: right;
+    vertical-align: middle;
+    border: 1px solid var(--app-border);
+    overflow: hidden;
+  }
 }
 
-.budget-table th,
-.budget-table td {
-  padding: var(--app-space-1) var(--app-space-2);
-  text-align: right;
-  vertical-align: middle;
-  border: 1px solid var(--app-border);
+.budget-table__col-row {
+  width: var(--budget-col-row-width);
+}
+
+.budget-table__col-category {
+  width: var(--budget-col-category-width);
+}
+
+.budget-table__col-month {
+  width: var(--budget-col-month-width);
+}
+
+.budget-table__col-sum {
+  width: var(--budget-col-sum-width);
+}
+
+.budget-table__col-actions {
+  width: var(--budget-col-actions-width);
+}
+
+.budget-table__category-cell {
+  vertical-align: top;
 }
 
 .budget-table th[scope='row'],
@@ -45,16 +85,33 @@
 .sticky-col {
   position: sticky;
   left: 0;
-  z-index: 1;
+  z-index: 2;
+  width: var(--budget-col-row-width);
+  min-width: var(--budget-col-row-width);
+  max-width: var(--budget-col-row-width);
   background: var(--app-surface);
+  box-shadow: 1px 0 0 var(--app-border);
 }
 
 .sticky-col--second {
-  left: 8rem;
+  left: var(--budget-col-row-width);
+  z-index: 2;
+  width: var(--budget-col-category-width);
+  min-width: var(--budget-col-category-width);
+  max-width: var(--budget-col-category-width);
+}
+
+.budget-table__row--muted .sticky-col {
+  background: var(--app-surface-muted);
+}
+
+.budget-table thead .sticky-col {
+  z-index: 3;
 }
 
 .cell-input {
-  width: 5.5rem;
+  width: 100%;
+  min-width: 0;
   box-sizing: border-box;
   font: inherit;
   border: 1px solid var(--app-border);

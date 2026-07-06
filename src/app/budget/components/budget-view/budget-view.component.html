@@ -1,9 +1,17 @@
-<section class="page" aria-labelledby="budget-heading">
-  <home-page-header title="Budget" headingId="budget-heading"></home-page-header>
+<section
+  class="page page--wide"
+  aria-labelledby="budget-heading">
+  <home-page-header
+    title="Budget"
+    headingId="budget-heading"></home-page-header>
 
   @if (store.error()) {
-    <div class="status-banner status-banner--danger" role="alert">
-      <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+    <div
+      class="status-banner status-banner--danger"
+      role="alert">
+      <i
+        class="bi bi-exclamation-triangle-fill"
+        aria-hidden="true"></i>
       <span>{{ store.error() }}</span>
     </div>
   }
@@ -13,15 +21,16 @@
       label="Haushalt"
       defaultText="Haushalt wählen"
       [dropdownData]="householdOptions()"
-      [selectedValue]="selectedHouseholdId()"
-      (selectedValueChange)="onHouseholdChange($event)"></lib-dropdown-list>
+      [(selectedValue)]="selectedHouseholdId"></lib-dropdown-list>
     <lib-input-field
       label="Jahr"
       type="number"
       effectStyle="box"
       [value]="selectedYear()"
       (valueChange)="selectedYear.set($event)"></lib-input-field>
-    <lib-button [label]="'Laden'" (clicked)="applySelection()"></lib-button>
+    <lib-button
+      [label]="'Laden'"
+      (clicked)="applySelection()"></lib-button>
   </div>
 
   @if (selectedHouseholdId()) {
@@ -33,19 +42,35 @@
 
     @if (store.budgetResource.isLoading() || store.evaResource.isLoading()) {
       <lib-skeleton aria-hidden="true"></lib-skeleton>
-      <p class="visually-hidden" role="status" aria-live="polite">Budget wird geladen …</p>
+      <p
+        class="visually-hidden"
+        role="status"
+        aria-live="polite">
+        Budget wird geladen …
+      </p>
     } @else if (store.budgetResource.error()) {
-      <div class="status-banner status-banner--danger" role="alert">
-        <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+      <div
+        class="status-banner status-banner--danger"
+        role="alert">
+        <i
+          class="bi bi-exclamation-triangle-fill"
+          aria-hidden="true"></i>
         <span>Budget konnte nicht geladen werden.</span>
-        <button type="button" class="btn" (click)="reloadBudget()">Erneut versuchen</button>
+        <button
+          type="button"
+          class="btn"
+          (click)="reloadBudget()">
+          Erneut versuchen
+        </button>
       </div>
     } @else if (!budget()) {
       <home-empty-state
         icon="bi-pie-chart"
         title="Kein Budget vorhanden"
         description="Für diesen Haushalt und dieses Jahr existiert noch kein Budget.">
-        <lib-button [label]="'Budget anlegen'" (clicked)="createBudget()"></lib-button>
+        <lib-button
+          [label]="'Budget anlegen'"
+          (clicked)="createBudget()"></lib-button>
       </home-empty-state>
     } @else if (uiStore.mode() === 'editor') {
       <div class="editor-toolbar">
@@ -66,7 +91,9 @@
             effectStyle="box"
             [value]="newGroupTargetPercent()"
             (valueChange)="newGroupTargetPercent.set($event)"></lib-input-field>
-          <lib-button [label]="'Gruppe hinzufügen'" (clicked)="createGroup()"></lib-button>
+          <lib-button
+            [label]="'Gruppe hinzufügen'"
+            (clicked)="createGroup()"></lib-button>
         </div>
 
         <div class="create-row">
@@ -85,18 +112,24 @@
             defaultText="Keine Kategorie"
             [dropdownData]="categoryOptions()"
             [(selectedValue)]="newRowCategoryId"></lib-dropdown-list>
-          <lib-button [label]="'Zeile hinzufügen'" (clicked)="createRow()"></lib-button>
+          <lib-button
+            [label]="'Zeile hinzufügen'"
+            (clicked)="createRow()"></lib-button>
         </div>
       </div>
 
       @if (!viewport.isDesktop()) {
-        <div class="month-stepper" aria-live="polite">
+        <div
+          class="month-stepper"
+          aria-live="polite">
           <button
             type="button"
             class="month-stepper__btn"
             aria-label="Vorheriger Monat"
             (click)="uiStore.prevMonth()">
-            <i class="bi bi-chevron-left" aria-hidden="true"></i>
+            <i
+              class="bi bi-chevron-left"
+              aria-hidden="true"></i>
           </button>
           <span class="month-stepper__label">{{ selectedMonthLabel() }}</span>
           <button
@@ -104,7 +137,9 @@
             class="month-stepper__btn"
             aria-label="Nächster Monat"
             (click)="uiStore.nextMonth()">
-            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+            <i
+              class="bi bi-chevron-right"
+              aria-hidden="true"></i>
           </button>
         </div>
       }
@@ -123,10 +158,27 @@
 
             <div class="grid-scroll">
               <table class="budget-table">
+                <colgroup>
+                  <col class="budget-table__col-row" />
+                  <col class="budget-table__col-category" />
+                  @for (month of months; track month) {
+                    <col class="budget-table__col-month" />
+                  }
+                  <col class="budget-table__col-sum" />
+                  <col class="budget-table__col-actions" />
+                </colgroup>
                 <thead>
                   <tr>
-                    <th scope="col" class="sticky-col">Zeile</th>
-                    <th scope="col" class="sticky-col sticky-col--second">Kategorie</th>
+                    <th
+                      scope="col"
+                      class="sticky-col">
+                      Zeile
+                    </th>
+                    <th
+                      scope="col"
+                      class="sticky-col sticky-col--second">
+                      Kategorie
+                    </th>
                     @for (month of months; track month) {
                       <th scope="col">{{ monthLabel(month) }}</th>
                     }
@@ -135,16 +187,27 @@
                   </tr>
                 </thead>
                 <tbody>
-                  @for (row of rowsForGroup(group.budgetGroupId); track row.budgetRowId; let even = $even) {
+                  @for (
+                    row of rowsForGroup(group.budgetGroupId);
+                    track row.budgetRowId;
+                    let even = $even
+                  ) {
                     <tr [class.budget-table__row--muted]="even">
-                      <th scope="row" class="sticky-col">{{ row.title }}</th>
-                      <td class="sticky-col sticky-col--second">
+                      <th
+                        scope="row"
+                        class="sticky-col">
+                        {{ row.title }}
+                      </th>
+                      <td class="sticky-col sticky-col--second budget-table__category-cell">
                         <lib-dropdown-list
-                          label="Kategorie"
+                          label=" "
+                          [ariaLabel]="'Kategorie für ' + row.title"
                           defaultText="Keine Kategorie"
                           [dropdownData]="categoryOptions()"
                           [selectedValue]="categoryValue(row.categoryId)"
-                          (selectedValueChange)="updateRowCategory(row, $event)"></lib-dropdown-list>
+                          (selectedValueChange)="
+                            updateRowCategory(row, $event)
+                          "></lib-dropdown-list>
                       </td>
                       @for (month of months; track month) {
                         <td>
@@ -193,7 +256,9 @@
                   [dropdownData]="categoryOptions()"
                   [selectedValue]="categoryValue(row.categoryId)"
                   (selectedValueChange)="updateRowCategory(row, $event)"></lib-dropdown-list>
-                <label class="budget-mobile-row__label" [for]="'cell-' + row.budgetRowId">
+                <label
+                  class="budget-mobile-row__label"
+                  [for]="'cell-' + row.budgetRowId">
                   {{ monthLabel(uiStore.selectedMonth()) }}
                 </label>
                 <input
@@ -213,10 +278,7 @@
                     )
                   " />
                 <div class="budget-mobile-row__footer">
-                  <span
-                    >Jahressumme:
-                    {{ rowYearTotal(row.budgetRowId) | number: '1.2-2' }}</span
-                  >
+                  <span>Jahressumme: {{ rowYearTotal(row.budgetRowId) | number: '1.2-2' }}</span>
                   <lib-button
                     [label]="'Zeile löschen'"
                     (clicked)="confirmDeleteRow(row)"></lib-button>
@@ -229,13 +291,17 @@
     } @else {
       @if (eva()) {
         @if (!viewport.isDesktop()) {
-          <div class="month-stepper" aria-live="polite">
+          <div
+            class="month-stepper"
+            aria-live="polite">
             <button
               type="button"
               class="month-stepper__btn"
               aria-label="Vorheriger Monat"
               (click)="uiStore.prevMonth()">
-              <i class="bi bi-chevron-left" aria-hidden="true"></i>
+              <i
+                class="bi bi-chevron-left"
+                aria-hidden="true"></i>
             </button>
             <span class="month-stepper__label">{{ selectedMonthLabel() }}</span>
             <button
@@ -243,7 +309,9 @@
               class="month-stepper__btn"
               aria-label="Nächster Monat"
               (click)="uiStore.nextMonth()">
-              <i class="bi bi-chevron-right" aria-hidden="true"></i>
+              <i
+                class="bi bi-chevron-right"
+                aria-hidden="true"></i>
             </button>
           </div>
         }
@@ -264,7 +332,11 @@
                 <table class="budget-table eva-table">
                   <thead>
                     <tr>
-                      <th scope="col" class="sticky-col">Zeile</th>
+                      <th
+                        scope="col"
+                        class="sticky-col">
+                        Zeile
+                      </th>
                       @for (month of months; track month) {
                         <th scope="col">{{ monthLabel(month) }}</th>
                       }
@@ -276,7 +348,11 @@
                   <tbody>
                     @for (row of group.rows; track row.budgetRowId; let even = $even) {
                       <tr [class.budget-table__row--muted]="even">
-                        <th scope="row" class="sticky-col">{{ row.title }}</th>
+                        <th
+                          scope="row"
+                          class="sticky-col">
+                          {{ row.title }}
+                        </th>
                         @for (monthIndex of monthIndexes; track monthIndex) {
                           @let soll = row.soll[monthIndex];
                           @let ist = row.ist[monthIndex];
@@ -302,9 +378,13 @@
                                 diff
                               ">
                               @if (diff > 0) {
-                                <i class="bi bi-caret-up-fill" aria-hidden="true"></i>
+                                <i
+                                  class="bi bi-caret-up-fill"
+                                  aria-hidden="true"></i>
                               } @else if (diff < 0) {
-                                <i class="bi bi-caret-down-fill" aria-hidden="true"></i>
+                                <i
+                                  class="bi bi-caret-down-fill"
+                                  aria-hidden="true"></i>
                               }
                               {{ diff | number: '1.2-2' }}
                             </span>
@@ -319,9 +399,13 @@
                             [class.diff-chip--up]="rowYearDiffVal > 0"
                             [class.diff-chip--down]="rowYearDiffVal < 0">
                             @if (rowYearDiffVal > 0) {
-                              <i class="bi bi-caret-up-fill" aria-hidden="true"></i>
+                              <i
+                                class="bi bi-caret-up-fill"
+                                aria-hidden="true"></i>
                             } @else if (rowYearDiffVal < 0) {
-                              <i class="bi bi-caret-down-fill" aria-hidden="true"></i>
+                              <i
+                                class="bi bi-caret-down-fill"
+                                aria-hidden="true"></i>
                             }
                             {{ rowYearDiffVal | number: '1.2-2' }}
                           </span>
@@ -329,7 +413,11 @@
                       </tr>
                     }
                     <tr class="group-total">
-                      <th scope="row" class="sticky-col">Gruppensumme</th>
+                      <th
+                        scope="row"
+                        class="sticky-col">
+                        Gruppensumme
+                      </th>
                       @for (monthIndex of monthIndexes; track monthIndex) {
                         @let diff = group.diff[monthIndex];
                         <td>
@@ -338,9 +426,13 @@
                             [class.diff-chip--up]="diff > 0"
                             [class.diff-chip--down]="diff < 0">
                             @if (diff > 0) {
-                              <i class="bi bi-caret-up-fill" aria-hidden="true"></i>
+                              <i
+                                class="bi bi-caret-up-fill"
+                                aria-hidden="true"></i>
                             } @else if (diff < 0) {
-                              <i class="bi bi-caret-down-fill" aria-hidden="true"></i>
+                              <i
+                                class="bi bi-caret-down-fill"
+                                aria-hidden="true"></i>
                             }
                             {{ diff | number: '1.2-2' }}
                           </span>
@@ -398,9 +490,13 @@
                           [class.diff-chip--up]="diff > 0"
                           [class.diff-chip--down]="diff < 0">
                           @if (diff > 0) {
-                            <i class="bi bi-caret-up-fill" aria-hidden="true"></i>
+                            <i
+                              class="bi bi-caret-up-fill"
+                              aria-hidden="true"></i>
                           } @else if (diff < 0) {
-                            <i class="bi bi-caret-down-fill" aria-hidden="true"></i>
+                            <i
+                              class="bi bi-caret-down-fill"
+                              aria-hidden="true"></i>
                           }
                           {{ diff | number: '1.2-2' }}
                         </span>
@@ -424,8 +520,14 @@
           }
         }
 
-        <section class="eva-totals" aria-labelledby="eva-totals-heading">
-          <h2 id="eva-totals-heading" class="visually-hidden">Jahresübersicht</h2>
+        <section
+          class="eva-totals"
+          aria-labelledby="eva-totals-heading">
+          <h2
+            id="eva-totals-heading"
+            class="visually-hidden">
+            Jahresübersicht
+          </h2>
           <div class="stat-card">
             <h3>Einnahmen</h3>
             <p>
