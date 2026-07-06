@@ -1,9 +1,10 @@
-import { ResourceRef } from '@angular/core';
+import { inject, ResourceRef } from '@angular/core';
 import { patchState, signalStoreFeature, type, withMethods } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { tapResponse } from '@ngrx/operators';
 import { exhaustMap, pipe, tap } from 'rxjs';
 import { Result } from '../../../core/models';
+import { ToastService } from '../../../shared/ui/toast/toast.service';
 import { HouseholdService } from '../../services/household.service';
 import {
   AddHouseholdMemberRequest,
@@ -23,10 +24,18 @@ export function withHouseholdCommands() {
       methods: type<{ _handleError: (error: unknown) => void }>(),
       state: type<{ isSaving: boolean; error: string | null }>(),
     },
-    withMethods((store) => {
-      const handleResult = (result: Result<number>, fallbackMessage: string): void => {
+    withMethods((store, toast = inject(ToastService)) => {
+      const handleResult = (
+        result: Result<number>,
+        fallbackMessage: string,
+        successMessage?: string
+      ): void => {
         if (result.isSuccess) {
           store.householdsResource.reload();
+
+          if (successMessage) {
+            toast.success(successMessage);
+          }
         } else {
           patchState(store, { error: result.message ?? fallbackMessage });
         }
@@ -34,7 +43,8 @@ export function withHouseholdCommands() {
 
       const command = <TRequest>(
         execute: (request: TRequest) => ReturnType<HouseholdService['createHousehold']>,
-        fallbackMessage: string
+        fallbackMessage: string,
+        successMessage?: string
       ) =>
         rxMethod<TRequest>(
           pipe(
@@ -42,7 +52,7 @@ export function withHouseholdCommands() {
             exhaustMap((request) =>
               execute(request).pipe(
                 tapResponse({
-                  next: (result) => handleResult(result, fallbackMessage),
+                  next: (result) => handleResult(result, fallbackMessage, successMessage),
                   error: (err) => store._handleError(err),
                   finalize: () => patchState(store, { isSaving: false }),
                 })
@@ -54,23 +64,28 @@ export function withHouseholdCommands() {
       return {
         createHousehold: command<CreateHouseholdRequest>(
           (request) => store._householdService.createHousehold(request),
-          'Failed to create household'
+          'Haushalt konnte nicht angelegt werden',
+          'Haushalt angelegt'
         ),
         renameHousehold: command<RenameHouseholdRequest>(
           (request) => store._householdService.renameHousehold(request),
-          'Failed to rename household'
+          'Haushalt konnte nicht umbenannt werden',
+          'Haushalt umbenannt'
         ),
         deleteHousehold: command<number>(
           (householdId) => store._householdService.deleteHousehold(householdId),
-          'Failed to delete household'
+          'Haushalt konnte nicht gelöscht werden',
+          'Haushalt gelöscht'
         ),
         addMember: command<AddHouseholdMemberRequest>(
           (request) => store._householdService.addMember(request),
-          'Failed to add household member'
+          'Mitglied konnte nicht eingeladen werden',
+          'Mitglied eingeladen'
         ),
         removeMember: command<RemoveHouseholdMemberRequest>(
           (request) => store._householdService.removeMember(request),
-          'Failed to remove household member'
+          'Mitglied konnte nicht entfernt werden',
+          'Mitglied entfernt'
         ),
       };
     })

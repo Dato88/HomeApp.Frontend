@@ -1,8 +1,10 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { EmptyStateComponent } from '../../shared/ui/empty-state/empty-state.component';
+import { PageHeaderComponent } from '../../shared/ui/page-header/page-header.component';
 
 @Component({
   selector: 'home-settings-menu',
-  imports: [],
+  imports: [PageHeaderComponent, EmptyStateComponent],
   templateUrl: './settings-menu.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './settings-menu.component.scss',

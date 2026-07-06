@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, computed, effect, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, signal, viewChild } from '@angular/core';
 import {
   ButtonComponent,
   DialogComponent,
@@ -16,7 +16,6 @@ import { FinanceStore } from '../../+state/finance.store';
 import {
   AccountDto,
   CreateTransactionRequest,
-  SetTransactionCategoryRequest,
   TransactionDto,
   UpdateTransactionRequest,
 } from '../../+state/models';
@@ -26,6 +25,7 @@ import { ConfirmDialogComponent } from '../../../shared/ui/confirm-dialog/confir
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { FileUploadComponent } from '../../../shared/ui/file-upload/file-upload.component';
 import { ViewportService } from '../../../shared/services/viewport/viewport.service';
+import { FinanceUiStore } from '../finance-view/+store/finance-ui.store';
 
 interface DropdownOption {
   value: string;
@@ -57,6 +57,7 @@ interface DropdownOption {
 })
 export class TransactionsViewComponent {
   readonly store = inject(FinanceStore);
+  readonly uiStore = inject(FinanceUiStore);
   readonly householdStore = inject(HouseholdStore);
   readonly viewport = inject(ViewportService);
 
@@ -64,12 +65,15 @@ export class TransactionsViewComponent {
 
   private readonly fileUpload = viewChild(FileUploadComponent);
 
-  readonly selectedAccountId = signal('');
-  readonly fromDate = signal('');
-  readonly toDate = signal('');
-  readonly uncategorizedOnly = signal(false);
-  readonly pageIndex = signal(0);
-  readonly pageSize = 50;
+  readonly selectedAccountId = computed(() => this.uiStore.transactionsAccountId());
+
+  readonly fromDate = computed(() => this.uiStore.transactionsFromDate());
+
+  readonly toDate = computed(() => this.uiStore.transactionsToDate());
+
+  readonly uncategorizedOnly = computed(() => this.uiStore.transactionsUncategorizedOnly());
+
+  readonly pageIndex = computed(() => this.uiStore.transactionsPageIndex());
 
   readonly editingTransaction = signal<TransactionDto | null>(null);
   readonly bookingDate = signal('');
@@ -137,46 +141,39 @@ export class TransactionsViewComponent {
         : 0) ?? 0
   );
 
-  constructor() {
-    effect(() => {
-      const accountId = Number(this.selectedAccountId());
-
-      if (!accountId || Number.isNaN(accountId)) {
-        this.store.setTransactionFilter(undefined);
-        return;
-      }
-
-      this.store.setTransactionFilter({
-        accountId,
-        from: this.fromDate() || null,
-        to: this.toDate() || null,
-        uncategorized: this.uncategorizedOnly() ? true : undefined,
-        page: this.pageIndex() + 1,
-        pageSize: this.pageSize,
-      });
-    });
-
-    effect(() => {
-      const account = this.selectedAccount();
-
-      if (account?.sharedHouseholdIds.length) {
-        this.store.setCategoryHouseholdId(account.sharedHouseholdIds[0]);
-      }
-    });
-  }
-
   onAccountChange(accountId: string): void {
-    this.selectedAccountId.set(accountId);
-    this.pageIndex.set(0);
+    if (!accountId) {
+      return;
+    }
+
+    const id = Number(accountId);
+
+    if (Number.isNaN(id) || id === Number(this.uiStore.transactionsAccountId())) {
+      return;
+    }
+
+    this.uiStore.setTransactionsAccountId(accountId);
     this.expandedTransactionId.set(null);
   }
 
+  onFromDateChange(from: string): void {
+    this.uiStore.setTransactionsFromDate(from);
+  }
+
+  onToDateChange(to: string): void {
+    this.uiStore.setTransactionsToDate(to);
+  }
+
+  onUncategorizedChange(uncategorized: boolean): void {
+    this.uiStore.setTransactionsUncategorizedOnly(uncategorized);
+  }
+
   applyFilters(): void {
-    this.pageIndex.set(0);
+    this.uiStore.setTransactionsPageIndex(0);
   }
 
   onPageChange(pageIndex: number): void {
-    this.pageIndex.set(pageIndex);
+    this.uiStore.setTransactionsPageIndex(pageIndex);
     this.expandedTransactionId.set(null);
   }
 

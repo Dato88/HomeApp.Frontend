@@ -14,15 +14,24 @@
     ariaLabel="Finanzbereiche"
     (activeIdChange)="uiStore.setActiveTab($event)"></home-tab-bar>
 
-  @switch (uiStore.activeTab()) {
-    @case ('accounts') {
-      <home-accounts-view></home-accounts-view>
-    }
-    @case ('transactions') {
-      <home-transactions-view></home-transactions-view>
-    }
-    @case ('categories') {
-      <home-categories-view></home-categories-view>
-    }
-  }
+  <div
+    class="finance-tab-panel"
+    [class.finance-tab-panel--hidden]="uiStore.activeTab() !== 'accounts'"
+    [attr.hidden]="uiStore.activeTab() !== 'accounts' ? true : null">
+    <home-accounts-view></home-accounts-view>
+  </div>
+
+  <div
+    class="finance-tab-panel"
+    [class.finance-tab-panel--hidden]="uiStore.activeTab() !== 'transactions'"
+    [attr.hidden]="uiStore.activeTab() !== 'transactions' ? true : null">
+    <home-transactions-view></home-transactions-view>
+  </div>
+
+  <div
+    class="finance-tab-panel"
+    [class.finance-tab-panel--hidden]="uiStore.activeTab() !== 'categories'"
+    [attr.hidden]="uiStore.activeTab() !== 'categories' ? true : null">
+    <home-categories-view></home-categories-view>
+  </div>
 </section>

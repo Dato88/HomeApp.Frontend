@@ -2,6 +2,7 @@ export {
   BUDGET_GROUP_TYPE_LABELS,
   BudgetGroupType,
   MONTH_LABELS,
+  MONTH_LABELS_FULL,
 } from './budget.enums';
 export type {
   BudgetCellDto,

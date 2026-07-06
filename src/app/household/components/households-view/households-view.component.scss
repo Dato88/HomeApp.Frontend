@@ -1,21 +1,6 @@
-home-households-view {
-  width: 100%;
-}
-
 .household-list {
   display: grid;
-  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--app-space-3);
   width: 100%;
-}
-
-.error-message {
-  color: #b00020;
-  margin: 0;
-}
-
-.dialog-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
 }

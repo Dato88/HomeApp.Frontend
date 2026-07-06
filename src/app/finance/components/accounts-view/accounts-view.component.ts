@@ -6,6 +6,7 @@ import {
   GridCellTemplateDirective,
   GridColumnComponent,
   GridComponent,
+  GridRowDetailsTemplateDirective,
   InputFieldComponent,
   SkeletonComponent,
 } from '@Dato88/homeapp-lib';
@@ -38,6 +39,7 @@ interface DropdownOption {
     GridCellTemplateDirective,
     GridColumnComponent,
     GridComponent,
+    GridRowDetailsTemplateDirective,
     InputFieldComponent,
     SkeletonComponent,
     ConfirmDialogComponent,
@@ -67,6 +69,10 @@ export class AccountsViewComponent {
   readonly createHouseholdIds = signal('');
 
   private readonly submitted = signal(false);
+  private readonly expandedAccountId = signal<number | null>(null);
+
+  readonly isDetailsExpanded = (account: AccountDto): boolean =>
+    account.accountId === this.expandedAccountId();
 
   readonly showNameError = computed(() => this.submitted() && !this.name().trim());
 
@@ -219,5 +225,11 @@ export class AccountsViewComponent {
     return account.sharedHouseholdIds
       .map((id) => households.find((household) => household.householdId === id)?.name ?? `#${id}`)
       .join(', ');
+  }
+
+  toggleDetails(account: AccountDto): void {
+    this.expandedAccountId.update((current) =>
+      current === account.accountId ? null : account.accountId
+    );
   }
 }

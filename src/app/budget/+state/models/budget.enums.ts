@@ -5,22 +5,37 @@ export enum BudgetGroupType {
 }
 
 export const BUDGET_GROUP_TYPE_LABELS: Record<BudgetGroupType, string> = {
-  [BudgetGroupType.Unknown]: 'Unknown',
-  [BudgetGroupType.Income]: 'Income',
-  [BudgetGroupType.Expense]: 'Expense',
+  [BudgetGroupType.Unknown]: 'Unbekannt',
+  [BudgetGroupType.Income]: 'Einnahmen',
+  [BudgetGroupType.Expense]: 'Ausgaben',
 };
 
 export const MONTH_LABELS = [
   'Jan',
   'Feb',
-  'Mar',
+  'Mär',
   'Apr',
-  'May',
+  'Mai',
   'Jun',
   'Jul',
   'Aug',
   'Sep',
-  'Oct',
+  'Okt',
   'Nov',
-  'Dec',
+  'Dez',
+] as const;
+
+export const MONTH_LABELS_FULL = [
+  'Januar',
+  'Februar',
+  'März',
+  'April',
+  'Mai',
+  'Juni',
+  'Juli',
+  'August',
+  'September',
+  'Oktober',
+  'November',
+  'Dezember',
 ] as const;

@@ -40,4 +40,8 @@ export class AuthenticationComponent implements OnInit {
   protected isLogoutAction(): boolean {
     return this.#route.snapshot.queryParamMap.get('action') === 'logout';
   }
+
+  protected retryAuth(): void {
+    this.authStore.reloadStatus();
+  }
 }

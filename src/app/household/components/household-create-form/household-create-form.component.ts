@@ -10,9 +10,9 @@ interface HouseholdFormModel {
   selector: 'home-household-create-form',
   imports: [InputFieldComponent, ButtonComponent],
   template: `
-    <form class="household-create-form" (submit)="submitForm($event)" novalidate>
+    <form class="household-create-form card" (submit)="submitForm($event)" novalidate>
       <lib-input-field
-        label="New household"
+        label="Neuer Haushalt"
         placeholder="Name"
         [required]="true"
         effectStyle="box"
@@ -23,18 +23,20 @@ interface HouseholdFormModel {
         "
         [errorMessage]="
           householdForm.name().invalid() && householdForm.name().touched()
-            ? 'Name is required'
+            ? 'Name ist erforderlich'
             : ''
-        " />
-      <lib-button [type]="'submit'" [label]="'Create household'"></lib-button>
+        "
+        [attr.aria-invalid]="householdForm.name().invalid() && householdForm.name().touched()" />
+      <lib-button [type]="'submit'" [label]="'Haushalt anlegen'"></lib-button>
     </form>
   `,
   styles: `
     .household-create-form {
       display: flex;
-      align-items: flex-end;
-      gap: 0.5rem;
       flex-wrap: wrap;
+      gap: var(--app-space-2);
+      align-items: flex-end;
+      margin-bottom: var(--app-space-4);
     }
   `,
 })

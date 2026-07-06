@@ -10,14 +10,17 @@
     type="date"
     effectStyle="box"
     [value]="fromDate()"
-    (valueChange)="fromDate.set($event)"></lib-input-field>
+    (valueChange)="onFromDateChange($event)"></lib-input-field>
   <lib-input-field
     label="Bis"
     type="date"
     effectStyle="box"
     [value]="toDate()"
-    (valueChange)="toDate.set($event)"></lib-input-field>
-  <home-checkbox label="Nur ohne Kategorie" [(checked)]="uncategorizedOnly"></home-checkbox>
+    (valueChange)="onToDateChange($event)"></lib-input-field>
+  <home-checkbox
+    label="Nur ohne Kategorie"
+    [checked]="uncategorizedOnly()"
+    (checkedChange)="onUncategorizedChange($event)"></home-checkbox>
   <lib-button [label]="'Filter anwenden'" (clicked)="applyFilters()"></lib-button>
 </div>
 

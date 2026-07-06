@@ -8,3 +8,25 @@
   display: flex;
   gap: var(--app-space-1);
 }
+
+.account-details {
+  display: grid;
+  gap: var(--app-space-2);
+  padding: var(--app-space-2) var(--app-space-3);
+
+  dl {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: var(--app-space-1) var(--app-space-3);
+    margin: 0;
+  }
+
+  dt {
+    color: var(--app-text-muted);
+  }
+
+  dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+}

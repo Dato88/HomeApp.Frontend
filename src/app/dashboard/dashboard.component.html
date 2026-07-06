@@ -1,8 +1,17 @@
-<section class="page">
-  <h1>Dashboard</h1>
-  @defer (on viewport) {
-    <p>dashboard works!</p>
-  } @placeholder {
-    <p role="status" aria-live="polite">Dashboard wird geladen…</p>
+<section class="page" aria-labelledby="dashboard-heading">
+  <home-page-header title="Dashboard" headingId="dashboard-heading"></home-page-header>
+
+  <nav class="dashboard-nav" aria-label="Bereiche">
+  @for (item of navItems; track item.route) {
+    <a
+      class="dashboard-nav-card card"
+      [routerLink]="item.route"
+      routerLinkActive="dashboard-nav-card--active"
+      ariaCurrentWhenActive="page">
+      <i class="bi dashboard-nav-card__icon" [class]="item.icon" aria-hidden="true"></i>
+      <span class="dashboard-nav-card__title">{{ item.title }}</span>
+      <span class="dashboard-nav-card__description">{{ item.description }}</span>
+    </a>
   }
+  </nav>
 </section>

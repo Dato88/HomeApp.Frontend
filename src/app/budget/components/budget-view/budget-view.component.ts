@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal, viewChild } from '@angular/core';
 import {
   ButtonComponent,
   DropdownListComponent,
@@ -8,6 +8,11 @@ import {
 } from '@Dato88/homeapp-lib';
 import { HouseholdStore } from '../../../household/+state/household.store';
 import { FinanceStore } from '../../../finance/+state/finance.store';
+import { ViewportService } from '../../../shared/services/viewport/viewport.service';
+import { ConfirmDialogComponent } from '../../../shared/ui/confirm-dialog/confirm-dialog.component';
+import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
+import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
+import { TabBarComponent, TabItem } from '../../../shared/ui/tab-bar/tab-bar.component';
 import { BudgetStore } from '../../+state/budget.store';
 import {
   BUDGET_GROUP_TYPE_LABELS,
@@ -20,11 +25,11 @@ import {
   CreateBudgetGroupRequest,
   CreateBudgetRowRequest,
   MONTH_LABELS,
+  MONTH_LABELS_FULL,
   UpdateBudgetCellRequest,
-  UpdateBudgetGroupRequest,
   UpdateBudgetRowRequest,
 } from '../../+state/models';
-import { BudgetUiStore } from './+store/budget-ui.store';
+import { BudgetUiStore, BudgetViewMode } from './+store/budget-ui.store';
 
 interface DropdownOption {
   value: string;
@@ -34,7 +39,17 @@ interface DropdownOption {
 
 @Component({
   selector: 'home-budget-view',
-  imports: [DecimalPipe, ButtonComponent, DropdownListComponent, InputFieldComponent, SkeletonComponent],
+  imports: [
+    DecimalPipe,
+    ButtonComponent,
+    DropdownListComponent,
+    InputFieldComponent,
+    SkeletonComponent,
+    PageHeaderComponent,
+    TabBarComponent,
+    EmptyStateComponent,
+    ConfirmDialogComponent,
+  ],
   providers: [BudgetUiStore],
   templateUrl: './budget-view.component.html',
   styleUrl: './budget-view.component.scss',
@@ -44,10 +59,23 @@ export class BudgetViewComponent {
   readonly uiStore = inject(BudgetUiStore);
   readonly householdStore = inject(HouseholdStore);
   readonly financeStore = inject(FinanceStore);
+  readonly viewport = inject(ViewportService);
 
-  readonly selectedHouseholdId = signal('');
+  readonly selectedHouseholdId = computed(() => {
+    const householdId = this.financeStore.selectedCategoryHouseholdId();
+
+    return householdId != null ? String(householdId) : '';
+  });
+
   readonly selectedYear = signal(String(new Date().getFullYear()));
   readonly monthLabels = MONTH_LABELS;
+  readonly months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as const;
+  readonly monthIndexes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] as const;
+
+  readonly budgetTabs: TabItem<BudgetViewMode>[] = [
+    { id: 'editor', label: 'Plan-Editor' },
+    { id: 'eva', label: 'E+A-Auswertung' },
+  ];
 
   readonly newGroupTitle = signal('');
   readonly newGroupType = signal(String(BudgetGroupType.Expense));
@@ -55,6 +83,11 @@ export class BudgetViewComponent {
   readonly newRowTitle = signal('');
   readonly newRowGroupId = signal('');
   readonly newRowCategoryId = signal('');
+
+  private readonly deleteGroupDialog =
+    viewChild.required<ConfirmDialogComponent<BudgetGroupDto>>('deleteGroupDialog');
+  private readonly deleteRowDialog =
+    viewChild.required<ConfirmDialogComponent<BudgetRowDto>>('deleteRowDialog');
 
   readonly householdOptions = computed<DropdownOption[]>(() =>
     this.householdStore.householdEntities().map((household) => ({
@@ -90,7 +123,11 @@ export class BudgetViewComponent {
   });
 
   readonly categoryOptions = computed<DropdownOption[]>(() => {
-    const householdId = Number(this.selectedHouseholdId());
+    const householdId = this.financeStore.selectedCategoryHouseholdId();
+
+    if (!householdId) {
+      return [];
+    }
 
     return this.financeStore
       .categoryEntities()
@@ -110,6 +147,22 @@ export class BudgetViewComponent {
     this.store.evaResource.hasValue() ? this.store.evaResource.value() : null
   );
 
+  readonly sortedGroups = computed(() => {
+    const budget = this.budget();
+
+    if (!budget) {
+      return [];
+    }
+
+    return budget.budgetGroups.slice().sort((a, b) => a.index - b.index);
+  });
+
+  readonly selectedMonthLabel = computed(() => {
+    const month = this.uiStore.selectedMonth();
+    const year = this.selectedYear();
+    return `${MONTH_LABELS_FULL[month - 1]} ${year}`;
+  });
+
   readonly usedCategoryIds = computed(() => {
     const budget = this.budget();
 
@@ -126,32 +179,45 @@ export class BudgetViewComponent {
 
   constructor() {
     effect(() => {
-      const householdId = Number(this.selectedHouseholdId());
+      const householdId = this.financeStore.selectedCategoryHouseholdId();
       const year = Number(this.selectedYear());
 
-      if (householdId && !Number.isNaN(householdId) && year && !Number.isNaN(year)) {
+      if (householdId && year && !Number.isNaN(year)) {
         this.store.setSelection({ householdId, year });
-        this.financeStore.setCategoryHouseholdId(householdId);
       } else {
         this.store.setSelection(undefined);
       }
     });
   }
 
+  onHouseholdChange(householdId: string): void {
+    if (!householdId || householdId === this.selectedHouseholdId()) {
+      return;
+    }
+
+    const id = Number(householdId);
+
+    if (Number.isNaN(id)) {
+      return;
+    }
+
+    this.financeStore.setCategoryHouseholdId(id);
+  }
+
   applySelection(): void {
-    const householdId = Number(this.selectedHouseholdId());
+    const householdId = this.financeStore.selectedCategoryHouseholdId();
     const year = Number(this.selectedYear());
 
-    if (householdId && !Number.isNaN(householdId) && year && !Number.isNaN(year)) {
+    if (householdId && year && !Number.isNaN(year)) {
       this.store.setSelection({ householdId, year });
     }
   }
 
   createBudget(): void {
-    const householdId = Number(this.selectedHouseholdId());
+    const householdId = this.financeStore.selectedCategoryHouseholdId();
     const year = Number(this.selectedYear());
 
-    if (householdId && !Number.isNaN(householdId) && year && !Number.isNaN(year)) {
+    if (householdId && year && !Number.isNaN(year)) {
       this.store.createBudget({ householdId, year });
     }
   }
@@ -283,16 +349,32 @@ export class BudgetViewComponent {
     this.store.updateRow(request);
   }
 
-  deleteGroup(group: BudgetGroupDto): void {
-    this.store.deleteGroup(group.budgetGroupId);
+  confirmDeleteGroup(group: BudgetGroupDto): void {
+    this.deleteGroupDialog().open(group);
   }
 
-  deleteRow(row: BudgetRowDto): void {
-    this.store.deleteRow(row.budgetRowId);
+  confirmDeleteRow(row: BudgetRowDto): void {
+    this.deleteRowDialog().open(row);
+  }
+
+  onDeleteGroupConfirmed(group: BudgetGroupDto | undefined): void {
+    if (group) {
+      this.store.deleteGroup(group.budgetGroupId);
+    }
+  }
+
+  onDeleteRowConfirmed(row: BudgetRowDto | undefined): void {
+    if (row) {
+      this.store.deleteRow(row.budgetRowId);
+    }
   }
 
   groupTypeLabel(group: BudgetGroupDto): string {
-    return BUDGET_GROUP_TYPE_LABELS[group.budgetGroupType] ?? 'Unknown';
+    return BUDGET_GROUP_TYPE_LABELS[group.budgetGroupType] ?? 'Unbekannt';
+  }
+
+  monthLabel(month: number): string {
+    return MONTH_LABELS[month - 1] ?? String(month);
   }
 
   categoryName(categoryId: number | null): string {
@@ -312,5 +394,14 @@ export class BudgetViewComponent {
 
   categoryValue(categoryId: number | null): string {
     return categoryId != null ? String(categoryId) : '';
+  }
+
+  yearDiff(soll: number, ist: number): number {
+    return ist - soll;
+  }
+
+  reloadBudget(): void {
+    this.store.budgetResource.reload();
+    this.store.evaResource.reload();
   }
 }

@@ -1,0 +1,89 @@
+.household-card {
+  display: grid;
+  gap: var(--app-space-3);
+  height: 100%;
+}
+
+.household-card__header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--app-space-2);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.household-card__title {
+  margin: 0;
+  font-size: var(--app-text-lg);
+}
+
+.household-card__subtitle {
+  margin: 0;
+  font-size: var(--app-text-base);
+}
+
+.household-card__actions,
+.household-card__form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--app-space-2);
+  align-items: flex-end;
+}
+
+.member-list {
+  display: grid;
+  gap: var(--app-space-2);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.member-list__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  gap: var(--app-space-2);
+  align-items: center;
+  padding: var(--app-space-2);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-sm);
+}
+
+.member-list__identity {
+  display: grid;
+  gap: var(--app-space-1);
+  min-width: 0;
+}
+
+.member-list__name {
+  font-weight: 600;
+}
+
+.member-list__email {
+  overflow-wrap: anywhere;
+  font-size: var(--app-text-sm);
+  color: var(--app-text-muted);
+}
+
+.member-list__remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+  padding: var(--app-space-1);
+  font-size: 1.1rem;
+  color: var(--app-danger);
+  cursor: pointer;
+  background: var(--app-danger-soft);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-sm);
+
+  &:hover:not(:disabled) {
+    background: var(--app-surface-muted);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+  }
+}

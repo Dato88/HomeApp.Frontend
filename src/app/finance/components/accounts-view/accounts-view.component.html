@@ -21,7 +21,8 @@
     [data]="store.accountEntities()"
     [loading]="store.accountsResource.isLoading()"
     [hoverable]="true"
-    [zebra]="true">
+    [zebra]="true"
+    [detailsExpandedBy]="isDetailsExpanded">
     <lib-grid-column field="name" title="Name" [sortable]="true"></lib-grid-column>
     @if (viewport.isDesktop()) {
       <lib-grid-column field="iban" title="IBAN"></lib-grid-column>
@@ -43,6 +44,24 @@
       <ng-template libGridCellTemplate let-account>
         @if (account.isOwner) {
           <div class="row-actions">
+            @if (!viewport.isDesktop()) {
+              <button
+                type="button"
+                class="icon-button"
+                [attr.aria-expanded]="isDetailsExpanded(account)"
+                [attr.aria-label]="
+                  'Details von Konto ' +
+                  account.name +
+                  (isDetailsExpanded(account) ? ' einklappen' : ' ausklappen')
+                "
+                (click)="toggleDetails(account)">
+                <i
+                  class="bi"
+                  [class.bi-chevron-down]="!isDetailsExpanded(account)"
+                  [class.bi-chevron-up]="isDetailsExpanded(account)"
+                  aria-hidden="true"></i>
+              </button>
+            }
             <button
               type="button"
               class="icon-button"
@@ -70,6 +89,18 @@
         }
       </ng-template>
     </lib-grid-column>
+    <ng-template libGridRowDetailsTemplate let-account>
+      <div class="account-details">
+        <dl>
+          <dt>IBAN</dt>
+          <dd>{{ account.iban || '—' }}</dd>
+          <dt>Währung</dt>
+          <dd>{{ account.currencyCode }}</dd>
+          <dt>Geteilt mit</dt>
+          <dd>{{ sharedHouseholdNames(account) || '—' }}</dd>
+        </dl>
+      </div>
+    </ng-template>
     <home-empty-state
       noEntries
       icon="bi-bank"

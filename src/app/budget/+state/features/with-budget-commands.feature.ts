@@ -1,9 +1,10 @@
-import { ResourceRef } from '@angular/core';
+import { inject, ResourceRef } from '@angular/core';
 import { patchState, signalStoreFeature, type, withMethods } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { tapResponse } from '@ngrx/operators';
 import { exhaustMap, pipe, tap } from 'rxjs';
 import { Result } from '../../../core/models';
+import { ToastService } from '../../../shared/ui/toast/toast.service';
 import { BudgetService } from '../../services/budget.service';
 import {
   BudgetResponse,
@@ -32,7 +33,7 @@ export function withBudgetCommands() {
       methods: type<{ _handleError: (error: unknown) => void }>(),
       state: type<BudgetCommandState & { selection: { householdId: number; year: number } | undefined }>(),
     },
-    withMethods((store) => {
+    withMethods((store, toast = inject(ToastService)) => {
       const handleIdResult = (result: Result<number>, fallbackMessage: string): void => {
         if (result.isSuccess) {
           return;
@@ -48,7 +49,8 @@ export function withBudgetCommands() {
 
       const command = <TRequest>(
         execute: (request: TRequest) => ReturnType<BudgetService['createGroup']>,
-        fallbackMessage: string
+        fallbackMessage: string,
+        successMessage?: string
       ) =>
         rxMethod<TRequest>(
           pipe(
@@ -61,6 +63,10 @@ export function withBudgetCommands() {
 
                     if (result.isSuccess) {
                       reload();
+
+                      if (successMessage) {
+                        toast.success(successMessage);
+                      }
                     }
                   },
                   error: (err) => store._handleError(err),
@@ -79,10 +85,11 @@ export function withBudgetCommands() {
               store._budgetService.createBudget(householdId, year).pipe(
                 tapResponse({
                   next: (result) => {
-                    handleIdResult(result, 'Failed to create budget');
+                    handleIdResult(result, 'Budget konnte nicht angelegt werden');
 
                     if (result.isSuccess) {
                       reload();
+                      toast.success('Budget angelegt');
                     }
                   },
                   error: (err) => store._handleError(err),
@@ -94,43 +101,53 @@ export function withBudgetCommands() {
         ),
         deleteBudget: command<number>(
           (budgetId) => store._budgetService.deleteBudget(budgetId),
-          'Failed to delete budget'
+          'Budget konnte nicht gelöscht werden',
+          'Budget gelöscht'
         ),
         createGroup: command<CreateBudgetGroupRequest>(
           (request) => store._budgetService.createGroup(request),
-          'Failed to create budget group'
+          'Gruppe konnte nicht angelegt werden',
+          'Gruppe angelegt'
         ),
         updateGroup: command<UpdateBudgetGroupRequest>(
           (request) => store._budgetService.updateGroup(request),
-          'Failed to update budget group'
+          'Gruppe konnte nicht gespeichert werden',
+          'Gruppe gespeichert'
         ),
         deleteGroup: command<number>(
           (budgetGroupId) => store._budgetService.deleteGroup(budgetGroupId),
-          'Failed to delete budget group'
+          'Gruppe konnte nicht gelöscht werden',
+          'Gruppe gelöscht'
         ),
         createRow: command<CreateBudgetRowRequest>(
           (request) => store._budgetService.createRow(request),
-          'Failed to create budget row'
+          'Zeile konnte nicht angelegt werden',
+          'Zeile angelegt'
         ),
         updateRow: command<UpdateBudgetRowRequest>(
           (request) => store._budgetService.updateRow(request),
-          'Failed to update budget row'
+          'Zeile konnte nicht gespeichert werden',
+          'Zeile gespeichert'
         ),
         deleteRow: command<number>(
           (budgetRowId) => store._budgetService.deleteRow(budgetRowId),
-          'Failed to delete budget row'
+          'Zeile konnte nicht gelöscht werden',
+          'Zeile gelöscht'
         ),
         createCell: command<CreateBudgetCellRequest>(
           (request) => store._budgetService.createCell(request),
-          'Failed to create budget cell'
+          'Betrag konnte nicht gespeichert werden',
+          'Betrag gespeichert'
         ),
         updateCell: command<UpdateBudgetCellRequest>(
           (request) => store._budgetService.updateCell(request),
-          'Failed to update budget cell'
+          'Betrag konnte nicht gespeichert werden',
+          'Betrag gespeichert'
         ),
         deleteCell: command<number>(
           (budgetCellId) => store._budgetService.deleteCell(budgetCellId),
-          'Failed to delete budget cell'
+          'Zelle konnte nicht gelöscht werden',
+          'Zelle gelöscht'
         ),
       };
     })
