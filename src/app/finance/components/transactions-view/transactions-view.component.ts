@@ -66,6 +66,9 @@ export class TransactionsViewComponent {
   readonly pageIndex = signal(0);
   readonly pageSize = 50;
 
+  /** Inline-Style schlägt lib-grid td { overflow: hidden } — nötig für Dropdown-Picker. */
+  readonly categoryCellStyle = { overflow: 'visible', verticalAlign: 'middle' };
+
   readonly editingTransaction = signal<TransactionDto | null>(null);
   readonly bookingDate = signal('');
   readonly amount = signal('');

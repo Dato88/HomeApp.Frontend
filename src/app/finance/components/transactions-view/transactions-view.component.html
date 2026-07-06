@@ -7,7 +7,7 @@
     dropdownName="transaction-account-filter"
     [dropdownData]="accountOptions()"
     [defaultText]="'Konto wählen'"
-    [width]="'min(100%, 20rem)'"
+    [width]="'100%'"
     [height]="'3rem'"
     [(selectedValue)]="selectedAccountId"
     (selectedValueChange)="onAccountFilterChange()"></lib-dropdown-list>
@@ -121,8 +121,9 @@
           <lib-grid-column
             field="categoryId"
             title="Kategorie"
-            width="12rem"
-            cellClass="grid-category-cell">
+            width="14rem"
+            cellClass="grid-category-cell"
+            [cellStyle]="categoryCellStyle">
             <ng-template
               libGridCellTemplate
               let-transaction>

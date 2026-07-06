@@ -90,8 +90,7 @@
   color: var(--app-text-muted);
 }
 
-// lib-dropdown-list: experimentelles base-select zeigt bei gesetzter selectedValue
-// keinen Text in selectedcontent. Native Darstellung in Tabellen/Grid-Zellen.
+// lib-grid-/Budget-Tabellenzellen: overflow:hidden schneidet base-select-Picker ab.
 .grid-category-cell,
 .budget-table__category-cell {
   overflow: visible;
@@ -104,39 +103,6 @@
 
   lib-dropdown-list .dropdown-container {
     gap: 0;
-  }
-
-  lib-dropdown-list select {
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    padding: 0.35rem 1.75rem 0.35rem 0.65rem;
-    font-size: var(--app-text-sm);
-    color: var(--app-text);
-    cursor: pointer;
-    background-color: var(--app-surface);
-    border: 1px solid var(--app-border);
-    border-radius: var(--app-radius-sm);
-    appearance: auto;
-    -webkit-appearance: menulist;
-    box-shadow: none;
-    backdrop-filter: none;
-  }
-
-  lib-dropdown-list select button,
-  lib-dropdown-list select selectedcontent {
-    display: none;
-  }
-
-  lib-dropdown-list select option {
-    padding: 0.25rem 0.5rem;
-    margin: 0;
-    font-weight: normal;
-    color: var(--app-text);
-    background: var(--app-surface);
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
   }
 }
 
