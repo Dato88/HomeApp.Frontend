@@ -30,12 +30,7 @@ import {
   UpdateBudgetRowRequest,
 } from '../../+state/models';
 import { BudgetUiStore, BudgetViewMode } from './+store/budget-ui.store';
-
-interface DropdownOption {
-  value: string;
-  name: string;
-  trackBy: number;
-}
+import { DropdownData } from '../../../shared/models/dropdown-data.model';
 
 @Component({
   selector: 'home-budget-view',
@@ -73,7 +68,7 @@ export class BudgetViewComponent {
   ];
 
   readonly newGroupTitle = signal('');
-  readonly newGroupType = signal(String(BudgetGroupType.Expense));
+  readonly newGroupType = signal('');
   readonly newGroupTargetPercent = signal('');
   readonly newRowTitle = signal('');
   readonly newRowGroupId = signal('');
@@ -84,7 +79,7 @@ export class BudgetViewComponent {
   private readonly deleteRowDialog =
     viewChild.required<ConfirmDialogComponent<BudgetRowDto>>('deleteRowDialog');
 
-  readonly householdOptions = computed<DropdownOption[]>(() =>
+  readonly householdOptions = computed<DropdownData[]>(() =>
     this.householdStore.householdEntities().map((household) => ({
       value: String(household.householdId),
       name: household.name,
@@ -92,7 +87,7 @@ export class BudgetViewComponent {
     }))
   );
 
-  readonly groupTypeOptions = computed<DropdownOption[]>(() =>
+  readonly groupTypeOptions = computed<DropdownData[]>(() =>
     [BudgetGroupType.Income, BudgetGroupType.Expense].map((type) => ({
       value: String(type),
       name: BUDGET_GROUP_TYPE_LABELS[type],
@@ -100,7 +95,7 @@ export class BudgetViewComponent {
     }))
   );
 
-  readonly groupOptions = computed<DropdownOption[]>(() => {
+  readonly groupOptions = computed<DropdownData[]>(() => {
     const budget = this.budget();
 
     if (!budget) {
@@ -117,7 +112,7 @@ export class BudgetViewComponent {
       }));
   });
 
-  readonly categoryOptions = computed<DropdownOption[]>(() => {
+  readonly categoryOptions = computed<DropdownData[]>(() => {
     const householdId = Number(this.selectedHouseholdId());
 
     return this.financeStore
@@ -203,8 +198,9 @@ export class BudgetViewComponent {
   createGroup(): void {
     const budget = this.budget();
     const title = this.newGroupTitle().trim();
+    const groupType = Number(this.newGroupType());
 
-    if (!budget || !title) {
+    if (!budget || !title || !groupType || Number.isNaN(groupType)) {
       return;
     }
 
@@ -212,12 +208,13 @@ export class BudgetViewComponent {
       budgetId: budget.budgetId,
       index: budget.budgetGroups.length + 1,
       title,
-      budgetGroupType: Number(this.newGroupType()) as BudgetGroupType,
+      budgetGroupType: groupType as BudgetGroupType,
       targetPercent: this.newGroupTargetPercent() ? Number(this.newGroupTargetPercent()) : null,
     };
 
     this.store.createGroup(request);
     this.newGroupTitle.set('');
+    this.newGroupType.set('');
     this.newGroupTargetPercent.set('');
   }
 

@@ -19,8 +19,11 @@
   <div class="toolbar">
     <lib-dropdown-list
       label="Haushalt"
-      defaultText="Haushalt wählen"
+      dropdownName="budget-household"
       [dropdownData]="householdOptions()"
+      [defaultText]="'Haushalt wählen'"
+      [width]="'min(100%, 16rem)'"
+      [height]="'3rem'"
       [(selectedValue)]="selectedHouseholdId"></lib-dropdown-list>
     <lib-input-field
       label="Jahr"
@@ -82,8 +85,11 @@
             (valueChange)="newGroupTitle.set($event)"></lib-input-field>
           <lib-dropdown-list
             label="Typ"
-            defaultText="Typ wählen"
+            dropdownName="budget-group-type"
             [dropdownData]="groupTypeOptions()"
+            [defaultText]="'Typ wählen'"
+            [width]="'12rem'"
+            [height]="'3rem'"
             [(selectedValue)]="newGroupType"></lib-dropdown-list>
           <lib-input-field
             label="Ziel %"
@@ -99,8 +105,11 @@
         <div class="create-row">
           <lib-dropdown-list
             label="Gruppe"
-            defaultText="Gruppe wählen"
+            dropdownName="budget-row-group"
             [dropdownData]="groupOptions()"
+            [defaultText]="'Gruppe wählen'"
+            [width]="'12rem'"
+            [height]="'3rem'"
             [(selectedValue)]="newRowGroupId"></lib-dropdown-list>
           <lib-input-field
             label="Neue Zeile"
@@ -109,8 +118,11 @@
             (valueChange)="newRowTitle.set($event)"></lib-input-field>
           <lib-dropdown-list
             label="Kategorie"
-            defaultText="Keine Kategorie"
+            dropdownName="budget-row-category"
             [dropdownData]="categoryOptions()"
+            [defaultText]="'Keine Kategorie'"
+            [width]="'12rem'"
+            [height]="'3rem'"
             [(selectedValue)]="newRowCategoryId"></lib-dropdown-list>
           <lib-button
             [label]="'Zeile hinzufügen'"
@@ -200,10 +212,12 @@
                       </th>
                       <td class="sticky-col sticky-col--second budget-table__category-cell">
                         <lib-dropdown-list
-                          label=" "
-                          [ariaLabel]="'Kategorie für ' + row.title"
-                          defaultText="Keine Kategorie"
+                          dropdownName="budget-table-category"
                           [dropdownData]="categoryOptions()"
+                          [defaultText]="'Keine Kategorie'"
+                          [width]="'100%'"
+                          [height]="'3rem'"
+                          [ariaLabel]="'Kategorie für ' + row.title"
                           [selectedValue]="categoryValue(row.categoryId)"
                           (selectedValueChange)="
                             updateRowCategory(row, $event)
@@ -252,8 +266,11 @@
                 <div class="budget-mobile-row__title">{{ row.title }}</div>
                 <lib-dropdown-list
                   label="Kategorie"
-                  defaultText="Keine Kategorie"
+                  dropdownName="budget-mobile-category"
                   [dropdownData]="categoryOptions()"
+                  [defaultText]="'Keine Kategorie'"
+                  [width]="'100%'"
+                  [height]="'3rem'"
                   [selectedValue]="categoryValue(row.categoryId)"
                   (selectedValueChange)="updateRowCategory(row, $event)"></lib-dropdown-list>
                 <label

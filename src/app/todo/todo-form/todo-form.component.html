@@ -17,6 +17,9 @@
     label="Priorität"
     dropdownName="todo-priority"
     [dropdownData]="priorityOptions"
+    [defaultText]="'Priorität wählen'"
+    [width]="'100%'"
+    [height]="'3rem'"
     [selectedValue]="priorityValue()"
     (selectedValueChange)="onPriorityChange($event)"></lib-dropdown-list>
   <div class="dialog-actions">

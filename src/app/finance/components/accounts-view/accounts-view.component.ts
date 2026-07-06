@@ -23,12 +23,7 @@ import {
 import { ConfirmDialogComponent } from '../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { ViewportService } from '../../../shared/services/viewport/viewport.service';
-
-interface DropdownOption {
-  value: string;
-  name: string;
-  trackBy: number;
-}
+import { DropdownData } from '../../../shared/models/dropdown-data.model';
 
 @Component({
   selector: 'home-accounts-view',
@@ -76,7 +71,7 @@ export class AccountsViewComponent {
 
   readonly showNameError = computed(() => this.submitted() && !this.name().trim());
 
-  readonly accountTypeOptions = computed<DropdownOption[]>(() =>
+  readonly accountTypeOptions = computed<DropdownData[]>(() =>
     Object.entries(ACCOUNT_TYPE_LABELS)
       .filter(([value]) => Number(value) !== AccountType.Unknown)
       .map(([value, label]) => ({
@@ -86,7 +81,7 @@ export class AccountsViewComponent {
       }))
   );
 
-  readonly householdOptions = computed<DropdownOption[]>(() =>
+  readonly householdOptions = computed<DropdownData[]>(() =>
     this.householdStore.householdEntities().map((household) => ({
       value: String(household.householdId),
       name: household.name,

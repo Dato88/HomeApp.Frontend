@@ -20,12 +20,7 @@ import {
 } from '../../+state/models';
 import { ConfirmDialogComponent } from '../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
-
-interface DropdownOption {
-  value: string;
-  name: string;
-  trackBy: number;
-}
+import { DropdownData } from '../../../shared/models/dropdown-data.model';
 
 @Component({
   selector: 'home-categories-view',
@@ -59,7 +54,7 @@ export class CategoriesViewComponent {
 
   readonly showNameError = computed(() => this.submitted() && !this.name().trim());
 
-  readonly householdOptions = computed<DropdownOption[]>(() =>
+  readonly householdOptions = computed<DropdownData[]>(() =>
     this.householdStore.householdEntities().map((household) => ({
       value: String(household.householdId),
       name: household.name,
@@ -67,7 +62,7 @@ export class CategoriesViewComponent {
     }))
   );
 
-  readonly categoryTypeOptions = computed<DropdownOption[]>(() =>
+  readonly categoryTypeOptions = computed<DropdownData[]>(() =>
     [CategoryType.Income, CategoryType.Expense].map((type) => ({
       value: String(type),
       name: CATEGORY_TYPE_LABELS[type],
@@ -94,10 +89,6 @@ export class CategoriesViewComponent {
         householdId && !Number.isNaN(householdId) ? householdId : undefined
       );
     });
-  }
-
-  onHouseholdChange(householdId: string): void {
-    this.selectedHouseholdId.set(householdId);
   }
 
   openCreate(): void {

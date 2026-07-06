@@ -46,6 +46,10 @@
     border: 1px solid var(--app-border);
     overflow: hidden;
   }
+
+  td.budget-table__category-cell {
+    overflow: visible;
+  }
 }
 
 .budget-table__col-row {
@@ -69,7 +73,8 @@
 }
 
 .budget-table__category-cell {
-  vertical-align: top;
+  overflow: visible;
+  vertical-align: middle;
 }
 
 .budget-table th[scope='row'],

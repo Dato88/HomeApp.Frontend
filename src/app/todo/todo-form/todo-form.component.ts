@@ -7,13 +7,7 @@ import {
 } from '@Dato88/homeapp-lib';
 import { TodoPriorityEnum } from '../../shared/enum/todo-priority.enum';
 import { TodoDto } from '../../shared/_interfaces/todo/todo-dto';
-
-// Struktur von DropdownData — die Lib exportiert den Typ (noch) nicht.
-interface PriorityOption {
-  trackBy: number;
-  value: string;
-  name: string;
-}
+import { DropdownData } from '../../shared/models/dropdown-data.model';
 
 interface TodoFormModel {
   todoId: number;
@@ -32,7 +26,7 @@ interface TodoFormModel {
 export class TodoFormComponent {
   readonly submitTodo = output<TodoDto>();
 
-  protected readonly priorityOptions: PriorityOption[] = [
+  protected readonly priorityOptions: DropdownData[] = [
     { trackBy: TodoPriorityEnum.Normal, value: String(TodoPriorityEnum.Normal), name: 'Normal' },
     { trackBy: TodoPriorityEnum.Low, value: String(TodoPriorityEnum.Low), name: 'Niedrig' },
     { trackBy: TodoPriorityEnum.Medium, value: String(TodoPriorityEnum.Medium), name: 'Mittel' },

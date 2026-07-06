@@ -163,8 +163,11 @@
       (valueChange)="description.set($event)"></lib-input-field>
     <lib-dropdown-list
       label="Kontotyp"
-      defaultText="Typ wählen"
+      dropdownName="account-type"
       [dropdownData]="accountTypeOptions()"
+      [defaultText]="'Typ wählen'"
+      [width]="'100%'"
+      [height]="'3rem'"
       [(selectedValue)]="accountType"></lib-dropdown-list>
     @if (!editingAccount()) {
       <div>
@@ -200,8 +203,11 @@
   </div>
   <lib-dropdown-list
     label="Haushalt"
-    defaultText="Haushalt wählen"
+    dropdownName="share-account-household"
     [dropdownData]="householdOptions()"
+    [defaultText]="'Haushalt wählen'"
+    [width]="'100%'"
+    [height]="'3rem'"
     [(selectedValue)]="shareHouseholdId"></lib-dropdown-list>
   <div class="dialog-actions">
     <lib-button [label]="'Abbrechen'" (clicked)="closeShareDialog()"></lib-button>

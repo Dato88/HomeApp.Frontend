@@ -26,12 +26,7 @@ import { ConfirmDialogComponent } from '../../../shared/ui/confirm-dialog/confir
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { FileUploadComponent } from '../../../shared/ui/file-upload/file-upload.component';
 import { ViewportService } from '../../../shared/services/viewport/viewport.service';
-
-interface DropdownOption {
-  value: string;
-  name: string;
-  trackBy: number;
-}
+import { DropdownData } from '../../../shared/models/dropdown-data.model';
 
 @Component({
   selector: 'home-transactions-view',
@@ -96,7 +91,7 @@ export class TransactionsViewComponent {
     return !value || Number.isNaN(Number(value.replace(',', '.')));
   });
 
-  readonly accountOptions = computed<DropdownOption[]>(() =>
+  readonly accountOptions = computed<DropdownData[]>(() =>
     this.store.accountEntities().map((account) => ({
       value: String(account.accountId),
       name: `${account.name}${account.iban ? ` (${account.iban})` : ''}`,
@@ -104,7 +99,7 @@ export class TransactionsViewComponent {
     }))
   );
 
-  readonly categoryOptions = computed<DropdownOption[]>(() => {
+  readonly categoryOptions = computed<DropdownData[]>(() => {
     const accountId = Number(this.selectedAccountId());
     const account = this.store.accountEntities().find((item) => item.accountId === accountId);
 
@@ -165,8 +160,7 @@ export class TransactionsViewComponent {
     });
   }
 
-  onAccountChange(accountId: string): void {
-    this.selectedAccountId.set(accountId);
+  onAccountFilterChange(): void {
     this.pageIndex.set(0);
     this.expandedTransactionId.set(null);
   }
