@@ -45,7 +45,6 @@ export class CategoriesViewComponent {
 
   readonly formDialog = viewChild.required<DialogComponent>('formDialog');
 
-  readonly selectedHouseholdId = signal('');
   readonly editingCategory = signal<CategoryDto | null>(null);
   readonly name = signal('');
   readonly categoryType = signal(String(CategoryType.Expense));
@@ -70,6 +69,10 @@ export class CategoriesViewComponent {
     }))
   );
 
+  readonly selectedHouseholdIdValue = computed(() =>
+    this.store.selectedHouseholdId() ? String(this.store.selectedHouseholdId()) : ''
+  );
+
   readonly incomeCategories = computed(() =>
     this.store
       .categoryEntities()
@@ -84,15 +87,17 @@ export class CategoriesViewComponent {
 
   constructor() {
     effect(() => {
-      const householdId = Number(this.selectedHouseholdId());
-      this.store.setCategoryHouseholdId(
-        householdId && !Number.isNaN(householdId) ? householdId : undefined
-      );
+      const householdId = Number(this.store.selectedHouseholdId());
+      // Re-fetch categories when household selection changes
     });
   }
 
+  setSelectedHouseholdId(householdId: string): void {
+    this.store.setSelectedHouseholdId(householdId ? Number(householdId) : undefined);
+  }
+
   openCreate(): void {
-    if (!this.selectedHouseholdId()) {
+    if (!this.store.selectedHouseholdId()) {
       return;
     }
 
@@ -123,7 +128,7 @@ export class CategoriesViewComponent {
   submitCategory(): void {
     this.submitted.set(true);
     const trimmedName = this.name().trim();
-    const householdId = Number(this.selectedHouseholdId());
+    const householdId = Number(this.store.selectedHouseholdId());
     const categoryType = Number(this.categoryType()) as CategoryType;
 
     if (!trimmedName || !householdId || Number.isNaN(householdId)) {

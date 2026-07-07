@@ -6,13 +6,17 @@ import { BudgetService } from '../services/budget.service';
 import { BudgetSelection } from './models';
 import { withBudgetQueries } from './features/with-budget-queries.feature';
 import { withBudgetCommands } from './features/with-budget-commands.feature';
+import { FinanceStore } from '../../finance/+state/finance.store';
 
 const budgetStoreFeatures = [
   withState({
     isSaving: false,
     selection: undefined as BudgetSelection | undefined,
   }),
-  withProps(() => ({ _budgetService: inject(BudgetService) })),
+  withProps(() => ({
+    _budgetService: inject(BudgetService),
+    _financeStore: inject(FinanceStore),
+  })),
   withErrorHandling(),
   withBudgetQueries(),
   withBudgetCommands(),

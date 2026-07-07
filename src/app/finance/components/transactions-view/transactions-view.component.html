@@ -9,8 +9,8 @@
     [defaultText]="'Konto wählen'"
     [width]="'100%'"
     [height]="'3rem'"
-    [(selectedValue)]="selectedAccountId"
-    (selectedValueChange)="onAccountFilterChange()"></lib-dropdown-list>
+    [selectedValue]="store.selectedAccountId()"
+    (selectedValueChange)="store.setSelectedAccountId($event); onAccountFilterChange()"></lib-dropdown-list>
   <lib-input-field
     label="Von"
     type="date"
@@ -31,7 +31,7 @@
     (clicked)="applyFilters()"></lib-button>
 </div>
 
-@if (selectedAccountId()) {
+@if (store.selectedAccountId()) {
   @if (canWrite()) {
     <div class="toolbar">
       <lib-button

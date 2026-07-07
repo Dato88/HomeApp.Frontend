@@ -24,7 +24,8 @@
       [defaultText]="'Haushalt wählen'"
       [width]="'min(100%, 16rem)'"
       [height]="'3rem'"
-      [(selectedValue)]="selectedHouseholdId"></lib-dropdown-list>
+      [selectedValue]="selectedHouseholdIdValue()"
+      (selectedValueChange)="setSelectedHouseholdId($event)"></lib-dropdown-list>
     <lib-input-field
       label="Jahr"
       type="number"
@@ -36,7 +37,7 @@
       (clicked)="applySelection()"></lib-button>
   </div>
 
-  @if (selectedHouseholdId()) {
+  @if (financeStore.selectedHouseholdId()) {
     <home-tab-bar
       [tabs]="budgetTabs"
       [activeId]="uiStore.mode()"

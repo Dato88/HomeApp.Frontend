@@ -56,11 +56,14 @@ export class BudgetViewComponent {
   readonly financeStore = inject(FinanceStore);
   readonly viewport = inject(ViewportService);
 
-  readonly selectedHouseholdId = signal('');
   readonly selectedYear = signal(String(new Date().getFullYear()));
   readonly monthLabels = MONTH_LABELS;
   readonly months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as const;
   readonly monthIndexes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] as const;
+
+  readonly selectedHouseholdIdValue = computed(() =>
+    this.financeStore.selectedHouseholdId() ? String(this.financeStore.selectedHouseholdId()) : ''
+  );
 
   readonly budgetTabs: TabItem<BudgetViewMode>[] = [
     { id: 'editor', label: 'Budgetplan' },
@@ -113,7 +116,7 @@ export class BudgetViewComponent {
   });
 
   readonly categoryOptions = computed<DropdownData[]>(() => {
-    const householdId = Number(this.selectedHouseholdId());
+    const householdId = Number(this.financeStore.selectedHouseholdId());
 
     return this.financeStore
       .categoryEntities()
@@ -165,20 +168,24 @@ export class BudgetViewComponent {
 
   constructor() {
     effect(() => {
-      const householdId = Number(this.selectedHouseholdId());
+      const householdId = Number(this.financeStore.selectedHouseholdId());
       const year = Number(this.selectedYear());
 
       if (householdId && !Number.isNaN(householdId) && year && !Number.isNaN(year)) {
         this.store.setSelection({ householdId, year });
-        this.financeStore.setCategoryHouseholdId(householdId);
+        this.financeStore.setSelectedHouseholdId(householdId);
       } else {
         this.store.setSelection(undefined);
       }
     });
   }
 
+  setSelectedHouseholdId(householdId: string): void {
+    this.financeStore.setSelectedHouseholdId(householdId ? Number(householdId) : undefined);
+  }
+
   applySelection(): void {
-    const householdId = Number(this.selectedHouseholdId());
+    const householdId = Number(this.financeStore.selectedHouseholdId());
     const year = Number(this.selectedYear());
 
     if (householdId && !Number.isNaN(householdId) && year && !Number.isNaN(year)) {
@@ -187,7 +194,7 @@ export class BudgetViewComponent {
   }
 
   createBudget(): void {
-    const householdId = Number(this.selectedHouseholdId());
+    const householdId = Number(this.financeStore.selectedHouseholdId());
     const year = Number(this.selectedYear());
 
     if (householdId && !Number.isNaN(householdId) && year && !Number.isNaN(year)) {

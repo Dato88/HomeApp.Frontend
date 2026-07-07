@@ -6,8 +6,9 @@
     [defaultText]="'Haushalt wählen'"
     [width]="'min(100%, 16rem)'"
     [height]="'3rem'"
-    [(selectedValue)]="selectedHouseholdId"></lib-dropdown-list>
-  @if (selectedHouseholdId()) {
+    [selectedValue]="selectedHouseholdIdValue()"
+    (selectedValueChange)="setSelectedHouseholdId($event)"></lib-dropdown-list>
+  @if (store.selectedHouseholdId()) {
     <lib-button
       [label]="'Kategorie hinzufügen'"
       icon="bi-plus-lg"
@@ -15,7 +16,7 @@
   }
 </div>
 
-@if (selectedHouseholdId()) {
+@if (store.selectedHouseholdId()) {
   @if (store.categoriesResource.isLoading()) {
     <lib-skeleton aria-hidden="true"></lib-skeleton>
     <p class="visually-hidden" role="status" aria-live="polite">Kategorien werden geladen …</p>

@@ -8,7 +8,8 @@ import { TransactionService } from '../../services/transaction.service';
 import { AccountDto, CategoryDto, TransactionFilter, TransactionListResponse } from '../models';
 
 export interface FinanceQueryState {
-  selectedCategoryHouseholdId: number | undefined;
+  selectedAccountId: string;
+  selectedHouseholdId: number | undefined;
   transactionFilter: TransactionFilter | undefined;
 }
 
@@ -31,7 +32,7 @@ export function withFinanceQueries() {
       }) as ResourceRef<AccountDto[]>,
       categoriesResource: rxResource({
         params: () => {
-          const householdId = store.selectedCategoryHouseholdId();
+          const householdId = store.selectedHouseholdId();
 
           return householdId ? { householdId } : undefined;
         },
@@ -58,8 +59,11 @@ export function withFinanceQueries() {
       }) as ResourceRef<TransactionListResponse>,
     })),
     withMethods((store) => ({
-      setCategoryHouseholdId(householdId: number | undefined): void {
-        patchState(store, { selectedCategoryHouseholdId: householdId });
+      setSelectedAccountId(accountId: string): void {
+        patchState(store, { selectedAccountId: accountId });
+      },
+      setSelectedHouseholdId(householdId: number | undefined): void {
+        patchState(store, { selectedHouseholdId: householdId });
       },
       setTransactionFilter(filter: TransactionFilter | undefined): void {
         patchState(store, { transactionFilter: filter });

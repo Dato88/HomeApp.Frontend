@@ -59,7 +59,6 @@ export class TransactionsViewComponent {
 
   private readonly fileUpload = viewChild(FileUploadComponent);
 
-  readonly selectedAccountId = signal('');
   readonly fromDate = signal('');
   readonly toDate = signal('');
   readonly uncategorizedOnly = signal(false);
@@ -109,7 +108,7 @@ export class TransactionsViewComponent {
   );
 
   readonly categoryOptions = computed<DropdownData[]>(() => {
-    const accountId = Number(this.selectedAccountId());
+    const accountId = Number(this.store.selectedAccountId());
     const account = this.store.accountEntities().find((item) => item.accountId === accountId);
 
     if (!account) {
@@ -127,7 +126,7 @@ export class TransactionsViewComponent {
   });
 
   readonly selectedAccount = computed<AccountDto | undefined>(() => {
-    const accountId = Number(this.selectedAccountId());
+    const accountId = Number(this.store.selectedAccountId());
 
     return this.store.accountEntities().find((account) => account.accountId === accountId);
   });
@@ -143,7 +142,7 @@ export class TransactionsViewComponent {
 
   constructor() {
     effect(() => {
-      const accountId = Number(this.selectedAccountId());
+      const accountId = Number(this.store.selectedAccountId());
 
       if (!accountId || Number.isNaN(accountId)) {
         this.store.setTransactionFilter(undefined);
@@ -164,7 +163,7 @@ export class TransactionsViewComponent {
       const account = this.selectedAccount();
 
       if (account?.sharedHouseholdIds.length) {
-        this.store.setCategoryHouseholdId(account.sharedHouseholdIds[0]);
+        this.store.setSelectedHouseholdId(account.sharedHouseholdIds[0]);
       }
     });
   }
@@ -230,7 +229,7 @@ export class TransactionsViewComponent {
 
   submitTransaction(): void {
     this.submitted.set(true);
-    const accountId = Number(this.selectedAccountId());
+    const accountId = Number(this.store.selectedAccountId());
     const parsedAmount = Number(this.amount().replace(',', '.'));
 
     if (!accountId || Number.isNaN(parsedAmount) || !this.amount().trim() || !this.bookingDate()) {
@@ -290,7 +289,7 @@ export class TransactionsViewComponent {
   }
 
   submitImport(): void {
-    const accountId = Number(this.selectedAccountId());
+    const accountId = Number(this.store.selectedAccountId());
     const file = this.importFile();
 
     if (!this.canWrite() || !accountId || !file) {

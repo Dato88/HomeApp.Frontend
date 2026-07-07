@@ -16,7 +16,8 @@ import { withFinanceCommands } from './features/with-finance-commands.feature';
 const financeStoreFeatures = [
   withState({
     isSaving: false,
-    selectedCategoryHouseholdId: undefined as number | undefined,
+    selectedAccountId: '' as string,
+    selectedHouseholdId: undefined as number | undefined,
     transactionFilter: undefined as import('./models').TransactionFilter | undefined,
     lastImportResult: null as import('./models').ImportTransactionsResponse | null,
   }),
