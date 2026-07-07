@@ -1,19 +1,19 @@
 <section class="authentication page">
   <div class="auth-panel card" role="status" aria-live="polite">
     @if (authStore.authStatusResource.isLoading()) {
-      <div class="auth-spinner" aria-busy="true" aria-label="Sitzung wird geprüft"></div>
-      <p class="auth-message">Sitzung wird geprüft …</p>
+      <div class="auth-spinner" aria-busy="true" aria-label="Anmeldung wird geprüft"></div>
+      <p class="auth-message">Anmeldung wird geprüft …</p>
     } @else if (isLogoutAction()) {
       <div class="auth-spinner" aria-busy="true" aria-label="Abmeldung läuft"></div>
       <p class="auth-message">Abmeldung …</p>
     } @else if (authStore.authStatusResource.error()) {
       <p class="auth-message auth-message--error" role="alert">
-        Anmeldung konnte nicht gestartet werden.
+        Anmeldung fehlgeschlagen.
       </p>
       <button type="button" class="btn" (click)="retryAuth()">Erneut versuchen</button>
     } @else {
       <div class="auth-spinner" aria-busy="true" aria-label="Weiterleitung zur Anmeldung"></div>
-      <p class="auth-message">Weiterleitung zur Anmeldung …</p>
+      <p class="auth-message">Weiterleitung …</p>
     }
   </div>
 </section>

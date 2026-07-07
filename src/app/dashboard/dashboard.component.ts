@@ -20,25 +20,25 @@ export class DashboardComponent {
   readonly navItems: DashboardNavItem[] = [
     {
       title: 'Todos',
-      description: 'Aufgaben verwalten',
+      description: 'Aufgabenliste verwalten',
       icon: 'bi-check2-square',
       route: '/todo',
     },
     {
       title: 'Finanzen',
-      description: 'Konten, Buchungen und Kategorien',
+      description: 'Konten & Buchungen',
       icon: 'bi-cash-stack',
       route: '/finance',
     },
     {
       title: 'Budget',
-      description: 'Planung und E+A-Auswertung',
+      description: 'Budgetplanung',
       icon: 'bi-pie-chart',
       route: '/budget',
     },
     {
       title: 'Haushalte',
-      description: 'Mitglieder und Freigaben',
+      description: 'Haushaltsverwaltung',
       icon: 'bi-house-heart',
       route: '/household',
     },
