@@ -61,7 +61,7 @@ export class AccountsViewComponent {
   readonly currencyCode = signal('EUR');
   readonly description = signal('');
   readonly accountType = signal(String(AccountType.Checking));
-  readonly createHouseholdIds = signal('');
+  readonly createHouseholdId = signal('');  // Single household for creation
 
   private readonly submitted = signal(false);
   private readonly expandedAccountId = signal<number | null>(null);
@@ -98,7 +98,7 @@ export class AccountsViewComponent {
     this.currencyCode.set('EUR');
     this.description.set('');
     this.accountType.set(String(AccountType.Checking));
-    this.createHouseholdIds.set('');
+    this.createHouseholdId.set('');
     this.createDialog().open();
   }
 
@@ -151,12 +151,8 @@ export class AccountsViewComponent {
       };
       this.store.updateAccount(request);
     } else {
-      const householdIds = this.createHouseholdIds()
-        .split(',')
-        .map((value) => value.trim())
-        .filter(Boolean)
-        .map(Number)
-        .filter((id) => !Number.isNaN(id));
+      const householdId = this.createHouseholdId() ? Number(this.createHouseholdId()) : null;
+      const householdIds = householdId && !Number.isNaN(householdId) ? [householdId] : undefined;
 
       const request: CreateAccountRequest = {
         name: trimmedName,
@@ -165,7 +161,7 @@ export class AccountsViewComponent {
         accountType,
         currencyCode: this.currencyCode().trim() || 'EUR',
         description: this.description().trim() || null,
-        householdIds: householdIds.length ? householdIds : undefined,
+        householdIds,
       };
       this.store.createAccount(request);
     }
