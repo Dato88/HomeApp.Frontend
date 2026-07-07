@@ -90,11 +90,14 @@
   color: var(--app-text-muted);
 }
 
-// lib-grid-/Budget-Tabellenzellen: overflow:hidden schneidet base-select-Picker ab.
+// lib-grid: rowHeight default 38px + td overflow:hidden stauchen Dropdowns.
 .grid-category-cell,
 .budget-table__category-cell {
-  overflow: visible;
+  overflow: visible !important;
+  max-height: none !important;
+  height: auto !important;
   vertical-align: middle;
+  text-align: left;
 
   lib-dropdown-list {
     display: block;

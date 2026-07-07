@@ -212,10 +212,10 @@
                       </th>
                       <td class="sticky-col sticky-col--second budget-table__category-cell">
                         <lib-dropdown-list
-                          dropdownName="budget-table-category"
+                          [dropdownName]="'budget-table-category-' + row.budgetRowId"
                           [dropdownData]="categoryOptions()"
                           [defaultText]="'Keine Kategorie'"
-                          [width]="'100%'"
+                          [width]="'11rem'"
                           [height]="'3rem'"
                           [ariaLabel]="'Kategorie für ' + row.title"
                           [selectedValue]="categoryValue(row.categoryId)"
@@ -545,33 +545,41 @@
             class="visually-hidden">
             Jahresübersicht
           </h2>
-          <div class="stat-card">
-            <h3>Einnahmen</h3>
-            <p>
-              SOLL {{ eva()!.totals.yearIncomeSoll | number: '1.2-2' }} · IST
+          <div class="stat-card stat-card--income">
+            <span class="stat-card__label">Einnahmen</span>
+            <p class="stat-card__value">
               {{ eva()!.totals.yearIncomeIst | number: '1.2-2' }}
             </p>
+            <span class="stat-card__detail">
+              SOLL: {{ eva()!.totals.yearIncomeSoll | number: '1.2-2' }}
+            </span>
           </div>
-          <div class="stat-card">
-            <h3>Ausgaben</h3>
-            <p>
-              SOLL {{ eva()!.totals.yearExpenseSoll | number: '1.2-2' }} · IST
+          <div class="stat-card stat-card--expense">
+            <span class="stat-card__label">Ausgaben</span>
+            <p class="stat-card__value">
               {{ eva()!.totals.yearExpenseIst | number: '1.2-2' }}
             </p>
+            <span class="stat-card__detail">
+              SOLL: {{ eva()!.totals.yearExpenseSoll | number: '1.2-2' }}
+            </span>
           </div>
-          <div class="stat-card">
-            <h3>Differenz</h3>
-            <p>
-              SOLL {{ eva()!.totals.yearDiffSoll | number: '1.2-2' }} · IST
+          <div class="stat-card stat-card--diff">
+            <span class="stat-card__label">Differenz</span>
+            <p class="stat-card__value">
               {{ eva()!.totals.yearDiffIst | number: '1.2-2' }}
             </p>
+            <span class="stat-card__detail">
+              SOLL: {{ eva()!.totals.yearDiffSoll | number: '1.2-2' }}
+            </span>
           </div>
-          <div class="stat-card">
-            <h3>Nicht zugeordnet</h3>
-            <p>
-              {{ eva()!.unassignedTransactionCount }} Buchungen · IST
+          <div class="stat-card stat-card--unassigned">
+            <span class="stat-card__label">Nicht zugeordnet</span>
+            <p class="stat-card__value">
               {{ sumArray(eva()!.unassignedIst) | number: '1.2-2' }}
             </p>
+            <span class="stat-card__detail">
+              {{ eva()!.unassignedTransactionCount }} Buchung(en)
+            </span>
           </div>
         </section>
       } @else {

@@ -26,7 +26,7 @@ import { ConfirmDialogComponent } from '../../../shared/ui/confirm-dialog/confir
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { FileUploadComponent } from '../../../shared/ui/file-upload/file-upload.component';
 import { ViewportService } from '../../../shared/services/viewport/viewport.service';
-import { DropdownData } from '../../../shared/models/dropdown-data.model';
+import { DropdownData, GRID_ROW_HEIGHT_WITH_DROPDOWN } from '../../../shared/models/dropdown-data.model';
 
 @Component({
   selector: 'home-transactions-view',
@@ -66,8 +66,14 @@ export class TransactionsViewComponent {
   readonly pageIndex = signal(0);
   readonly pageSize = 50;
 
-  /** Inline-Style schlägt lib-grid td { overflow: hidden } — nötig für Dropdown-Picker. */
-  readonly categoryCellStyle = { overflow: 'visible', verticalAlign: 'middle' };
+  readonly gridRowHeight = GRID_ROW_HEIGHT_WITH_DROPDOWN;
+
+  /** Inline-Style schlägt lib-grid td { overflow: hidden } und fixe Zeilenhöhe. */
+  readonly categoryCellStyle = {
+    overflow: 'visible',
+    verticalAlign: 'middle',
+    maxHeight: 'none',
+  };
 
   readonly editingTransaction = signal<TransactionDto | null>(null);
   readonly bookingDate = signal('');
@@ -296,6 +302,11 @@ export class TransactionsViewComponent {
   }
 
   categoryValue(categoryId: number | null): string {
-    return categoryId != null ? String(categoryId) : '';
+    if (categoryId == null || categoryId === 0) {
+      return '';
+    }
+
+    const value = String(categoryId);
+    return this.categoryOptions().some((option) => option.value === value) ? value : '';
   }
 }

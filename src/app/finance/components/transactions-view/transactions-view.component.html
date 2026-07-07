@@ -92,6 +92,7 @@
         [loading]="store.transactionsResource.isLoading()"
         [hoverable]="true"
         [zebra]="true"
+        [rowHeight]="gridRowHeight"
         [detailsExpandedBy]="isDetailsExpanded">
         <lib-grid-column
           field="bookingDate"
@@ -122,16 +123,17 @@
             field="categoryId"
             title="Kategorie"
             width="14rem"
+            align="left"
             cellClass="grid-category-cell"
             [cellStyle]="categoryCellStyle">
             <ng-template
               libGridCellTemplate
               let-transaction>
               <lib-dropdown-list
-                dropdownName="transaction-category"
+                [dropdownName]="'transaction-category-' + transaction.transactionId"
                 [dropdownData]="categoryOptions()"
                 [defaultText]="'Ohne Kategorie'"
-                [width]="'100%'"
+                [width]="'12rem'"
                 [height]="'3rem'"
                 [ariaLabel]="'Kategorie für Buchung vom ' + transaction.bookingDate"
                 [selectedValue]="categoryValue(transaction.categoryId)"

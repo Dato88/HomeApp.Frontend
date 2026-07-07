@@ -6,5 +6,5 @@ export interface DropdownData {
   selected?: boolean;
 }
 
-/** Standardhöhe laut lib-dropdown-list Showcase (custom-size-example). */
-export const DROPDOWN_HEIGHT = '3rem';
+/** lib-grid Standard-rowHeight (38px) ist zu niedrig für Dropdowns mit height: 3rem. */
+export const GRID_ROW_HEIGHT_WITH_DROPDOWN = 72;

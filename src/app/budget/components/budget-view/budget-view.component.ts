@@ -63,8 +63,8 @@ export class BudgetViewComponent {
   readonly monthIndexes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] as const;
 
   readonly budgetTabs: TabItem<BudgetViewMode>[] = [
-    { id: 'editor', label: 'Plan-Editor' },
-    { id: 'eva', label: 'E+A-Auswertung' },
+    { id: 'editor', label: 'Budgetplan' },
+    { id: 'eva', label: 'Einnahme/Ausgabe' },
   ];
 
   readonly newGroupTitle = signal('');
@@ -366,7 +366,12 @@ export class BudgetViewComponent {
   }
 
   categoryValue(categoryId: number | null): string {
-    return categoryId != null ? String(categoryId) : '';
+    if (categoryId == null || categoryId === 0) {
+      return '';
+    }
+
+    const value = String(categoryId);
+    return this.categoryOptions().some((option) => option.value === value) ? value : '';
   }
 
   yearDiff(soll: number, ist: number): number {
