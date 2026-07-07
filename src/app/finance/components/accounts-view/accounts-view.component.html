@@ -180,6 +180,12 @@
         [selectedValue]="createHouseholdId()"
         (selectedValueChange)="createHouseholdId.set($event)"></lib-dropdown-list>
       <p class="field-hint">Weitere Haushalte können später über "Mit Haushalt teilen" hinzugefügt werden.</p>
+    } @else {
+      <div>
+        <label class="form-label">Haushalte</label>
+        <p class="form-value">{{ editingAccountHouseholdNames() }}</p>
+        <p class="field-hint">Haushalte können über "Mit Haushalt teilen" verwaltet werden.</p>
+      </div>
     }
     <div class="dialog-actions">
       <lib-button [label]="'Abbrechen'" (clicked)="closeCreateDialog()"></lib-button>

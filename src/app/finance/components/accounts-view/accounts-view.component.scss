@@ -30,3 +30,19 @@
     overflow-wrap: anywhere;
   }
 }
+
+.form-label {
+  display: block;
+  font-size: var(--app-text-sm);
+  font-weight: 500;
+  color: var(--app-text);
+  margin-bottom: var(--app-space-1);
+}
+
+.form-value {
+  margin: 0;
+  padding: var(--app-space-2);
+  background: var(--app-surface-muted);
+  border-radius: var(--app-radius-sm);
+  font-size: var(--app-text-base);
+}

@@ -89,6 +89,17 @@ export class AccountsViewComponent {
     }))
   );
 
+  readonly editingAccountHouseholdNames = computed(() => {
+    const account = this.editingAccount();
+    if (!account) return '';
+
+    return this.householdStore
+      .householdEntities()
+      .filter((household) => account.sharedHouseholdIds.includes(household.householdId))
+      .map((household) => household.name)
+      .join(', ') || '—';
+  });
+
   openCreate(): void {
     this.editingAccount.set(null);
     this.submitted.set(false);
