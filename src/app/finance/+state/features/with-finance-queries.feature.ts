@@ -33,7 +33,6 @@ export function withFinanceQueries() {
       categoriesResource: rxResource({
         params: () => {
           const householdId = store.selectedHouseholdId();
-
           return householdId ? { householdId } : undefined;
         },
         stream: ({ params }) =>

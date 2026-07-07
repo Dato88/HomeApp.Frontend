@@ -11,6 +11,15 @@
     [height]="'3rem'"
     [selectedValue]="store.selectedAccountId()"
     (selectedValueChange)="store.setSelectedAccountId($event); onAccountFilterChange()"></lib-dropdown-list>
+  <lib-dropdown-list
+    label="Haushalt"
+    dropdownName="transaction-household-filter"
+    [dropdownData]="householdOptions()"
+    [defaultText]="'Haushalt wählen'"
+    [width]="'100%'"
+    [height]="'3rem'"
+    [selectedValue]="selectedHouseholdIdValue()"
+    (selectedValueChange)="setSelectedHouseholdId($event)"></lib-dropdown-list>
   <lib-input-field
     label="Von"
     type="date"

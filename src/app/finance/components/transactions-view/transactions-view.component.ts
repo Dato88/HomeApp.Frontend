@@ -107,23 +107,37 @@ export class TransactionsViewComponent {
     }))
   );
 
-  readonly categoryOptions = computed<DropdownData[]>(() => {
+  readonly householdOptions = computed<DropdownData[]>(() => {
     const accountId = Number(this.store.selectedAccountId());
     const account = this.store.accountEntities().find((item) => item.accountId === accountId);
 
-    if (!account) {
+    if (!account || !account.sharedHouseholdIds.length) {
       return [];
     }
 
-    return this.store
+    return this.householdStore
+      .householdEntities()
+      .filter((household) => account.sharedHouseholdIds.includes(household.householdId))
+      .map((household) => ({
+        value: String(household.householdId),
+        name: household.name,
+        trackBy: household.householdId,
+      }));
+  });
+
+  readonly selectedHouseholdIdValue = computed(() =>
+    this.store.selectedHouseholdId() ? String(this.store.selectedHouseholdId()) : ''
+  );
+
+  readonly categoryOptions = computed<DropdownData[]>(() =>
+    this.store
       .categoryEntities()
-      .filter((category) => account.sharedHouseholdIds.includes(category.householdId))
       .map((category) => ({
         value: String(category.categoryId),
         name: category.name,
         trackBy: category.categoryId,
-      }));
-  });
+      }))
+  );
 
   readonly selectedAccount = computed<AccountDto | undefined>(() => {
     const accountId = Number(this.store.selectedAccountId());
@@ -166,6 +180,10 @@ export class TransactionsViewComponent {
         this.store.setSelectedHouseholdId(account.sharedHouseholdIds[0]);
       }
     });
+  }
+
+  setSelectedHouseholdId(householdId: string): void {
+    this.store.setSelectedHouseholdId(householdId ? Number(householdId) : undefined);
   }
 
   onAccountFilterChange(): void {
