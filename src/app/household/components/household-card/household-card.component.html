@@ -1,7 +1,7 @@
 <article class="card household-card">
   <header class="household-card__header">
     @if (isRenaming()) {
-      <form class="household-card__form" (submit)="submitRename($event)" novalidate>
+      <form class="household-card__rename-form" (submit)="submitRename($event)" novalidate>
         <lib-input-field
           label="Haushaltsname"
           effectStyle="box"
@@ -14,57 +14,67 @@
     } @else {
       <h2 class="household-card__title">{{ household().name }}</h2>
       <div class="household-card__actions">
-        <lib-button
-          [label]="'Umbenennen'"
-          [ariaLabel]="'Haushalt ' + household().name + ' umbenennen'"
-          (clicked)="startRename()"></lib-button>
-        <lib-button
-          [label]="'Löschen'"
-          [ariaLabel]="'Haushalt ' + household().name + ' löschen'"
-          (clicked)="deleteHousehold.emit(household().householdId)"></lib-button>
+        <button
+          type="button"
+          class="icon-button"
+          [attr.aria-label]="'Haushalt ' + household().name + ' umbenennen'"
+          (click)="startRename()">
+          <i class="bi bi-pencil" aria-hidden="true"></i>
+        </button>
+        <button
+          type="button"
+          class="icon-button icon-button--danger"
+          [attr.aria-label]="'Haushalt ' + household().name + ' löschen'"
+          (click)="deleteHousehold.emit(household().householdId)">
+          <i class="bi bi-trash" aria-hidden="true"></i>
+        </button>
       </div>
     }
   </header>
 
-  <h3 class="household-card__subtitle">Mitglieder</h3>
-  <ul class="member-list" role="list">
-    @for (member of household().members; track member.personId) {
-      <li class="member-list__item">
-        <div class="member-list__identity">
-          <span class="member-list__name">{{ member.firstName }} {{ member.lastName }}</span>
-          <span class="member-list__email">{{ member.email }}</span>
-        </div>
-        <button
-          type="button"
-          class="member-list__remove"
-          [disabled]="household().members.length <= 1"
-          [attr.aria-label]="member.email + ' aus ' + household().name + ' entfernen'"
-          (click)="confirmRemoveMember(member)">
-          <i class="bi bi-person-dash" aria-hidden="true"></i>
-        </button>
-      </li>
-    }
-  </ul>
+  <div class="household-card__body">
+    <h3 class="household-card__subtitle">Mitglieder</h3>
+    <ul class="member-list" role="list">
+      @for (member of household().members; track member.personId) {
+        <li class="member-list__item">
+          <div class="member-list__identity">
+            <span class="member-list__name">{{ member.firstName }} {{ member.lastName }}</span>
+            <span class="member-list__email">{{ member.email }}</span>
+          </div>
+          <button
+            type="button"
+            class="icon-button icon-button--danger"
+            [disabled]="household().members.length <= 1"
+            [attr.aria-label]="member.email + ' aus ' + household().name + ' entfernen'"
+            (click)="confirmRemoveMember(member)">
+            <i class="bi bi-person-dash" aria-hidden="true"></i>
+          </button>
+        </li>
+      }
+    </ul>
+  </div>
 
-  <form class="household-card__form" (submit)="submitInvite($event)" novalidate>
-    <lib-input-field
-      label="Per E-Mail einladen"
-      type="email"
-      placeholder="partner@beispiel.de"
-      effectStyle="box"
-      [value]="inviteForm.email().value()"
-      (valueChange)="inviteForm.email().value.set($event)"
-      [validationState]="
-        inviteForm.email().invalid() && inviteForm.email().touched() ? 'error' : null
-      "
-      [errorMessage]="
-        inviteForm.email().invalid() && inviteForm.email().touched()
-          ? 'Bitte eine gültige E-Mail-Adresse eingeben'
-          : ''
-      "
-      [attr.aria-invalid]="inviteForm.email().invalid() && inviteForm.email().touched()" />
-    <lib-button [type]="'submit'" [label]="'Einladen'"></lib-button>
-  </form>
+  <div class="household-card__footer">
+    <form class="household-card__invite-form" (submit)="submitInvite($event)" novalidate>
+      <lib-input-field
+        label="Per E-Mail einladen"
+        type="email"
+        placeholder="partner@beispiel.de"
+        effectStyle="box"
+        [value]="inviteForm.email().value()"
+        (valueChange)="inviteForm.email().value.set($event)"
+        [validationState]="
+          inviteForm.email().invalid() && inviteForm.email().touched() ? 'error' : null
+        "
+        [errorMessage]="
+          inviteForm.email().invalid() && inviteForm.email().touched()
+            ? 'Bitte eine gültige E-Mail-Adresse eingeben'
+            : ''
+        "
+        [attr.aria-invalid]="inviteForm.email().invalid() && inviteForm.email().touched()" />
+      <lib-button [type]="'submit'" [label]="'Einladen'"></lib-button>
+    </form>
+  </div>
 </article>
 
 <home-confirm-dialog

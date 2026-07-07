@@ -1,6 +1,7 @@
 .household-card {
   display: grid;
-  gap: var(--app-space-3);
+  grid-template-rows: auto 1fr auto;
+  gap: 0;
   height: 100%;
 }
 
@@ -8,26 +9,45 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--app-space-2);
-  align-items: center;
+  align-items: start;
   justify-content: space-between;
+  margin-bottom: var(--app-space-3);
+  border-bottom: 1px solid var(--app-border);
+  padding-bottom: var(--app-space-2);
 }
 
 .household-card__title {
   margin: 0;
   font-size: var(--app-text-lg);
+  font-weight: 600;
 }
 
-.household-card__subtitle {
-  margin: 0;
-  font-size: var(--app-text-base);
+.household-card__actions {
+  display: flex;
+  gap: var(--app-space-1);
 }
 
-.household-card__actions,
-.household-card__form {
+.household-card__rename-form,
+.household-card__invite-form {
   display: flex;
   flex-wrap: wrap;
   gap: var(--app-space-2);
   align-items: flex-end;
+}
+
+.household-card__body {
+  margin-bottom: var(--app-space-3);
+}
+
+.household-card__subtitle {
+  margin: 0 0 var(--app-space-2) 0;
+  font-size: var(--app-text-base);
+  font-weight: 500;
+}
+
+.household-card__footer {
+  border-top: 1px solid var(--app-border);
+  padding-top: var(--app-space-2);
 }
 
 .member-list {
@@ -46,44 +66,26 @@
   padding: var(--app-space-2);
   border: 1px solid var(--app-border);
   border-radius: var(--app-radius-sm);
+  background: var(--app-surface);
 }
 
 .member-list__identity {
   display: grid;
+  grid-template-columns: 1fr;
   gap: var(--app-space-1);
   min-width: 0;
 }
 
 .member-list__name {
   font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .member-list__email {
-  overflow-wrap: anywhere;
   font-size: var(--app-text-sm);
   color: var(--app-text-muted);
-}
-
-.member-list__remove {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 2.5rem;
-  min-height: 2.5rem;
-  padding: var(--app-space-1);
-  font-size: 1.1rem;
-  color: var(--app-danger);
-  cursor: pointer;
-  background: var(--app-danger-soft);
-  border: 1px solid var(--app-border);
-  border-radius: var(--app-radius-sm);
-
-  &:hover:not(:disabled) {
-    background: var(--app-surface-muted);
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.45;
-  }
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
