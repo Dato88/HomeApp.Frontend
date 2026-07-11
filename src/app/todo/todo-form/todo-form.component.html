@@ -1,4 +1,7 @@
-<form class="todo-form" (submit)="submitForm($event)" novalidate>
+<form
+  class="todo-form"
+  (submit)="submitForm($event)"
+  novalidate>
   <lib-input-field
     label="Titel"
     placeholder="Was ist zu tun?"
@@ -19,10 +22,11 @@
     [dropdownData]="priorityOptions"
     [defaultText]="'Priorität wählen'"
     [width]="'100%'"
-    [height]="'3rem'"
     [selectedValue]="priorityValue()"
     (selectedValueChange)="onPriorityChange($event)"></lib-dropdown-list>
   <div class="dialog-actions">
-    <lib-button [type]="'submit'" [label]="'Hinzufügen'"></lib-button>
+    <lib-button
+      [type]="'submit'"
+      [label]="'Hinzufügen'"></lib-button>
   </div>
 </form>

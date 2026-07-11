@@ -3,6 +3,7 @@
   aria-labelledby="budget-heading">
   <home-page-header
     title="Budget"
+    subtitle="Plane Einnahmen und Ausgaben je Haushalt und Jahr"
     headingId="budget-heading"></home-page-header>
 
   @if (store.error()) {
@@ -16,14 +17,13 @@
     </div>
   }
 
-  <div class="toolbar">
+  <div class="toolbar selection-bar">
     <lib-dropdown-list
       label="Haushalt"
       dropdownName="budget-household"
       [dropdownData]="householdOptions()"
       [defaultText]="'Haushalt wählen'"
       [width]="'min(100%, 16rem)'"
-      [height]="'3rem'"
       [selectedValue]="selectedHouseholdIdValue()"
       (selectedValueChange)="setSelectedHouseholdId($event)"></lib-dropdown-list>
     <lib-input-field
@@ -38,558 +38,632 @@
   </div>
 
   @if (financeStore.selectedHouseholdId()) {
-    <home-tab-bar
-      [tabs]="budgetTabs"
-      [activeId]="uiStore.mode()"
-      ariaLabel="Budget-Ansicht"
-      (activeIdChange)="uiStore.setMode($event)"></home-tab-bar>
+    <div class="budget-panel">
+      <home-tab-bar
+        [tabs]="budgetTabs"
+        [activeId]="uiStore.mode()"
+        ariaLabel="Budget-Ansicht"
+        (activeIdChange)="uiStore.setMode($event)"></home-tab-bar>
 
-    @if (store.budgetResource.isLoading() || store.evaResource.isLoading()) {
-      <lib-skeleton aria-hidden="true"></lib-skeleton>
-      <p
-        class="visually-hidden"
-        role="status"
-        aria-live="polite">
-        Budget wird geladen …
-      </p>
-    } @else if (store.budgetResource.error()) {
-      <div
-        class="status-banner status-banner--danger"
-        role="alert">
-        <i
-          class="bi bi-exclamation-triangle-fill"
-          aria-hidden="true"></i>
-        <span>Budget konnte nicht geladen werden.</span>
-        <button
-          type="button"
-          class="btn"
-          (click)="reloadBudget()">
-          Erneut versuchen
-        </button>
-      </div>
-    } @else if (!budget()) {
-      <home-empty-state
-        icon="bi-pie-chart"
-        title="Kein Budget vorhanden"
-        description="Für diesen Haushalt und dieses Jahr existiert noch kein Budget.">
-        <lib-button
-          [label]="'Budget anlegen'"
-          (clicked)="createBudget()"></lib-button>
-      </home-empty-state>
-    } @else if (uiStore.mode() === 'editor') {
-      <div class="editor-toolbar">
-        <div class="create-group">
-          <lib-input-field
-            label="Neue Gruppe"
-            effectStyle="box"
-            [value]="newGroupTitle()"
-            (valueChange)="newGroupTitle.set($event)"></lib-input-field>
-          <lib-dropdown-list
-            label="Typ"
-            dropdownName="budget-group-type"
-            [dropdownData]="groupTypeOptions()"
-            [defaultText]="'Typ wählen'"
-            [width]="'12rem'"
-            [height]="'3rem'"
-            [(selectedValue)]="newGroupType"></lib-dropdown-list>
-          <lib-input-field
-            label="Ziel %"
-            type="number"
-            effectStyle="box"
-            [value]="newGroupTargetPercent()"
-            (valueChange)="newGroupTargetPercent.set($event)"></lib-input-field>
-          <lib-button
-            [label]="'Gruppe hinzufügen'"
-            (clicked)="createGroup()"></lib-button>
-        </div>
-
-        <div class="create-row">
-          <lib-dropdown-list
-            label="Gruppe"
-            dropdownName="budget-row-group"
-            [dropdownData]="groupOptions()"
-            [defaultText]="'Gruppe wählen'"
-            [width]="'12rem'"
-            [height]="'3rem'"
-            [(selectedValue)]="newRowGroupId"></lib-dropdown-list>
-          <lib-input-field
-            label="Neue Zeile"
-            effectStyle="box"
-            [value]="newRowTitle()"
-            (valueChange)="newRowTitle.set($event)"></lib-input-field>
-          <lib-dropdown-list
-            label="Kategorie"
-            dropdownName="budget-row-category"
-            [dropdownData]="categoryOptions()"
-            [defaultText]="'Keine Kategorie'"
-            [width]="'12rem'"
-            [height]="'3rem'"
-            [(selectedValue)]="newRowCategoryId"></lib-dropdown-list>
-          <lib-button
-            [label]="'Zeile hinzufügen'"
-            (clicked)="createRow()"></lib-button>
-        </div>
-      </div>
-
-      @if (!viewport.isDesktop()) {
-        <div
-          class="month-stepper"
-          aria-live="polite">
-          <button
-            type="button"
-            class="month-stepper__btn"
-            aria-label="Vorheriger Monat"
-            (click)="uiStore.prevMonth()">
-            <i
-              class="bi bi-chevron-left"
-              aria-hidden="true"></i>
-          </button>
-          <span class="month-stepper__label">{{ selectedMonthLabel() }}</span>
-          <button
-            type="button"
-            class="month-stepper__btn"
-            aria-label="Nächster Monat"
-            (click)="uiStore.nextMonth()">
-            <i
-              class="bi bi-chevron-right"
-              aria-hidden="true"></i>
-          </button>
-        </div>
-      }
-
-      @if (viewport.isDesktop()) {
-        @for (group of sortedGroups(); track group.budgetGroupId) {
-          <section class="budget-group">
-            <header class="group-header">
-              <h2>{{ group.title }}</h2>
-              <span class="chip">{{ groupTypeLabel(group) }}</span>
-              <span class="chip">Ziel {{ group.targetPercent ?? '—' }}%</span>
-              <lib-button
-                [label]="'Gruppe löschen'"
-                (clicked)="confirmDeleteGroup(group)"></lib-button>
-            </header>
-
-            <div class="grid-scroll">
-              <table class="budget-table">
-                <colgroup>
-                  <col class="budget-table__col-row" />
-                  <col class="budget-table__col-category" />
-                  @for (month of months; track month) {
-                    <col class="budget-table__col-month" />
-                  }
-                  <col class="budget-table__col-sum" />
-                  <col class="budget-table__col-actions" />
-                </colgroup>
-                <thead>
-                  <tr>
-                    <th
-                      scope="col"
-                      class="sticky-col">
-                      Zeile
-                    </th>
-                    <th
-                      scope="col"
-                      class="sticky-col sticky-col--second">
-                      Kategorie
-                    </th>
-                    @for (month of months; track month) {
-                      <th scope="col">{{ monthLabel(month) }}</th>
-                    }
-                    <th scope="col">Summe</th>
-                    <th scope="col">Aktionen</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (
-                    row of rowsForGroup(group.budgetGroupId);
-                    track row.budgetRowId;
-                    let even = $even
-                  ) {
-                    <tr [class.budget-table__row--muted]="even">
-                      <th
-                        scope="row"
-                        class="sticky-col">
-                        {{ row.title }}
-                      </th>
-                      <td class="sticky-col sticky-col--second budget-table__category-cell">
-                        <lib-dropdown-list
-                          [dropdownName]="'budget-table-category-' + row.budgetRowId"
-                          [dropdownData]="categoryOptions()"
-                          [defaultText]="'Keine Kategorie'"
-                          [width]="'11rem'"
-                          [height]="'3rem'"
-                          [ariaLabel]="'Kategorie für ' + row.title"
-                          [selectedValue]="categoryValue(row.categoryId)"
-                          (selectedValueChange)="
-                            updateRowCategory(row, $event)
-                          "></lib-dropdown-list>
-                      </td>
-                      @for (month of months; track month) {
-                        <td>
-                          <input
-                            type="number"
-                            inputmode="decimal"
-                            class="cell-input"
-                            [attr.aria-label]="row.title + ' ' + monthLabel(month) + ' Betrag'"
-                            [value]="cellForRow(row.budgetRowId, month)?.amount ?? ''"
-                            (change)="
-                              createOrUpdateCell(row.budgetRowId, month, $any($event.target).value)
-                            " />
-                        </td>
-                      }
-                      <td>{{ rowYearTotal(row.budgetRowId) | number: '1.2-2' }}</td>
-                      <td>
-                        <lib-button
-                          [label]="'Zeile löschen'"
-                          (clicked)="confirmDeleteRow(row)"></lib-button>
-                      </td>
-                    </tr>
-                  }
-                </tbody>
-              </table>
-            </div>
-          </section>
-        }
-      } @else {
-        @for (group of sortedGroups(); track group.budgetGroupId) {
-          <article class="card budget-mobile-card">
-            <header class="budget-mobile-card__header">
-              <h2 class="budget-mobile-card__title">{{ group.title }}</h2>
-              <span class="chip">{{ groupTypeLabel(group) }}</span>
-              <span class="chip">Ziel {{ group.targetPercent ?? '—' }}%</span>
-              <lib-button
-                [label]="'Gruppe löschen'"
-                (clicked)="confirmDeleteGroup(group)"></lib-button>
-            </header>
-
-            @for (row of rowsForGroup(group.budgetGroupId); track row.budgetRowId) {
-              <div class="budget-mobile-row">
-                <div class="budget-mobile-row__title">{{ row.title }}</div>
-                <lib-dropdown-list
-                  label="Kategorie"
-                  dropdownName="budget-mobile-category"
-                  [dropdownData]="categoryOptions()"
-                  [defaultText]="'Keine Kategorie'"
-                  [width]="'100%'"
-                  [height]="'3rem'"
-                  [selectedValue]="categoryValue(row.categoryId)"
-                  (selectedValueChange)="updateRowCategory(row, $event)"></lib-dropdown-list>
-                <label
-                  class="budget-mobile-row__label"
-                  [for]="'cell-' + row.budgetRowId">
-                  {{ monthLabel(uiStore.selectedMonth()) }}
-                </label>
-                <input
-                  [id]="'cell-' + row.budgetRowId"
-                  type="number"
-                  inputmode="decimal"
-                  class="cell-input cell-input--full"
-                  [attr.aria-label]="
-                    row.title + ' ' + monthLabel(uiStore.selectedMonth()) + ' Betrag'
-                  "
-                  [value]="cellForRow(row.budgetRowId, uiStore.selectedMonth())?.amount ?? ''"
-                  (change)="
-                    createOrUpdateCell(
-                      row.budgetRowId,
-                      uiStore.selectedMonth(),
-                      $any($event.target).value
-                    )
-                  " />
-                <div class="budget-mobile-row__footer">
-                  <span>Jahressumme: {{ rowYearTotal(row.budgetRowId) | number: '1.2-2' }}</span>
-                  <lib-button
-                    [label]="'Zeile löschen'"
-                    (clicked)="confirmDeleteRow(row)"></lib-button>
-                </div>
-              </div>
-            }
-          </article>
-        }
-      }
-    } @else {
-      @if (eva()) {
-        @if (!viewport.isDesktop()) {
-          <div
-            class="month-stepper"
+      <div class="budget-panel__body">
+        @if (store.budgetResource.isLoading() || store.evaResource.isLoading()) {
+          <lib-skeleton aria-hidden="true"></lib-skeleton>
+          <p
+            class="visually-hidden"
+            role="status"
             aria-live="polite">
+            Budget wird geladen …
+          </p>
+        } @else if (store.budgetResource.error()) {
+          <div
+            class="status-banner status-banner--danger"
+            role="alert">
+            <i
+              class="bi bi-exclamation-triangle-fill"
+              aria-hidden="true"></i>
+            <span>Budget konnte nicht geladen werden.</span>
             <button
               type="button"
-              class="month-stepper__btn"
-              aria-label="Vorheriger Monat"
-              (click)="uiStore.prevMonth()">
-              <i
-                class="bi bi-chevron-left"
-                aria-hidden="true"></i>
-            </button>
-            <span class="month-stepper__label">{{ selectedMonthLabel() }}</span>
-            <button
-              type="button"
-              class="month-stepper__btn"
-              aria-label="Nächster Monat"
-              (click)="uiStore.nextMonth()">
-              <i
-                class="bi bi-chevron-right"
-                aria-hidden="true"></i>
+              class="btn"
+              (click)="reloadBudget()">
+              Erneut versuchen
             </button>
           </div>
-        }
-
-        @if (viewport.isDesktop()) {
-          @for (group of eva()!.groups; track group.budgetGroupId) {
-            <section class="eva-group">
-              <header class="group-header">
-                <h2>{{ group.title }}</h2>
-                <span class="chip">
-                  Ziel {{ group.targetPercent ?? '—' }}% · Geplant
-                  {{ group.plannedPercentOfIncome ?? '—' }}% · Ist
-                  {{ group.actualPercentOfIncome ?? '—' }}%
-                </span>
-              </header>
-
-              <div class="grid-scroll">
-                <table class="budget-table eva-table">
-                  <thead>
-                    <tr>
-                      <th
-                        scope="col"
-                        class="sticky-col">
-                        Zeile
-                      </th>
-                      @for (month of months; track month) {
-                        <th scope="col">{{ monthLabel(month) }}</th>
-                      }
-                      <th scope="col">Jahr SOLL</th>
-                      <th scope="col">Jahr IST</th>
-                      <th scope="col">Jahr Diff</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @for (row of group.rows; track row.budgetRowId; let even = $even) {
-                      <tr [class.budget-table__row--muted]="even">
-                        <th
-                          scope="row"
-                          class="sticky-col">
-                          {{ row.title }}
-                        </th>
-                        @for (monthIndex of monthIndexes; track monthIndex) {
-                          @let soll = row.soll[monthIndex];
-                          @let ist = row.ist[monthIndex];
-                          @let diff = row.diff[monthIndex];
-                          <td>
-                            <span
-                              class="diff-chip"
-                              [class.diff-chip--up]="diff > 0"
-                              [class.diff-chip--down]="diff < 0"
-                              [attr.title]="
-                                'SOLL ' +
-                                (soll | number: '1.2-2') +
-                                ' · IST ' +
-                                (ist | number: '1.2-2')
-                              "
-                              [attr.aria-label]="
-                                monthLabel(monthIndex + 1) +
-                                ': SOLL ' +
-                                soll +
-                                ', IST ' +
-                                ist +
-                                ', Differenz ' +
-                                diff
-                              ">
-                              @if (diff > 0) {
-                                <i
-                                  class="bi bi-caret-up-fill"
-                                  aria-hidden="true"></i>
-                              } @else if (diff < 0) {
-                                <i
-                                  class="bi bi-caret-down-fill"
-                                  aria-hidden="true"></i>
-                              }
-                              {{ diff | number: '1.2-2' }}
-                            </span>
-                          </td>
-                        }
-                        <td>{{ row.yearSoll | number: '1.2-2' }}</td>
-                        <td>{{ row.yearIst | number: '1.2-2' }}</td>
-                        <td>
-                          @let rowYearDiffVal = yearDiff(row.yearSoll, row.yearIst);
-                          <span
-                            class="diff-chip"
-                            [class.diff-chip--up]="rowYearDiffVal > 0"
-                            [class.diff-chip--down]="rowYearDiffVal < 0">
-                            @if (rowYearDiffVal > 0) {
-                              <i
-                                class="bi bi-caret-up-fill"
-                                aria-hidden="true"></i>
-                            } @else if (rowYearDiffVal < 0) {
-                              <i
-                                class="bi bi-caret-down-fill"
-                                aria-hidden="true"></i>
-                            }
-                            {{ rowYearDiffVal | number: '1.2-2' }}
-                          </span>
-                        </td>
-                      </tr>
-                    }
-                    <tr class="group-total">
-                      <th
-                        scope="row"
-                        class="sticky-col">
-                        Gruppensumme
-                      </th>
-                      @for (monthIndex of monthIndexes; track monthIndex) {
-                        @let diff = group.diff[monthIndex];
-                        <td>
-                          <span
-                            class="diff-chip"
-                            [class.diff-chip--up]="diff > 0"
-                            [class.diff-chip--down]="diff < 0">
-                            @if (diff > 0) {
-                              <i
-                                class="bi bi-caret-up-fill"
-                                aria-hidden="true"></i>
-                            } @else if (diff < 0) {
-                              <i
-                                class="bi bi-caret-down-fill"
-                                aria-hidden="true"></i>
-                            }
-                            {{ diff | number: '1.2-2' }}
-                          </span>
-                        </td>
-                      }
-                      <td>{{ group.yearSoll | number: '1.2-2' }}</td>
-                      <td>{{ group.yearIst | number: '1.2-2' }}</td>
-                      <td>
-                        @let groupYearDiff = yearDiff(group.yearSoll, group.yearIst);
-                        <span
-                          class="diff-chip"
-                          [class.diff-chip--up]="groupYearDiff > 0"
-                          [class.diff-chip--down]="groupYearDiff < 0">
-                          {{ groupYearDiff | number: '1.2-2' }}
-                        </span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+        } @else if (!budget()) {
+          <home-empty-state
+            icon="bi-pie-chart"
+            title="Kein Budget vorhanden"
+            description="Für diesen Haushalt und dieses Jahr existiert noch kein Budget.">
+            <lib-button
+              [label]="'Budget anlegen'"
+              (clicked)="createBudget()"></lib-button>
+          </home-empty-state>
+        } @else if (uiStore.mode() === 'editor') {
+          <div class="tab-panel-enter">
+            <div class="editor-toolbar">
+              <div class="create-group">
+                <lib-input-field
+                  label="Neue Gruppe"
+                  effectStyle="box"
+                  [value]="newGroupTitle()"
+                  (valueChange)="newGroupTitle.set($event)"></lib-input-field>
+                <lib-dropdown-list
+                  label="Typ"
+                  dropdownName="budget-group-type"
+                  [dropdownData]="groupTypeOptions()"
+                  [defaultText]="'Typ wählen'"
+                  [width]="'12rem'"
+                  [(selectedValue)]="newGroupType"></lib-dropdown-list>
+                <lib-input-field
+                  label="Ziel %"
+                  type="number"
+                  effectStyle="box"
+                  [value]="newGroupTargetPercent()"
+                  (valueChange)="newGroupTargetPercent.set($event)"></lib-input-field>
+                <lib-button
+                  [label]="'Gruppe hinzufügen'"
+                  (clicked)="createGroup()"></lib-button>
               </div>
-            </section>
-          }
-        } @else {
-          @for (group of eva()!.groups; track group.budgetGroupId) {
-            <article class="card budget-mobile-card">
-              <header class="budget-mobile-card__header">
-                <h2 class="budget-mobile-card__title">{{ group.title }}</h2>
-                <span class="chip">
-                  Ziel {{ group.targetPercent ?? '—' }}% · Geplant
-                  {{ group.plannedPercentOfIncome ?? '—' }}%
-                </span>
-              </header>
 
-              @for (row of group.rows; track row.budgetRowId) {
-                @let monthIndex = uiStore.selectedMonth() - 1;
-                @let soll = row.soll[monthIndex];
-                @let ist = row.ist[monthIndex];
-                @let diff = row.diff[monthIndex];
-                <div class="budget-mobile-row budget-mobile-row--eva">
-                  <div class="budget-mobile-row__title">{{ row.title }}</div>
-                  <dl class="eva-mobile-stats">
-                    <div>
-                      <dt>SOLL</dt>
-                      <dd>{{ soll | number: '1.2-2' }}</dd>
-                    </div>
-                    <div>
-                      <dt>IST</dt>
-                      <dd>{{ ist | number: '1.2-2' }}</dd>
-                    </div>
-                    <div>
-                      <dt>Diff</dt>
-                      <dd>
-                        <span
-                          class="diff-chip"
-                          [class.diff-chip--up]="diff > 0"
-                          [class.diff-chip--down]="diff < 0">
-                          @if (diff > 0) {
-                            <i
-                              class="bi bi-caret-up-fill"
-                              aria-hidden="true"></i>
-                          } @else if (diff < 0) {
-                            <i
-                              class="bi bi-caret-down-fill"
-                              aria-hidden="true"></i>
+              <div class="create-row">
+                <lib-dropdown-list
+                  label="Gruppe"
+                  dropdownName="budget-row-group"
+                  [dropdownData]="groupOptions()"
+                  [defaultText]="'Gruppe wählen'"
+                  [width]="'12rem'"
+                  [(selectedValue)]="newRowGroupId"></lib-dropdown-list>
+                <lib-input-field
+                  label="Neue Zeile"
+                  effectStyle="box"
+                  [value]="newRowTitle()"
+                  (valueChange)="newRowTitle.set($event)"></lib-input-field>
+                <lib-dropdown-list
+                  label="Kategorie"
+                  dropdownName="budget-row-category"
+                  [dropdownData]="categoryOptions()"
+                  [defaultText]="'Keine Kategorie'"
+                  [width]="'12rem'"
+                  [(selectedValue)]="newRowCategoryId"></lib-dropdown-list>
+                <lib-button
+                  [label]="'Zeile hinzufügen'"
+                  (clicked)="createRow()"></lib-button>
+              </div>
+            </div>
+
+            @if (!viewport.isDesktop()) {
+              <div
+                class="month-stepper"
+                aria-live="polite">
+                <button
+                  type="button"
+                  class="month-stepper__btn"
+                  aria-label="Vorheriger Monat"
+                  (click)="uiStore.prevMonth()">
+                  <i
+                    class="bi bi-chevron-left"
+                    aria-hidden="true"></i>
+                </button>
+                <span class="month-stepper__label">{{ selectedMonthLabel() }}</span>
+                <button
+                  type="button"
+                  class="month-stepper__btn"
+                  aria-label="Nächster Monat"
+                  (click)="uiStore.nextMonth()">
+                  <i
+                    class="bi bi-chevron-right"
+                    aria-hidden="true"></i>
+                </button>
+              </div>
+            }
+
+            @if (viewport.isDesktop()) {
+              @for (group of sortedGroups(); track group.budgetGroupId) {
+                <section class="budget-group">
+                  <header class="group-header">
+                    <span
+                      class="group-header__icon"
+                      [class.group-header__icon--success]="isIncomeGroup(group)"
+                      [class.group-header__icon--danger]="!isIncomeGroup(group)">
+                      <i
+                        class="bi"
+                        [class.bi-graph-up-arrow]="isIncomeGroup(group)"
+                        [class.bi-graph-down-arrow]="!isIncomeGroup(group)"
+                        aria-hidden="true"></i>
+                    </span>
+                    <h2>{{ group.title }}</h2>
+                    <span
+                      class="chip"
+                      [class.chip--success]="isIncomeGroup(group)"
+                      [class.chip--danger]="!isIncomeGroup(group)">
+                      {{ groupTypeLabel(group) }}
+                    </span>
+                    <span class="chip">Ziel {{ group.targetPercent ?? '—' }}%</span>
+                    <lib-button
+                      [label]="'Gruppe löschen'"
+                      icon="bi-trash"
+                      (clicked)="confirmDeleteGroup(group)"></lib-button>
+                  </header>
+
+                  <div class="grid-scroll">
+                    <table class="budget-table">
+                      <colgroup>
+                        <col class="budget-table__col-row" />
+                        <col class="budget-table__col-category" />
+                        @for (month of months; track month) {
+                          <col class="budget-table__col-month" />
+                        }
+                        <col class="budget-table__col-sum" />
+                        <col class="budget-table__col-actions" />
+                      </colgroup>
+                      <thead>
+                        <tr>
+                          <th
+                            scope="col"
+                            class="sticky-col">
+                            Zeile
+                          </th>
+                          <th
+                            scope="col"
+                            class="sticky-col sticky-col--second">
+                            Kategorie
+                          </th>
+                          @for (month of months; track month) {
+                            <th scope="col">{{ monthLabel(month) }}</th>
                           }
-                          {{ diff | number: '1.2-2' }}
-                        </span>
-                      </dd>
+                          <th scope="col">Summe</th>
+                          <th scope="col">Aktionen</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (
+                          row of rowsForGroup(group.budgetGroupId);
+                          track row.budgetRowId;
+                          let even = $even
+                        ) {
+                          <tr [class.budget-table__row--muted]="even">
+                            <th
+                              scope="row"
+                              class="sticky-col">
+                              {{ row.title }}
+                            </th>
+                            <td class="sticky-col sticky-col--second budget-table__category-cell">
+                              <lib-dropdown-list
+                                [dropdownName]="'budget-table-category-' + row.budgetRowId"
+                                [dropdownData]="categoryOptions()"
+                                [defaultText]="'Keine Kategorie'"
+                                [width]="'11rem'"
+                                [height]="'3rem'"
+                                [ariaLabel]="'Kategorie für ' + row.title"
+                                [selectedValue]="categoryValue(row.categoryId)"
+                                (selectedValueChange)="
+                                  updateRowCategory(row, $event)
+                                "></lib-dropdown-list>
+                            </td>
+                            @for (month of months; track month) {
+                              <td>
+                                <input
+                                  type="number"
+                                  inputmode="decimal"
+                                  class="cell-input"
+                                  [attr.aria-label]="
+                                    row.title + ' ' + monthLabel(month) + ' Betrag'
+                                  "
+                                  [value]="cellForRow(row.budgetRowId, month)?.amount ?? ''"
+                                  (change)="
+                                    createOrUpdateCell(
+                                      row.budgetRowId,
+                                      month,
+                                      $any($event.target).value
+                                    )
+                                  " />
+                              </td>
+                            }
+                            <td>{{ rowYearTotal(row.budgetRowId) | number: '1.2-2' }}</td>
+                            <td>
+                              <lib-button
+                                [label]="'Zeile löschen'"
+                                icon="bi-trash"
+                                (clicked)="confirmDeleteRow(row)"></lib-button>
+                            </td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+              }
+            } @else {
+              @for (group of sortedGroups(); track group.budgetGroupId) {
+                <article class="card budget-mobile-card">
+                  <header class="budget-mobile-card__header">
+                    <div class="budget-mobile-card__title-row">
+                      <span
+                        class="group-header__icon"
+                        [class.group-header__icon--success]="isIncomeGroup(group)"
+                        [class.group-header__icon--danger]="!isIncomeGroup(group)">
+                        <i
+                          class="bi"
+                          [class.bi-graph-up-arrow]="isIncomeGroup(group)"
+                          [class.bi-graph-down-arrow]="!isIncomeGroup(group)"
+                          aria-hidden="true"></i>
+                      </span>
+                      <h2 class="budget-mobile-card__title">{{ group.title }}</h2>
                     </div>
-                  </dl>
+                    <span
+                      class="chip"
+                      [class.chip--success]="isIncomeGroup(group)"
+                      [class.chip--danger]="!isIncomeGroup(group)">
+                      {{ groupTypeLabel(group) }}
+                    </span>
+                    <span class="chip">Ziel {{ group.targetPercent ?? '—' }}%</span>
+                    <lib-button
+                      [label]="'Gruppe löschen'"
+                      icon="bi-trash"
+                      (clicked)="confirmDeleteGroup(group)"></lib-button>
+                  </header>
+
+                  @for (row of rowsForGroup(group.budgetGroupId); track row.budgetRowId) {
+                    <div class="budget-mobile-row">
+                      <div class="budget-mobile-row__title">{{ row.title }}</div>
+                      <lib-dropdown-list
+                        label="Kategorie"
+                        dropdownName="budget-mobile-category"
+                        [dropdownData]="categoryOptions()"
+                        [defaultText]="'Keine Kategorie'"
+                        [width]="'100%'"
+                        [selectedValue]="categoryValue(row.categoryId)"
+                        (selectedValueChange)="updateRowCategory(row, $event)"></lib-dropdown-list>
+                      <label
+                        class="budget-mobile-row__label"
+                        [for]="'cell-' + row.budgetRowId">
+                        {{ monthLabel(uiStore.selectedMonth()) }}
+                      </label>
+                      <input
+                        [id]="'cell-' + row.budgetRowId"
+                        type="number"
+                        inputmode="decimal"
+                        class="cell-input cell-input--full"
+                        [attr.aria-label]="
+                          row.title + ' ' + monthLabel(uiStore.selectedMonth()) + ' Betrag'
+                        "
+                        [value]="cellForRow(row.budgetRowId, uiStore.selectedMonth())?.amount ?? ''"
+                        (change)="
+                          createOrUpdateCell(
+                            row.budgetRowId,
+                            uiStore.selectedMonth(),
+                            $any($event.target).value
+                          )
+                        " />
+                      <div class="budget-mobile-row__footer">
+                        <span>
+                          Jahressumme: {{ rowYearTotal(row.budgetRowId) | number: '1.2-2' }}
+                        </span>
+                        <lib-button
+                          [label]="'Zeile löschen'"
+                          icon="bi-trash"
+                          (clicked)="confirmDeleteRow(row)"></lib-button>
+                      </div>
+                    </div>
+                  }
+                </article>
+              }
+            }
+          </div>
+        } @else {
+          <div class="tab-panel-enter">
+            @if (eva()) {
+              @if (!viewport.isDesktop()) {
+                <div
+                  class="month-stepper"
+                  aria-live="polite">
+                  <button
+                    type="button"
+                    class="month-stepper__btn"
+                    aria-label="Vorheriger Monat"
+                    (click)="uiStore.prevMonth()">
+                    <i
+                      class="bi bi-chevron-left"
+                      aria-hidden="true"></i>
+                  </button>
+                  <span class="month-stepper__label">{{ selectedMonthLabel() }}</span>
+                  <button
+                    type="button"
+                    class="month-stepper__btn"
+                    aria-label="Nächster Monat"
+                    (click)="uiStore.nextMonth()">
+                    <i
+                      class="bi bi-chevron-right"
+                      aria-hidden="true"></i>
+                  </button>
                 </div>
               }
 
-              @let groupMonthIndex = uiStore.selectedMonth() - 1;
-              <footer class="budget-mobile-card__footer">
-                <span>Gruppensumme Diff</span>
-                <span
-                  class="diff-chip"
-                  [class.diff-chip--up]="group.diff[groupMonthIndex] > 0"
-                  [class.diff-chip--down]="group.diff[groupMonthIndex] < 0">
-                  {{ group.diff[groupMonthIndex] | number: '1.2-2' }}
-                </span>
-              </footer>
-            </article>
-          }
-        }
+              @if (viewport.isDesktop()) {
+                @for (group of eva()!.groups; track group.budgetGroupId) {
+                  <section class="eva-group">
+                    <header class="group-header">
+                      <span
+                        class="group-header__icon"
+                        [class.group-header__icon--success]="isIncomeGroup(group)"
+                        [class.group-header__icon--danger]="!isIncomeGroup(group)">
+                        <i
+                          class="bi"
+                          [class.bi-graph-up-arrow]="isIncomeGroup(group)"
+                          [class.bi-graph-down-arrow]="!isIncomeGroup(group)"
+                          aria-hidden="true"></i>
+                      </span>
+                      <h2>{{ group.title }}</h2>
+                      <span
+                        class="chip"
+                        [class.chip--success]="isIncomeGroup(group)"
+                        [class.chip--danger]="!isIncomeGroup(group)">
+                        Ziel {{ group.targetPercent ?? '—' }}% · Geplant
+                        {{ group.plannedPercentOfIncome ?? '—' }}% · Ist
+                        {{ group.actualPercentOfIncome ?? '—' }}%
+                      </span>
+                    </header>
 
-        <section
-          class="eva-totals"
-          aria-labelledby="eva-totals-heading">
-          <h2
-            id="eva-totals-heading"
-            class="visually-hidden">
-            Jahresübersicht
-          </h2>
-          <div class="stat-card stat-card--income">
-            <span class="stat-card__label">Einnahmen</span>
-            <p class="stat-card__value">
-              {{ eva()!.totals.yearIncomeIst | number: '1.2-2' }}
-            </p>
-            <span class="stat-card__detail">
-              SOLL: {{ eva()!.totals.yearIncomeSoll | number: '1.2-2' }}
-            </span>
+                    <div class="grid-scroll">
+                      <table class="budget-table eva-table">
+                        <thead>
+                          <tr>
+                            <th
+                              scope="col"
+                              class="sticky-col">
+                              Zeile
+                            </th>
+                            @for (month of months; track month) {
+                              <th scope="col">{{ monthLabel(month) }}</th>
+                            }
+                            <th scope="col">Jahr SOLL</th>
+                            <th scope="col">Jahr IST</th>
+                            <th scope="col">Jahr Diff</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @for (row of group.rows; track row.budgetRowId; let even = $even) {
+                            <tr [class.budget-table__row--muted]="even">
+                              <th
+                                scope="row"
+                                class="sticky-col">
+                                {{ row.title }}
+                              </th>
+                              @for (monthIndex of monthIndexes; track monthIndex) {
+                                @let soll = row.soll[monthIndex];
+                                @let ist = row.ist[monthIndex];
+                                @let diff = row.diff[monthIndex];
+                                <td>
+                                  <span
+                                    class="diff-chip"
+                                    [class.diff-chip--up]="diff > 0"
+                                    [class.diff-chip--down]="diff < 0"
+                                    [attr.title]="
+                                      'SOLL ' +
+                                      (soll | number: '1.2-2') +
+                                      ' · IST ' +
+                                      (ist | number: '1.2-2')
+                                    "
+                                    [attr.aria-label]="
+                                      monthLabel(monthIndex + 1) +
+                                      ': SOLL ' +
+                                      soll +
+                                      ', IST ' +
+                                      ist +
+                                      ', Differenz ' +
+                                      diff
+                                    ">
+                                    @if (diff > 0) {
+                                      <i
+                                        class="bi bi-caret-up-fill"
+                                        aria-hidden="true"></i>
+                                    } @else if (diff < 0) {
+                                      <i
+                                        class="bi bi-caret-down-fill"
+                                        aria-hidden="true"></i>
+                                    }
+                                    {{ diff | number: '1.2-2' }}
+                                  </span>
+                                </td>
+                              }
+                              <td>{{ row.yearSoll | number: '1.2-2' }}</td>
+                              <td>{{ row.yearIst | number: '1.2-2' }}</td>
+                              <td>
+                                @let rowYearDiffVal = yearDiff(row.yearSoll, row.yearIst);
+                                <span
+                                  class="diff-chip"
+                                  [class.diff-chip--up]="rowYearDiffVal > 0"
+                                  [class.diff-chip--down]="rowYearDiffVal < 0">
+                                  @if (rowYearDiffVal > 0) {
+                                    <i
+                                      class="bi bi-caret-up-fill"
+                                      aria-hidden="true"></i>
+                                  } @else if (rowYearDiffVal < 0) {
+                                    <i
+                                      class="bi bi-caret-down-fill"
+                                      aria-hidden="true"></i>
+                                  }
+                                  {{ rowYearDiffVal | number: '1.2-2' }}
+                                </span>
+                              </td>
+                            </tr>
+                          }
+                          <tr class="group-total">
+                            <th
+                              scope="row"
+                              class="sticky-col">
+                              Gruppensumme
+                            </th>
+                            @for (monthIndex of monthIndexes; track monthIndex) {
+                              @let diff = group.diff[monthIndex];
+                              <td>
+                                <span
+                                  class="diff-chip"
+                                  [class.diff-chip--up]="diff > 0"
+                                  [class.diff-chip--down]="diff < 0">
+                                  @if (diff > 0) {
+                                    <i
+                                      class="bi bi-caret-up-fill"
+                                      aria-hidden="true"></i>
+                                  } @else if (diff < 0) {
+                                    <i
+                                      class="bi bi-caret-down-fill"
+                                      aria-hidden="true"></i>
+                                  }
+                                  {{ diff | number: '1.2-2' }}
+                                </span>
+                              </td>
+                            }
+                            <td>{{ group.yearSoll | number: '1.2-2' }}</td>
+                            <td>{{ group.yearIst | number: '1.2-2' }}</td>
+                            <td>
+                              @let groupYearDiff = yearDiff(group.yearSoll, group.yearIst);
+                              <span
+                                class="diff-chip"
+                                [class.diff-chip--up]="groupYearDiff > 0"
+                                [class.diff-chip--down]="groupYearDiff < 0">
+                                {{ groupYearDiff | number: '1.2-2' }}
+                              </span>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </section>
+                }
+              } @else {
+                @for (group of eva()!.groups; track group.budgetGroupId) {
+                  <article class="card budget-mobile-card">
+                    <header class="budget-mobile-card__header">
+                      <span
+                        class="group-header__icon"
+                        [class.group-header__icon--success]="isIncomeGroup(group)"
+                        [class.group-header__icon--danger]="!isIncomeGroup(group)">
+                        <i
+                          class="bi"
+                          [class.bi-graph-up-arrow]="isIncomeGroup(group)"
+                          [class.bi-graph-down-arrow]="!isIncomeGroup(group)"
+                          aria-hidden="true"></i>
+                      </span>
+                      <h2 class="budget-mobile-card__title">{{ group.title }}</h2>
+                      <span
+                        class="chip"
+                        [class.chip--success]="isIncomeGroup(group)"
+                        [class.chip--danger]="!isIncomeGroup(group)">
+                        Ziel {{ group.targetPercent ?? '—' }}% · Geplant
+                        {{ group.plannedPercentOfIncome ?? '—' }}%
+                      </span>
+                    </header>
+
+                    @for (row of group.rows; track row.budgetRowId) {
+                      @let monthIndex = uiStore.selectedMonth() - 1;
+                      @let soll = row.soll[monthIndex];
+                      @let ist = row.ist[monthIndex];
+                      @let diff = row.diff[monthIndex];
+                      <div class="budget-mobile-row budget-mobile-row--eva">
+                        <div class="budget-mobile-row__title">{{ row.title }}</div>
+                        <dl class="eva-mobile-stats">
+                          <div>
+                            <dt>SOLL</dt>
+                            <dd>{{ soll | number: '1.2-2' }}</dd>
+                          </div>
+                          <div>
+                            <dt>IST</dt>
+                            <dd>{{ ist | number: '1.2-2' }}</dd>
+                          </div>
+                          <div>
+                            <dt>Diff</dt>
+                            <dd>
+                              <span
+                                class="diff-chip"
+                                [class.diff-chip--up]="diff > 0"
+                                [class.diff-chip--down]="diff < 0">
+                                @if (diff > 0) {
+                                  <i
+                                    class="bi bi-caret-up-fill"
+                                    aria-hidden="true"></i>
+                                } @else if (diff < 0) {
+                                  <i
+                                    class="bi bi-caret-down-fill"
+                                    aria-hidden="true"></i>
+                                }
+                                {{ diff | number: '1.2-2' }}
+                              </span>
+                            </dd>
+                          </div>
+                        </dl>
+                      </div>
+                    }
+
+                    @let groupMonthIndex = uiStore.selectedMonth() - 1;
+                    <footer class="budget-mobile-card__footer">
+                      <span>Gruppensumme Diff</span>
+                      <span
+                        class="diff-chip"
+                        [class.diff-chip--up]="group.diff[groupMonthIndex] > 0"
+                        [class.diff-chip--down]="group.diff[groupMonthIndex] < 0">
+                        {{ group.diff[groupMonthIndex] | number: '1.2-2' }}
+                      </span>
+                    </footer>
+                  </article>
+                }
+              }
+
+              <section
+                class="eva-totals"
+                aria-labelledby="eva-totals-heading">
+                <h2
+                  id="eva-totals-heading"
+                  class="visually-hidden">
+                  Jahresübersicht
+                </h2>
+                <div class="stat-card stat-card--income">
+                  <span class="stat-card__label">Einnahmen</span>
+                  <p class="stat-card__value">
+                    {{ eva()!.totals.yearIncomeIst | number: '1.2-2' }}
+                  </p>
+                  <span class="stat-card__detail">
+                    SOLL: {{ eva()!.totals.yearIncomeSoll | number: '1.2-2' }}
+                  </span>
+                </div>
+                <div class="stat-card stat-card--expense">
+                  <span class="stat-card__label">Ausgaben</span>
+                  <p class="stat-card__value">
+                    {{ eva()!.totals.yearExpenseIst | number: '1.2-2' }}
+                  </p>
+                  <span class="stat-card__detail">
+                    SOLL: {{ eva()!.totals.yearExpenseSoll | number: '1.2-2' }}
+                  </span>
+                </div>
+                <div class="stat-card stat-card--diff">
+                  <span class="stat-card__label">Differenz</span>
+                  <p class="stat-card__value">
+                    {{ eva()!.totals.yearDiffIst | number: '1.2-2' }}
+                  </p>
+                  <span class="stat-card__detail">
+                    SOLL: {{ eva()!.totals.yearDiffSoll | number: '1.2-2' }}
+                  </span>
+                </div>
+                <div class="stat-card stat-card--unassigned">
+                  <span class="stat-card__label">Nicht zugeordnet</span>
+                  <p class="stat-card__value">
+                    {{ sumArray(eva()!.unassignedIst) | number: '1.2-2' }}
+                  </p>
+                  <span class="stat-card__detail">
+                    {{ eva()!.unassignedTransactionCount }} Buchung(en)
+                  </span>
+                </div>
+              </section>
+            } @else {
+              <home-empty-state
+                icon="bi-bar-chart"
+                title="Keine Auswertungsdaten"
+                description="Für dieses Budget liegen noch keine E+A-Daten vor."></home-empty-state>
+            }
           </div>
-          <div class="stat-card stat-card--expense">
-            <span class="stat-card__label">Ausgaben</span>
-            <p class="stat-card__value">
-              {{ eva()!.totals.yearExpenseIst | number: '1.2-2' }}
-            </p>
-            <span class="stat-card__detail">
-              SOLL: {{ eva()!.totals.yearExpenseSoll | number: '1.2-2' }}
-            </span>
-          </div>
-          <div class="stat-card stat-card--diff">
-            <span class="stat-card__label">Differenz</span>
-            <p class="stat-card__value">
-              {{ eva()!.totals.yearDiffIst | number: '1.2-2' }}
-            </p>
-            <span class="stat-card__detail">
-              SOLL: {{ eva()!.totals.yearDiffSoll | number: '1.2-2' }}
-            </span>
-          </div>
-          <div class="stat-card stat-card--unassigned">
-            <span class="stat-card__label">Nicht zugeordnet</span>
-            <p class="stat-card__value">
-              {{ sumArray(eva()!.unassignedIst) | number: '1.2-2' }}
-            </p>
-            <span class="stat-card__detail">
-              {{ eva()!.unassignedTransactionCount }} Buchung(en)
-            </span>
-          </div>
-        </section>
-      } @else {
-        <home-empty-state
-          icon="bi-bar-chart"
-          title="Keine Auswertungsdaten"
-          description="Für dieses Budget liegen noch keine E+A-Daten vor."></home-empty-state>
-      }
-    }
+        }
+      </div>
+    </div>
   } @else {
     <home-empty-state
       icon="bi-house"

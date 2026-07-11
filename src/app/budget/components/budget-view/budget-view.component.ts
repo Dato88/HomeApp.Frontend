@@ -353,6 +353,10 @@ export class BudgetViewComponent {
     return BUDGET_GROUP_TYPE_LABELS[group.budgetGroupType] ?? 'Unbekannt';
   }
 
+  isIncomeGroup(group: { budgetGroupType: BudgetGroupType }): boolean {
+    return group.budgetGroupType === BudgetGroupType.Income;
+  }
+
   monthLabel(month: number): string {
     return MONTH_LABELS[month - 1] ?? String(month);
   }

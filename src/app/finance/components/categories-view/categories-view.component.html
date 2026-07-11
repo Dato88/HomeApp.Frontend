@@ -5,7 +5,6 @@
     [dropdownData]="householdOptions()"
     [defaultText]="'Haushalt wählen'"
     [width]="'min(100%, 16rem)'"
-    [height]="'3rem'"
     [selectedValue]="selectedHouseholdIdValue()"
     (selectedValueChange)="setSelectedHouseholdId($event)"></lib-dropdown-list>
   @if (store.selectedHouseholdId()) {
@@ -188,7 +187,6 @@
       [dropdownData]="categoryTypeOptions()"
       [defaultText]="'Typ wählen'"
       [width]="'100%'"
-      [height]="'3rem'"
       [(selectedValue)]="categoryType"></lib-dropdown-list>
     <div class="dialog-actions">
       <lib-button

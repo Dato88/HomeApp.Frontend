@@ -8,7 +8,6 @@
     [dropdownData]="accountOptions()"
     [defaultText]="'Konto wählen'"
     [width]="'100%'"
-    [height]="'3rem'"
     [selectedValue]="store.selectedAccountId()"
     (selectedValueChange)="
       store.setSelectedAccountId($event); onAccountFilterChange()
@@ -19,7 +18,6 @@
     [dropdownData]="householdOptions()"
     [defaultText]="'Haushalt wählen'"
     [width]="'100%'"
-    [height]="'3rem'"
     [selectedValue]="selectedHouseholdIdValue()"
     (selectedValueChange)="setSelectedHouseholdId($event)"></lib-dropdown-list>
   <lib-input-field
@@ -258,7 +256,6 @@
               [dropdownData]="categoryOptions()"
               [defaultText]="'Ohne Kategorie'"
               [width]="'100%'"
-              [height]="'3rem'"
               [selectedValue]="categoryValue(transaction.categoryId)"
               (selectedValueChange)="setCategory(transaction, $event)"></lib-dropdown-list>
           </div>
@@ -344,7 +341,6 @@
       [dropdownData]="categoryOptions()"
       [defaultText]="'Ohne Kategorie'"
       [width]="'100%'"
-      [height]="'3rem'"
       [(selectedValue)]="categoryId"></lib-dropdown-list>
     <div class="dialog-actions">
       <lib-button
