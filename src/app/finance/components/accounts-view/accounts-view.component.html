@@ -1,15 +1,60 @@
 @if (store.accountsResource.isLoading()) {
   <lib-skeleton aria-hidden="true"></lib-skeleton>
-  <p class="visually-hidden" role="status" aria-live="polite">Konten werden geladen …</p>
+  <p
+    class="visually-hidden"
+    role="status"
+    aria-live="polite">
+    Konten werden geladen …
+  </p>
 } @else if (store.accountsResource.error()) {
-  <div class="status-banner status-banner--danger" role="alert">
-    <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+  <div
+    class="status-banner status-banner--danger"
+    role="alert">
+    <i
+      class="bi bi-exclamation-triangle-fill"
+      aria-hidden="true"></i>
     <span>Konten konnten nicht geladen werden.</span>
-    <button type="button" class="btn" (click)="store.accountsResource.reload()">
+    <button
+      type="button"
+      class="btn"
+      (click)="store.accountsResource.reload()">
       Erneut versuchen
     </button>
   </div>
 } @else {
+  <div
+    class="stat-row"
+    role="group"
+    aria-label="Kontoübersicht">
+    <div class="stat-card">
+      <span class="stat-card__icon">
+        <i
+          class="bi bi-bank"
+          aria-hidden="true"></i>
+      </span>
+      <span class="stat-card__label">Konten gesamt</span>
+      <p class="stat-card__value">{{ totalAccountsCount() }}</p>
+    </div>
+    <div class="stat-card stat-card--success">
+      <span class="stat-card__icon">
+        <i
+          class="bi bi-person-check"
+          aria-hidden="true"></i>
+      </span>
+      <span class="stat-card__label">Eigene Konten</span>
+      <p class="stat-card__value">{{ ownedAccountsCount() }}</p>
+    </div>
+    <div class="stat-card stat-card--info">
+      <span class="stat-card__icon">
+        <i
+          class="bi bi-share"
+          aria-hidden="true"></i>
+      </span>
+      <span class="stat-card__label">Mit dir geteilt</span>
+      <p class="stat-card__value">{{ sharedWithYouCount() }}</p>
+    </div>
+  </div>
+
   <div class="toolbar">
     <lib-button
       [label]="'Konto hinzufügen'"
@@ -23,25 +68,55 @@
     [hoverable]="true"
     [zebra]="true"
     [detailsExpandedBy]="isDetailsExpanded">
-    <lib-grid-column field="name" title="Name" [sortable]="true"></lib-grid-column>
+    <lib-grid-column
+      field="name"
+      title="Name"
+      [sortable]="true">
+      <ng-template
+        libGridCellTemplate
+        let-account>
+        <span class="account-name-cell">
+          <i
+            class="bi {{ accountTypeIcon(account) }}"
+            aria-hidden="true"></i>
+          {{ account.name }}
+        </span>
+      </ng-template>
+    </lib-grid-column>
     @if (viewport.isDesktop()) {
-      <lib-grid-column field="iban" title="IBAN"></lib-grid-column>
+      <lib-grid-column
+        field="iban"
+        title="IBAN"></lib-grid-column>
     }
-    <lib-grid-column field="accountType" title="Typ">
-      <ng-template libGridCellTemplate let-account>
+    <lib-grid-column
+      field="accountType"
+      title="Typ">
+      <ng-template
+        libGridCellTemplate
+        let-account>
         {{ accountTypeLabel(account) }}
       </ng-template>
     </lib-grid-column>
     @if (viewport.isDesktop()) {
-      <lib-grid-column field="currencyCode" title="Währung"></lib-grid-column>
-      <lib-grid-column field="sharedHouseholdIds" title="Geteilt mit">
-        <ng-template libGridCellTemplate let-account>
+      <lib-grid-column
+        field="currencyCode"
+        title="Währung"></lib-grid-column>
+      <lib-grid-column
+        field="sharedHouseholdIds"
+        title="Geteilt mit">
+        <ng-template
+          libGridCellTemplate
+          let-account>
           {{ sharedHouseholdNames(account) || '—' }}
         </ng-template>
       </lib-grid-column>
     }
-    <lib-grid-column field="isOwner" title="Aktionen">
-      <ng-template libGridCellTemplate let-account>
+    <lib-grid-column
+      field="isOwner"
+      title="Aktionen">
+      <ng-template
+        libGridCellTemplate
+        let-account>
         @if (account.isOwner) {
           <div class="row-actions">
             @if (!viewport.isDesktop()) {
@@ -67,21 +142,27 @@
               class="icon-button"
               [attr.aria-label]="'Konto ' + account.name + ' bearbeiten'"
               (click)="openEdit(account)">
-              <i class="bi bi-pencil" aria-hidden="true"></i>
+              <i
+                class="bi bi-pencil"
+                aria-hidden="true"></i>
             </button>
             <button
               type="button"
               class="icon-button"
               [attr.aria-label]="'Konto ' + account.name + ' teilen'"
               (click)="openShare(account.accountId)">
-              <i class="bi bi-share" aria-hidden="true"></i>
+              <i
+                class="bi bi-share"
+                aria-hidden="true"></i>
             </button>
             <button
               type="button"
               class="icon-button icon-button--danger"
               [attr.aria-label]="'Konto ' + account.name + ' löschen'"
               (click)="deleteDialog.open(account)">
-              <i class="bi bi-trash" aria-hidden="true"></i>
+              <i
+                class="bi bi-trash"
+                aria-hidden="true"></i>
             </button>
           </div>
         } @else {
@@ -89,7 +170,9 @@
         }
       </ng-template>
     </lib-grid-column>
-    <ng-template libGridRowDetailsTemplate let-account>
+    <ng-template
+      libGridRowDetailsTemplate
+      let-account>
       <div class="account-details">
         <dl>
           <dt>IBAN</dt>
@@ -129,10 +212,15 @@
       class="icon-button"
       aria-label="Dialog schließen"
       (click)="closeCreateDialog()">
-      <i class="bi bi-x-lg" aria-hidden="true"></i>
+      <i
+        class="bi bi-x-lg"
+        aria-hidden="true"></i>
     </button>
   </div>
-  <form class="form-grid" (submit)="$event.preventDefault(); submitAccount()" novalidate>
+  <form
+    class="form-grid"
+    (submit)="$event.preventDefault(); submitAccount()"
+    novalidate>
     <lib-input-field
       label="Name"
       effectStyle="box"
@@ -179,7 +267,9 @@
         [height]="'3rem'"
         [selectedValue]="createHouseholdId()"
         (selectedValueChange)="createHouseholdId.set($event)"></lib-dropdown-list>
-      <p class="field-hint">Weitere Haushalte können später über "Mit Haushalt teilen" hinzugefügt werden.</p>
+      <p class="field-hint">
+        Weitere Haushalte können später über "Mit Haushalt teilen" hinzugefügt werden.
+      </p>
     } @else {
       <div>
         <label class="form-label">Haushalte</label>
@@ -188,8 +278,12 @@
       </div>
     }
     <div class="dialog-actions">
-      <lib-button [label]="'Abbrechen'" (clicked)="closeCreateDialog()"></lib-button>
-      <lib-button [type]="'submit'" [label]="'Speichern'"></lib-button>
+      <lib-button
+        [label]="'Abbrechen'"
+        (clicked)="closeCreateDialog()"></lib-button>
+      <lib-button
+        [type]="'submit'"
+        [label]="'Speichern'"></lib-button>
     </div>
   </form>
 </lib-dialog>
@@ -206,7 +300,9 @@
       class="icon-button"
       aria-label="Dialog schließen"
       (click)="closeShareDialog()">
-      <i class="bi bi-x-lg" aria-hidden="true"></i>
+      <i
+        class="bi bi-x-lg"
+        aria-hidden="true"></i>
     </button>
   </div>
   <lib-dropdown-list
@@ -218,8 +314,12 @@
     [height]="'3rem'"
     [(selectedValue)]="shareHouseholdId"></lib-dropdown-list>
   <div class="dialog-actions">
-    <lib-button [label]="'Abbrechen'" (clicked)="closeShareDialog()"></lib-button>
-    <lib-button [label]="'Teilen'" (clicked)="submitShare()"></lib-button>
+    <lib-button
+      [label]="'Abbrechen'"
+      (clicked)="closeShareDialog()"></lib-button>
+    <lib-button
+      [label]="'Teilen'"
+      (clicked)="submitShare()"></lib-button>
   </div>
 </lib-dialog>
 

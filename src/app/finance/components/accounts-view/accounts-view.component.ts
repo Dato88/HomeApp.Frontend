@@ -61,7 +61,7 @@ export class AccountsViewComponent {
   readonly currencyCode = signal('EUR');
   readonly description = signal('');
   readonly accountType = signal(String(AccountType.Checking));
-  readonly createHouseholdId = signal('');  // Single household for creation
+  readonly createHouseholdId = signal(''); // Single household for creation
 
   private readonly submitted = signal(false);
   private readonly expandedAccountId = signal<number | null>(null);
@@ -70,6 +70,16 @@ export class AccountsViewComponent {
     account.accountId === this.expandedAccountId();
 
   readonly showNameError = computed(() => this.submitted() && !this.name().trim());
+
+  readonly totalAccountsCount = computed(() => this.store.accountEntities().length);
+
+  readonly ownedAccountsCount = computed(
+    () => this.store.accountEntities().filter((account) => account.isOwner).length
+  );
+
+  readonly sharedWithYouCount = computed(
+    () => this.store.accountEntities().filter((account) => !account.isOwner).length
+  );
 
   readonly accountTypeOptions = computed<DropdownData[]>(() =>
     Object.entries(ACCOUNT_TYPE_LABELS)
@@ -93,11 +103,13 @@ export class AccountsViewComponent {
     const account = this.editingAccount();
     if (!account) return '';
 
-    return this.householdStore
-      .householdEntities()
-      .filter((household) => account.sharedHouseholdIds.includes(household.householdId))
-      .map((household) => household.name)
-      .join(', ') || '—';
+    return (
+      this.householdStore
+        .householdEntities()
+        .filter((household) => account.sharedHouseholdIds.includes(household.householdId))
+        .map((household) => household.name)
+        .join(', ') || '—'
+    );
   });
 
   openCreate(): void {
@@ -220,6 +232,23 @@ export class AccountsViewComponent {
 
   accountTypeLabel(account: AccountDto): string {
     return ACCOUNT_TYPE_LABELS[account.accountType] ?? 'Unbekannt';
+  }
+
+  accountTypeIcon(account: AccountDto): string {
+    switch (account.accountType) {
+      case AccountType.Checking:
+        return 'bi-wallet2';
+      case AccountType.Savings:
+        return 'bi-piggy-bank';
+      case AccountType.CreditCard:
+        return 'bi-credit-card-2-front';
+      case AccountType.Depot:
+        return 'bi-graph-up-arrow';
+      case AccountType.Cash:
+        return 'bi-cash-stack';
+      default:
+        return 'bi-bank';
+    }
   }
 
   sharedHouseholdNames(account: AccountDto): string {

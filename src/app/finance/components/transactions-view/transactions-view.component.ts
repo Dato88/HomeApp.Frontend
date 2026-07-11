@@ -26,7 +26,10 @@ import { ConfirmDialogComponent } from '../../../shared/ui/confirm-dialog/confir
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { FileUploadComponent } from '../../../shared/ui/file-upload/file-upload.component';
 import { ViewportService } from '../../../shared/services/viewport/viewport.service';
-import { DropdownData, GRID_ROW_HEIGHT_WITH_DROPDOWN } from '../../../shared/models/dropdown-data.model';
+import {
+  DropdownData,
+  GRID_ROW_HEIGHT_WITH_DROPDOWN,
+} from '../../../shared/models/dropdown-data.model';
 
 @Component({
   selector: 'home-transactions-view',
@@ -130,13 +133,11 @@ export class TransactionsViewComponent {
   );
 
   readonly categoryOptions = computed<DropdownData[]>(() =>
-    this.store
-      .categoryEntities()
-      .map((category) => ({
-        value: String(category.categoryId),
-        name: category.name,
-        trackBy: category.categoryId,
-      }))
+    this.store.categoryEntities().map((category) => ({
+      value: String(category.categoryId),
+      name: category.name,
+      trackBy: category.categoryId,
+    }))
   );
 
   readonly selectedAccount = computed<AccountDto | undefined>(() => {

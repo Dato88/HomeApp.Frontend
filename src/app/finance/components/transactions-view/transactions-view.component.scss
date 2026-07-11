@@ -9,8 +9,39 @@
   gap: var(--app-space-1);
 }
 
-.amount-cell {
+.filters-bar {
+  padding: var(--app-space-3);
+  background: var(--app-surface-muted);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-md);
+}
+
+// Verhindert, dass lange Freitext-Spalten (Empfänger, Verwendungszweck) über
+// mehrere Zeilen umbrechen: bei fester Zeilenhöhe (siehe GRID_ROW_HEIGHT_WITH_DROPDOWN)
+// würde umgebrochener Text sonst in die nächste Zeile hineinragen.
+.cell-truncate {
+  overflow: hidden;
+}
+
+.cell-truncate-text {
   display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.results-summary {
+  margin: 0;
+  font-size: var(--app-text-sm);
+  color: var(--app-text-muted);
+}
+
+.amount-cell {
+  display: inline-flex;
+  gap: 0.15rem;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
   font-variant-numeric: tabular-nums;
   text-align: right;
   white-space: nowrap;
@@ -18,6 +49,10 @@
 
 .amount-cell--negative {
   color: var(--app-danger);
+}
+
+.amount-cell--positive {
+  color: var(--app-success);
 }
 
 .transaction-details {

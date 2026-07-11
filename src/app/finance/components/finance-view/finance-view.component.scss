@@ -1,3 +1,15 @@
 :host {
   display: block;
 }
+
+.finance-panel {
+  padding: var(--app-space-4);
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-lg);
+  box-shadow: var(--app-shadow-1);
+}
+
+.finance-panel__body {
+  padding-top: var(--app-space-4);
+}

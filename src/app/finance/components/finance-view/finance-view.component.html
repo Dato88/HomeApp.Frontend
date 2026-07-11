@@ -3,6 +3,7 @@
   aria-labelledby="finance-heading">
   <home-page-header
     title="Finanzen"
+    subtitle="Konten, Buchungen und Kategorien im Überblick"
     headingId="finance-heading"></home-page-header>
 
   @if (store.error()) {
@@ -16,21 +17,25 @@
     </div>
   }
 
-  <home-tab-bar
-    [tabs]="tabs"
-    [activeId]="uiStore.activeTab()"
-    ariaLabel="Finanzbereiche"
-    (activeIdChange)="uiStore.setActiveTab($event)"></home-tab-bar>
+  <div class="finance-panel">
+    <home-tab-bar
+      [tabs]="tabs"
+      [activeId]="uiStore.activeTab()"
+      ariaLabel="Finanzbereiche"
+      (activeIdChange)="uiStore.setActiveTab($event)"></home-tab-bar>
 
-  @switch (uiStore.activeTab()) {
-    @case ('accounts') {
-      <home-accounts-view></home-accounts-view>
-    }
-    @case ('transactions') {
-      <home-transactions-view></home-transactions-view>
-    }
-    @case ('categories') {
-      <home-categories-view></home-categories-view>
-    }
-  }
+    <div class="finance-panel__body">
+      @switch (uiStore.activeTab()) {
+        @case ('accounts') {
+          <home-accounts-view class="tab-panel-enter"></home-accounts-view>
+        }
+        @case ('transactions') {
+          <home-transactions-view class="tab-panel-enter"></home-transactions-view>
+        }
+        @case ('categories') {
+          <home-categories-view class="tab-panel-enter"></home-categories-view>
+        }
+      }
+    </div>
+  </div>
 </section>

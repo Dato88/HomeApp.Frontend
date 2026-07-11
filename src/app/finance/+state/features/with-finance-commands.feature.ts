@@ -2,12 +2,14 @@ import { inject, ResourceRef } from '@angular/core';
 import { patchState, signalStoreFeature, type, withMethods } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { tapResponse } from '@ngrx/operators';
+import { NamedEntityState, updateEntity } from '@ngrx/signals/entities';
 import { concatMap, exhaustMap, pipe, tap } from 'rxjs';
 import { Result } from '../../../core/models';
 import { ToastService } from '../../../shared/ui/toast/toast.service';
 import { AccountService } from '../../services/account.service';
 import { CategoryService } from '../../services/category.service';
 import { TransactionService } from '../../services/transaction.service';
+import { transactionEntities } from '../configs/transaction.config';
 import {
   AccountDto,
   CategoryDto,
@@ -18,6 +20,8 @@ import {
   ImportTransactionsResponse,
   SetTransactionCategoryRequest,
   ShareAccountRequest,
+  TransactionDto,
+  TransactionFilter,
   TransactionListResponse,
   UpdateAccountRequest,
   UpdateCategoryRequest,
@@ -42,7 +46,11 @@ export function withFinanceCommands() {
         transactionsResource: ResourceRef<TransactionListResponse>;
       }>(),
       methods: type<{ _handleError: (error: unknown) => void }>(),
-      state: type<FinanceCommandState>(),
+      state: type<
+        FinanceCommandState & {
+          transactionFilter: TransactionFilter | undefined;
+        } & NamedEntityState<TransactionDto, 'transaction'>
+      >(),
     },
     withMethods((store, toast = inject(ToastService)) => {
       const handleIdResult = (result: Result<number>, fallbackMessage: string): void => {
@@ -163,10 +171,44 @@ export function withFinanceCommands() {
           reloadTransactions,
           'Buchung gelöscht'
         ),
-        setTransactionCategory: command<SetTransactionCategoryRequest>(
-          (request) => store._transactionService.setCategory(request),
-          'Kategorie konnte nicht zugewiesen werden',
-          reloadTransactions
+        // Patcht nur den betroffenen Datensatz statt die ganze Liste neu zu laden -
+        // ein voller reload() würde das Grid kurz durch ein Skeleton ersetzen und
+        // die Scroll-Position der Nutzerin zurücksetzen.
+        setTransactionCategory: rxMethod<SetTransactionCategoryRequest>(
+          pipe(
+            tap(() => patchState(store, { isSaving: true, error: null })),
+            exhaustMap((request) =>
+              store._transactionService.setCategory(request).pipe(
+                tapResponse({
+                  next: (result) => {
+                    handleIdResult(result, 'Kategorie konnte nicht zugewiesen werden');
+
+                    if (!result.isSuccess) {
+                      return;
+                    }
+
+                    // Verlässt der Datensatz durch die Zuweisung den aktiven
+                    // "Nur ohne Kategorie"-Filter, muss die Liste neu geladen werden,
+                    // damit er dort korrekt verschwindet.
+                    if (store.transactionFilter()?.uncategorized && request.categoryId != null) {
+                      reloadTransactions();
+                      return;
+                    }
+
+                    patchState(
+                      store,
+                      updateEntity(
+                        { id: request.transactionId, changes: { categoryId: request.categoryId } },
+                        transactionEntities
+                      )
+                    );
+                  },
+                  error: (err) => store._handleError(err),
+                  finalize: () => patchState(store, { isSaving: false }),
+                })
+              )
+            )
+          )
         ),
         importTransactions: rxMethod<ImportTransactionsRequest>(
           pipe(

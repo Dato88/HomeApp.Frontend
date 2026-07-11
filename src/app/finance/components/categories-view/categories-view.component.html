@@ -19,38 +19,69 @@
 @if (store.selectedHouseholdId()) {
   @if (store.categoriesResource.isLoading()) {
     <lib-skeleton aria-hidden="true"></lib-skeleton>
-    <p class="visually-hidden" role="status" aria-live="polite">Kategorien werden geladen …</p>
+    <p
+      class="visually-hidden"
+      role="status"
+      aria-live="polite">
+      Kategorien werden geladen …
+    </p>
   } @else if (store.categoriesResource.error()) {
-    <div class="status-banner status-banner--danger" role="alert">
-      <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+    <div
+      class="status-banner status-banner--danger"
+      role="alert">
+      <i
+        class="bi bi-exclamation-triangle-fill"
+        aria-hidden="true"></i>
       <span>Kategorien konnten nicht geladen werden.</span>
-      <button type="button" class="btn" (click)="store.categoriesResource.reload()">
+      <button
+        type="button"
+        class="btn"
+        (click)="store.categoriesResource.reload()">
         Erneut versuchen
       </button>
     </div>
   } @else {
-    <h2 class="category-section-heading">
+    <h2 class="category-section-heading category-section-heading--income">
+      <span class="category-section-heading__icon">
+        <i
+          class="bi bi-graph-up-arrow"
+          aria-hidden="true"></i>
+      </span>
       Einnahmen
       <span class="chip chip--success">{{ incomeCategories().length }}</span>
     </h2>
-    <lib-grid [data]="incomeCategories()" [hoverable]="true" [zebra]="true">
-      <lib-grid-column field="name" title="Name" [sortable]="true"></lib-grid-column>
-      <lib-grid-column field="categoryId" title="Aktionen">
-        <ng-template libGridCellTemplate let-category>
+    <lib-grid
+      [data]="incomeCategories()"
+      [hoverable]="true"
+      [zebra]="true">
+      <lib-grid-column
+        field="name"
+        title="Name"
+        [sortable]="true"></lib-grid-column>
+      <lib-grid-column
+        field="categoryId"
+        title="Aktionen">
+        <ng-template
+          libGridCellTemplate
+          let-category>
           <div class="row-actions">
             <button
               type="button"
               class="icon-button"
               [attr.aria-label]="'Kategorie ' + category.name + ' bearbeiten'"
               (click)="openEdit(category)">
-              <i class="bi bi-pencil" aria-hidden="true"></i>
+              <i
+                class="bi bi-pencil"
+                aria-hidden="true"></i>
             </button>
             <button
               type="button"
               class="icon-button icon-button--danger"
               [attr.aria-label]="'Kategorie ' + category.name + ' löschen'"
               (click)="deleteDialog.open(category)">
-              <i class="bi bi-trash" aria-hidden="true"></i>
+              <i
+                class="bi bi-trash"
+                aria-hidden="true"></i>
             </button>
           </div>
         </ng-template>
@@ -61,28 +92,47 @@
         title="Keine Einnahmen-Kategorien"></home-empty-state>
     </lib-grid>
 
-    <h2 class="category-section-heading">
+    <h2 class="category-section-heading category-section-heading--expense">
+      <span class="category-section-heading__icon">
+        <i
+          class="bi bi-graph-down-arrow"
+          aria-hidden="true"></i>
+      </span>
       Ausgaben
       <span class="chip chip--danger">{{ expenseCategories().length }}</span>
     </h2>
-    <lib-grid [data]="expenseCategories()" [hoverable]="true" [zebra]="true">
-      <lib-grid-column field="name" title="Name" [sortable]="true"></lib-grid-column>
-      <lib-grid-column field="categoryId" title="Aktionen">
-        <ng-template libGridCellTemplate let-category>
+    <lib-grid
+      [data]="expenseCategories()"
+      [hoverable]="true"
+      [zebra]="true">
+      <lib-grid-column
+        field="name"
+        title="Name"
+        [sortable]="true"></lib-grid-column>
+      <lib-grid-column
+        field="categoryId"
+        title="Aktionen">
+        <ng-template
+          libGridCellTemplate
+          let-category>
           <div class="row-actions">
             <button
               type="button"
               class="icon-button"
               [attr.aria-label]="'Kategorie ' + category.name + ' bearbeiten'"
               (click)="openEdit(category)">
-              <i class="bi bi-pencil" aria-hidden="true"></i>
+              <i
+                class="bi bi-pencil"
+                aria-hidden="true"></i>
             </button>
             <button
               type="button"
               class="icon-button icon-button--danger"
               [attr.aria-label]="'Kategorie ' + category.name + ' löschen'"
               (click)="deleteDialog.open(category)">
-              <i class="bi bi-trash" aria-hidden="true"></i>
+              <i
+                class="bi bi-trash"
+                aria-hidden="true"></i>
             </button>
           </div>
         </ng-template>
@@ -115,10 +165,15 @@
       class="icon-button"
       aria-label="Dialog schließen"
       (click)="closeFormDialog()">
-      <i class="bi bi-x-lg" aria-hidden="true"></i>
+      <i
+        class="bi bi-x-lg"
+        aria-hidden="true"></i>
     </button>
   </div>
-  <form class="form-grid" (submit)="$event.preventDefault(); submitCategory()" novalidate>
+  <form
+    class="form-grid"
+    (submit)="$event.preventDefault(); submitCategory()"
+    novalidate>
     <lib-input-field
       label="Name"
       effectStyle="box"
@@ -136,8 +191,12 @@
       [height]="'3rem'"
       [(selectedValue)]="categoryType"></lib-dropdown-list>
     <div class="dialog-actions">
-      <lib-button [label]="'Abbrechen'" (clicked)="closeFormDialog()"></lib-button>
-      <lib-button [type]="'submit'" [label]="'Speichern'"></lib-button>
+      <lib-button
+        [label]="'Abbrechen'"
+        (clicked)="closeFormDialog()"></lib-button>
+      <lib-button
+        [type]="'submit'"
+        [label]="'Speichern'"></lib-button>
     </div>
   </form>
 </lib-dialog>
