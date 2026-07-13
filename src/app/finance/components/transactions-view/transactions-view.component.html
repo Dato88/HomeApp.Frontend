@@ -333,6 +333,7 @@
 <lib-dialog
   #formDialog
   [isModal]="true"
+  [closeOnOutsideClick]="false"
   dialogClass="app-dialog"
   ariaLabelledBy="transaction-form-title"
   (closed)="onFormDialogClosed()">
@@ -405,6 +406,7 @@
 <lib-dialog
   #bulkCategoryDialog
   [isModal]="true"
+  [closeOnOutsideClick]="false"
   dialogClass="app-dialog app-dialog--narrow"
   ariaLabelledBy="bulk-category-title">
   <div class="dialog-header">
@@ -444,6 +446,7 @@
 <lib-dialog
   #ibanDialog
   [isModal]="true"
+  [closeOnOutsideClick]="false"
   dialogClass="app-dialog"
   ariaLabelledBy="iban-dialog-title">
   <div class="dialog-header">

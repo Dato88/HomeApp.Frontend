@@ -200,6 +200,7 @@
 <lib-dialog
   #createDialog
   [isModal]="true"
+  [closeOnOutsideClick]="false"
   dialogClass="app-dialog"
   ariaLabelledBy="account-form-title"
   (closed)="onCreateDialogClosed()">
@@ -289,6 +290,7 @@
 <lib-dialog
   #shareDialog
   [isModal]="true"
+  [closeOnOutsideClick]="false"
   dialogClass="app-dialog app-dialog--narrow"
   ariaLabelledBy="share-account-title">
   <div class="dialog-header">

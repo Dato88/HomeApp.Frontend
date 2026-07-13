@@ -265,6 +265,7 @@
 <lib-dialog
   #formDialog
   [isModal]="true"
+  [closeOnOutsideClick]="false"
   dialogClass="app-dialog app-dialog--narrow"
   ariaLabelledBy="category-form-title"
   (closed)="onFormDialogClosed()">
@@ -322,6 +323,7 @@
 <lib-dialog
   #groupFormDialog
   [isModal]="true"
+  [closeOnOutsideClick]="false"
   dialogClass="app-dialog app-dialog--narrow"
   ariaLabelledBy="category-group-form-title"
   (closed)="onGroupFormDialogClosed()">
