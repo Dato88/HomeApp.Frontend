@@ -59,6 +59,10 @@
   width: min(420px, calc(100vw - 2rem));
 }
 
+.app-dialog--wide {
+  width: min(900px, calc(100vw - 2rem));
+}
+
 // Wrapper für breite Tabellen/Grids: eigener horizontaler Scrollbereich
 // mit Schatten-Affordance an den Kanten.
 .grid-scroll {

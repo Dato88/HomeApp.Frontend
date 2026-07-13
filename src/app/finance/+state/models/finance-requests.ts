@@ -98,6 +98,8 @@ export interface TransactionFilter {
   to?: string | null;
   categoryId?: number | null;
   uncategorized?: boolean;
+  /** Exakte Gegenkonto-IBAN; Backend-Filter für „Kategorie per Empfänger zuweisen". */
+  counterpartyIban?: string | null;
   /** 1-based page index. */
   page: number;
   /** Max 200. */

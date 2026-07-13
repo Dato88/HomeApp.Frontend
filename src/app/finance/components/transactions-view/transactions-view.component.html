@@ -141,7 +141,7 @@
         <lib-grid-column
           field="transactionId"
           title=""
-          width="3rem">
+          width="7rem">
           <ng-template
             libGridCellTemplate
             let-transaction>
@@ -155,7 +155,7 @@
         <lib-grid-column
           field="bookingDate"
           title="Datum"
-          width="7rem"
+          width="8rem"
           [sortable]="true"></lib-grid-column>
         <lib-grid-column
           field="amount"
@@ -183,7 +183,7 @@
           <lib-grid-column
             field="counterpartyName"
             title="Empfänger"
-            width="16%"
+            width="20%"
             cellClass="cell-truncate">
             <ng-template
               libGridCellTemplate
@@ -203,7 +203,7 @@
           <lib-grid-column
             field="purpose"
             title="Verwendungszweck"
-            width="28%"
+            width="auto"
             cellClass="cell-truncate">
             <ng-template
               libGridCellTemplate
@@ -241,7 +241,7 @@
         <lib-grid-column
           field="transactionId"
           title="Aktionen"
-          width="8rem">
+          width="10rem">
           <ng-template
             libGridCellTemplate
             let-transaction>
@@ -261,6 +261,20 @@
                     class="bi"
                     [class.bi-chevron-down]="!isDetailsExpanded(transaction)"
                     [class.bi-chevron-up]="isDetailsExpanded(transaction)"
+                    aria-hidden="true"></i>
+                </button>
+              }
+              @if (transaction.counterpartyIban) {
+                <button
+                  type="button"
+                  class="icon-button"
+                  [attr.aria-label]="
+                    'Kategorie per Empfänger zuweisen für Buchung vom ' + transaction.bookingDate
+                  "
+                  title="Kategorie per Empfänger zuweisen"
+                  (click)="openRecipientDialog(transaction)">
+                  <i
+                    class="bi bi-tags"
                     aria-hidden="true"></i>
                 </button>
               }
@@ -489,6 +503,11 @@
       (clicked)="applyIbanSelection()"></lib-button>
   </div>
 </lib-dialog>
+
+<home-recipient-bulk-category-dialog
+  #recipientDialog
+  [categoryOptions]="categoryOptions()"
+  (assign)="assignRecipientCategory($event)"></home-recipient-bulk-category-dialog>
 
 <home-confirm-dialog
   #deleteDialog

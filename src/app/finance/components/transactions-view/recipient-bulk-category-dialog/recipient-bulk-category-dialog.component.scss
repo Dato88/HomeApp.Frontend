@@ -1,0 +1,61 @@
+.dialog-body {
+  display: grid;
+  gap: var(--app-space-3);
+}
+
+.recipient-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--app-space-1) var(--app-space-3);
+  align-items: baseline;
+
+  code {
+    font-size: var(--app-text-sm);
+    color: var(--app-text-muted);
+  }
+}
+
+.selection-bar {
+  align-items: center;
+  padding: var(--app-space-2) var(--app-space-3);
+  background: var(--app-surface-muted);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-md);
+}
+
+// Grid scrollt vertikal im Dialog, damit der Footer mit den Aktionen
+// innerhalb der max-height von .app-dialog sichtbar bleibt.
+.grid-scroll {
+  max-height: 45vh;
+  overflow-y: auto;
+}
+
+.cell-truncate-text {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.category-missing {
+  color: var(--app-text-muted);
+}
+
+.amount-cell {
+  display: inline-flex;
+  gap: 0.15rem;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.amount-cell--negative {
+  color: var(--app-danger);
+}
+
+.amount-cell--positive {
+  color: var(--app-success);
+}

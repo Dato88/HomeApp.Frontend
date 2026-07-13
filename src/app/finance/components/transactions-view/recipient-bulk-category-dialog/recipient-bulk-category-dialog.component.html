@@ -1,0 +1,176 @@
+<lib-dialog
+  [isModal]="true"
+  [closeOnOutsideClick]="false"
+  dialogClass="app-dialog app-dialog--wide"
+  ariaLabelledBy="recipient-bulk-category-title"
+  (closed)="onClosed()">
+  <div class="dialog-header">
+    <h2 id="recipient-bulk-category-title">Kategorie per Empfänger zuweisen</h2>
+    <button
+      type="button"
+      class="icon-button"
+      aria-label="Dialog schließen"
+      (click)="close()">
+      <i
+        class="bi bi-x-lg"
+        aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <div class="dialog-body">
+    <div class="recipient-summary">
+      <strong>{{ sourceTransaction()?.counterpartyName || '—' }}</strong>
+      <code>{{ sourceTransaction()?.counterpartyIban }}</code>
+    </div>
+
+    <lib-dropdown-list
+      label="Kategorie"
+      dropdownName="recipient-bulk-category"
+      [dropdownData]="categoryOptions()"
+      [defaultText]="'Ohne Kategorie'"
+      [width]="'100%'"
+      [selectedValue]="categoryId()"
+      (selectedValueChange)="onCategoryChange($event)"></lib-dropdown-list>
+
+    @if (transactionsResource.isLoading()) {
+      <lib-skeleton aria-hidden="true"></lib-skeleton>
+      <p
+        class="visually-hidden"
+        role="status"
+        aria-live="polite">
+        Buchungen werden geladen …
+      </p>
+    } @else if (transactionsResource.error()) {
+      <div
+        class="status-banner status-banner--danger"
+        role="alert">
+        <i
+          class="bi bi-exclamation-triangle-fill"
+          aria-hidden="true"></i>
+        <span>Buchungen konnten nicht geladen werden.</span>
+        <button
+          type="button"
+          class="btn"
+          (click)="transactionsResource.reload()">
+          Erneut versuchen
+        </button>
+      </div>
+    } @else {
+      <div
+        class="toolbar selection-bar"
+        role="group"
+        aria-label="Mehrfachauswahl">
+        <home-checkbox
+          label="Alle auswählen"
+          [checked]="allSelected()"
+          (checkedChange)="toggleSelectAll($event)"></home-checkbox>
+        <lib-button
+          [label]="'Nur ohne Kategorie'"
+          (clicked)="selectUncategorized()"></lib-button>
+        <span
+          class="chip"
+          aria-live="polite">
+          {{ selectedCount() }} ausgewählt
+        </span>
+      </div>
+
+      @if (hasMoreThanLoaded()) {
+        <p class="field-hint">
+          Es werden die ersten {{ transactions().length }} von {{ totalCount() }} Buchungen
+          angezeigt.
+        </p>
+      }
+
+      <div class="grid-scroll">
+        <lib-grid
+          [data]="transactions()"
+          [hoverable]="true"
+          [zebra]="true">
+          <lib-grid-column
+            field="transactionId"
+            title=""
+            width="max-content">
+            <ng-template
+              libGridCellTemplate
+              let-transaction>
+              <home-checkbox
+                [label]="''"
+                [ariaLabel]="'Buchung vom ' + transaction.bookingDate + ' auswählen'"
+                [checked]="isSelected(transaction)"
+                (checkedChange)="toggleSelection(transaction, $event)"></home-checkbox>
+            </ng-template>
+          </lib-grid-column>
+          <lib-grid-column
+            field="bookingDate"
+            title="Datum"
+            width="7rem"></lib-grid-column>
+          <lib-grid-column
+            field="purpose"
+            title="Verwendungszweck"
+            width="auto"
+            cellClass="cell-truncate">
+            <ng-template
+              libGridCellTemplate
+              let-transaction
+              let-value="value">
+              <span
+                class="cell-truncate-text"
+                [attr.title]="value || null">
+                {{ value || '—' }}
+              </span>
+            </ng-template>
+          </lib-grid-column>
+          <lib-grid-column
+            field="categoryId"
+            title="Aktuelle Kategorie"
+            width="11rem">
+            <ng-template
+              libGridCellTemplate
+              let-transaction>
+              <span [class.category-missing]="transaction.categoryId == null">
+                {{ categoryName(transaction.categoryId) }}
+              </span>
+            </ng-template>
+          </lib-grid-column>
+          <lib-grid-column
+            field="amount"
+            title="Betrag"
+            width="7.5rem"
+            align="right">
+            <ng-template
+              libGridCellTemplate
+              let-transaction
+              let-value="value">
+              <span
+                class="amount-cell"
+                [class.amount-cell--negative]="transaction.amount < 0"
+                [class.amount-cell--positive]="transaction.amount >= 0">
+                <i
+                  class="bi"
+                  [class.bi-arrow-down-short]="transaction.amount < 0"
+                  [class.bi-arrow-up-short]="transaction.amount >= 0"
+                  aria-hidden="true"></i>
+                {{ value | number: '1.2-2' }}
+              </span>
+            </ng-template>
+          </lib-grid-column>
+          <home-empty-state
+            noEntries
+            icon="bi-receipt"
+            title="Keine Buchungen gefunden"
+            description="Für diese IBAN wurden keine Buchungen gefunden."></home-empty-state>
+        </lib-grid>
+      </div>
+    }
+
+    <div class="dialog-actions">
+      <lib-button
+        [label]="'Abbrechen'"
+        (clicked)="close()"></lib-button>
+      <lib-button
+        [label]="'Zuweisen (' + selectedCount() + ')'"
+        [disabled]="!selectedCount()"
+        (clicked)="submit()"></lib-button>
+    </div>
+  </div>
+</lib-dialog>

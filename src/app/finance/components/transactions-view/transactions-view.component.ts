@@ -16,9 +16,11 @@ import { FinanceStore } from '../../+state/finance.store';
 import {
   AccountDto,
   CreateTransactionRequest,
+  SetTransactionCategoryRequest,
   TransactionDto,
   UpdateTransactionRequest,
 } from '../../+state/models';
+import { RecipientBulkCategoryDialogComponent } from './recipient-bulk-category-dialog/recipient-bulk-category-dialog.component';
 import { HouseholdStore } from '../../../household/+state/household.store';
 import { CheckboxComponent } from '../../../shared/ui/checkbox/checkbox.component';
 import { ConfirmDialogComponent } from '../../../shared/ui/confirm-dialog/confirm-dialog.component';
@@ -48,6 +50,7 @@ import {
     ConfirmDialogComponent,
     EmptyStateComponent,
     FileUploadComponent,
+    RecipientBulkCategoryDialogComponent,
   ],
   templateUrl: './transactions-view.component.html',
   styleUrl: './transactions-view.component.scss',
@@ -87,6 +90,8 @@ export class TransactionsViewComponent {
 
   readonly bulkCategoryDialog = viewChild.required<DialogComponent>('bulkCategoryDialog');
   readonly ibanDialog = viewChild.required<DialogComponent>('ibanDialog');
+  readonly recipientDialog =
+    viewChild.required<RecipientBulkCategoryDialogComponent>('recipientDialog');
 
   readonly selectedTransactionIds = signal<ReadonlySet<number>>(new Set<number>());
   readonly bulkCategoryId = signal('');
@@ -364,6 +369,14 @@ export class TransactionsViewComponent {
     });
 
     this.closeIbanDialog();
+  }
+
+  openRecipientDialog(transaction: TransactionDto): void {
+    this.recipientDialog().open(transaction);
+  }
+
+  assignRecipientCategory(request: SetTransactionCategoryRequest): void {
+    this.store.setTransactionCategory(request);
   }
 
   toggleDetails(transaction: TransactionDto): void {

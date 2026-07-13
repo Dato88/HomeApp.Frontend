@@ -48,6 +48,10 @@ export class TransactionService {
       params = params.set('uncategorized', filter.uncategorized);
     }
 
+    if (filter.counterpartyIban) {
+      params = params.set('counterpartyIban', filter.counterpartyIban);
+    }
+
     return this.#http
       .get<Result<TransactionListResponse>>(this.#baseUrl, { params })
       .pipe(catchError(handleHttpError<TransactionListResponse>()));
