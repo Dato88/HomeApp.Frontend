@@ -5,4 +5,5 @@ export interface CategoryDto {
   householdId: number;
   name: string;
   categoryType: CategoryType;
+  categoryGroupId: number | null;
 }

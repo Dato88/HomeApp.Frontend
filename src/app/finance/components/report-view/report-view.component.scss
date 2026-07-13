@@ -1,0 +1,186 @@
+:host {
+  display: grid;
+  gap: var(--app-space-3);
+  align-content: start;
+}
+
+.filters-bar {
+  padding: var(--app-space-3);
+  background: var(--app-surface-muted);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-md);
+}
+
+.household-select {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--app-space-2) var(--app-space-3);
+  align-items: center;
+  min-width: 0;
+  padding: 0 var(--app-space-2);
+  margin: 0;
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-sm);
+
+  &__legend {
+    padding: 0 var(--app-space-1);
+    font-size: var(--app-text-sm);
+    color: var(--app-text-muted);
+  }
+
+  &__empty {
+    font-size: var(--app-text-sm);
+    color: var(--app-text-muted);
+  }
+}
+
+.year-picker {
+  display: flex;
+  gap: var(--app-space-1);
+  align-items: end;
+
+  lib-input-field {
+    width: 6.5rem;
+  }
+}
+
+.eva-table {
+  min-width: 64rem;
+  font-variant-numeric: tabular-nums;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 0.35rem 0.55rem;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--app-border);
+  }
+
+  thead th {
+    font-size: var(--app-text-sm);
+    color: var(--app-text-muted);
+    text-align: right;
+    background: var(--app-surface-muted);
+  }
+
+  thead th.eva-table__label {
+    text-align: left;
+  }
+
+  th[scope='row'] {
+    font-weight: 400;
+    text-align: left;
+  }
+
+  // Erste Spalte beim horizontalen Scrollen fixieren.
+  th:first-child,
+  td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--app-surface);
+  }
+
+  thead th:first-child {
+    background: var(--app-surface-muted);
+  }
+
+  .num {
+    text-align: right;
+  }
+
+  .num--negative {
+    color: var(--app-danger);
+  }
+
+  .num--positive {
+    color: var(--app-success);
+  }
+
+  .num--over {
+    font-weight: 600;
+    color: var(--app-danger);
+  }
+
+  .num--under {
+    color: var(--app-success);
+  }
+
+  &__year {
+    font-weight: 600;
+    border-left: 1px solid var(--app-border);
+  }
+
+  &__section th {
+    padding-top: var(--app-space-3);
+    font-size: var(--app-text-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: var(--app-surface);
+
+    i {
+      margin-right: var(--app-space-1);
+    }
+  }
+
+  &__section--income th {
+    color: var(--app-success);
+  }
+
+  &__section--expense th {
+    color: var(--app-danger);
+  }
+
+  &__group th,
+  &__group td {
+    font-weight: 600;
+    background: var(--app-surface-muted);
+  }
+
+  &__group th:first-child,
+  &__group td:first-child {
+    background: var(--app-surface-muted);
+  }
+
+  &__category th:first-child {
+    padding-left: var(--app-space-4);
+    color: var(--app-text-muted);
+  }
+
+  &__category td {
+    color: var(--app-text-muted);
+  }
+
+  &__total th,
+  &__total td {
+    font-weight: 700;
+    border-top: 2px solid var(--app-border);
+  }
+
+  &__diff th,
+  &__diff td {
+    font-weight: 700;
+    border-top: 2px solid var(--app-border);
+    border-bottom: none;
+  }
+
+  &__unassigned th,
+  &__unassigned td {
+    color: var(--app-text-muted);
+    background: var(--app-warning-soft, var(--app-surface-muted));
+  }
+
+  &__unassigned th:first-child {
+    background: var(--app-warning-soft, var(--app-surface-muted));
+  }
+}
+
+.eva-hint {
+  display: flex;
+  gap: var(--app-space-2);
+  align-items: baseline;
+  margin: 0;
+  font-size: var(--app-text-sm);
+  color: var(--app-text-muted);
+}

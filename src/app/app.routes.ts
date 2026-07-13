@@ -11,8 +11,7 @@ export const routes: Routes = [
   {
     path: '',
     canActivate: [authGuard],
-    loadComponent: () =>
-      import('./shell/app-shell.component').then((m) => m.AppShellComponent),
+    loadComponent: () => import('./shell/app-shell.component').then((m) => m.AppShellComponent),
     children: [
       {
         path: '',
@@ -29,14 +28,6 @@ export const routes: Routes = [
         path: 'todo',
         title: 'Todo',
         loadComponent: () => import('./todo/todo.component').then((m) => m.TodoComponent),
-      },
-      {
-        path: 'budget',
-        title: 'Budget',
-        loadComponent: () =>
-          import('./budget/components/budget-view/budget-view.component').then(
-            (m) => m.BudgetViewComponent
-          ),
       },
       {
         path: 'household',

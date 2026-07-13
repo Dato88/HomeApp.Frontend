@@ -33,6 +33,7 @@ export interface CreateCategoryRequest {
   householdId: number;
   name: string;
   categoryType: CategoryType;
+  categoryGroupId?: number | null;
 }
 
 /** PATCH is a full replace: always send every field. */
@@ -40,6 +41,22 @@ export interface UpdateCategoryRequest {
   categoryId: number;
   name: string;
   categoryType: CategoryType;
+  categoryGroupId?: number | null;
+}
+
+export interface CreateCategoryGroupRequest {
+  householdId: number;
+  name: string;
+  categoryGroupType: CategoryType;
+  targetPercent?: number | null;
+}
+
+/** PATCH is a full replace: always send every field. */
+export interface UpdateCategoryGroupRequest {
+  categoryGroupId: number;
+  name: string;
+  categoryGroupType: CategoryType;
+  targetPercent?: number | null;
 }
 
 export interface CreateTransactionRequest {
@@ -67,8 +84,9 @@ export interface UpdateTransactionRequest {
   purpose?: string | null;
 }
 
+/** All-or-nothing: das Backend weist die Kategorie allen IDs zu oder keiner (max. 500). */
 export interface SetTransactionCategoryRequest {
-  transactionId: number;
+  transactionIds: number[];
   categoryId: number | null;
 }
 

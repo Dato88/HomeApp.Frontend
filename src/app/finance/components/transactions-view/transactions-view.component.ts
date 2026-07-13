@@ -16,7 +16,6 @@ import { FinanceStore } from '../../+state/finance.store';
 import {
   AccountDto,
   CreateTransactionRequest,
-  SetTransactionCategoryRequest,
   TransactionDto,
   UpdateTransactionRequest,
 } from '../../+state/models';
@@ -85,6 +84,13 @@ export class TransactionsViewComponent {
   readonly categoryId = signal('');
 
   readonly importFile = signal<File | null>(null);
+
+  readonly bulkCategoryDialog = viewChild.required<DialogComponent>('bulkCategoryDialog');
+  readonly ibanDialog = viewChild.required<DialogComponent>('ibanDialog');
+
+  readonly selectedTransactionIds = signal<ReadonlySet<number>>(new Set<number>());
+  readonly bulkCategoryId = signal('');
+  readonly selectedIbans = signal<ReadonlySet<string>>(new Set<string>());
 
   private readonly expandedTransactionId = signal<number | null>(null);
   private readonly submitted = signal(false);
@@ -155,6 +161,51 @@ export class TransactionsViewComponent {
         : 0) ?? 0
   );
 
+  readonly selectedCount = computed(() => this.selectedTransactionIds().size);
+
+  readonly allOnPageSelected = computed(() => {
+    const transactions = this.store.transactionEntities();
+    const selected = this.selectedTransactionIds();
+
+    return (
+      transactions.length > 0 &&
+      transactions.every((transaction) => selected.has(transaction.transactionId))
+    );
+  });
+
+  /**
+   * Kandidaten für die IBAN-Auswahl: eindeutige Gegenkonto-IBANs der aktuell
+   * geladenen Seite. Wiederkehrende Buchungen (Miete, Abos, Gehalt) teilen sich
+   * eine IBAN und lassen sich so in einem Rutsch auswählen.
+   */
+  readonly ibanCandidates = computed(() => {
+    const byIban = new Map<string, { iban: string; name: string; count: number }>();
+
+    for (const transaction of this.store.transactionEntities()) {
+      const iban = transaction.counterpartyIban;
+
+      if (!iban) {
+        continue;
+      }
+
+      const existing = byIban.get(iban);
+
+      if (existing) {
+        existing.count += 1;
+      } else {
+        byIban.set(iban, {
+          iban,
+          name: transaction.counterpartyName ?? '—',
+          count: 1,
+        });
+      }
+    }
+
+    return [...byIban.values()].sort((a, b) => b.count - a.count);
+  });
+
+  readonly selectedIbanCount = computed(() => this.selectedIbans().size);
+
   constructor() {
     effect(() => {
       const accountId = Number(this.store.selectedAccountId());
@@ -190,15 +241,129 @@ export class TransactionsViewComponent {
   onAccountFilterChange(): void {
     this.pageIndex.set(0);
     this.expandedTransactionId.set(null);
+    this.clearSelection();
   }
 
   applyFilters(): void {
     this.pageIndex.set(0);
+    this.clearSelection();
   }
 
   onPageChange(pageIndex: number): void {
     this.pageIndex.set(pageIndex);
     this.expandedTransactionId.set(null);
+    this.clearSelection();
+  }
+
+  isTransactionSelected(transaction: TransactionDto): boolean {
+    return this.selectedTransactionIds().has(transaction.transactionId);
+  }
+
+  toggleTransactionSelection(transaction: TransactionDto, checked: boolean): void {
+    this.selectedTransactionIds.update((current) => {
+      const next = new Set(current);
+
+      if (checked) {
+        next.add(transaction.transactionId);
+      } else {
+        next.delete(transaction.transactionId);
+      }
+
+      return next;
+    });
+  }
+
+  toggleSelectAll(checked: boolean): void {
+    if (!checked) {
+      this.clearSelection();
+      return;
+    }
+
+    this.selectedTransactionIds.set(
+      new Set(this.store.transactionEntities().map((transaction) => transaction.transactionId))
+    );
+  }
+
+  clearSelection(): void {
+    this.selectedTransactionIds.set(new Set<number>());
+  }
+
+  openBulkCategoryDialog(): void {
+    if (!this.selectedCount()) {
+      return;
+    }
+
+    this.bulkCategoryId.set('');
+    this.bulkCategoryDialog().open();
+  }
+
+  closeBulkCategoryDialog(): void {
+    this.bulkCategoryDialog().close();
+  }
+
+  submitBulkCategory(): void {
+    const transactionIds = [...this.selectedTransactionIds()];
+
+    if (!transactionIds.length) {
+      return;
+    }
+
+    this.store.setTransactionCategory({
+      transactionIds,
+      categoryId: this.bulkCategoryId() ? Number(this.bulkCategoryId()) : null,
+    });
+    this.closeBulkCategoryDialog();
+    this.clearSelection();
+  }
+
+  openIbanDialog(): void {
+    this.selectedIbans.set(new Set<string>());
+    this.ibanDialog().open();
+  }
+
+  closeIbanDialog(): void {
+    this.ibanDialog().close();
+  }
+
+  isIbanSelected(iban: string): boolean {
+    return this.selectedIbans().has(iban);
+  }
+
+  toggleIbanSelection(iban: string, checked: boolean): void {
+    this.selectedIbans.update((current) => {
+      const next = new Set(current);
+
+      if (checked) {
+        next.add(iban);
+      } else {
+        next.delete(iban);
+      }
+
+      return next;
+    });
+  }
+
+  /** Alle geladenen Buchungen der gewählten IBANs in die Auswahl übernehmen. */
+  applyIbanSelection(): void {
+    const ibans = this.selectedIbans();
+
+    if (!ibans.size) {
+      return;
+    }
+
+    this.selectedTransactionIds.update((current) => {
+      const next = new Set(current);
+
+      for (const transaction of this.store.transactionEntities()) {
+        if (transaction.counterpartyIban && ibans.has(transaction.counterpartyIban)) {
+          next.add(transaction.transactionId);
+        }
+      }
+
+      return next;
+    });
+
+    this.closeIbanDialog();
   }
 
   toggleDetails(transaction: TransactionDto): void {
@@ -271,7 +436,7 @@ export class TransactionsViewComponent {
 
       if (category !== editing.categoryId) {
         this.store.setTransactionCategory({
-          transactionId: editing.transactionId,
+          transactionIds: [editing.transactionId],
           categoryId: category,
         });
       }
@@ -298,7 +463,7 @@ export class TransactionsViewComponent {
 
   setCategory(transaction: TransactionDto, categoryId: string): void {
     this.store.setTransactionCategory({
-      transactionId: transaction.transactionId,
+      transactionIds: [transaction.transactionId],
       categoryId: categoryId ? Number(categoryId) : null,
     });
   }

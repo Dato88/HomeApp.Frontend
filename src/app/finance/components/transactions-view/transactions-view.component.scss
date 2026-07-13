@@ -36,6 +36,46 @@
   color: var(--app-text-muted);
 }
 
+.selection-bar {
+  align-items: center;
+  padding: var(--app-space-2) var(--app-space-3);
+  background: var(--app-surface-muted);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-md);
+}
+
+.iban-candidate-list {
+  display: grid;
+  gap: var(--app-space-1);
+  max-height: 50vh;
+  padding: 0;
+  margin: var(--app-space-3) 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.iban-candidate {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--app-space-1) var(--app-space-3);
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--app-space-1) var(--app-space-2);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-sm);
+
+  &__meta {
+    display: inline-flex;
+    gap: var(--app-space-2);
+    align-items: center;
+
+    code {
+      font-size: var(--app-text-sm);
+      color: var(--app-text-muted);
+    }
+  }
+}
+
 .amount-cell {
   display: inline-flex;
   gap: 0.15rem;

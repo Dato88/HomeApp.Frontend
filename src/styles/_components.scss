@@ -91,8 +91,7 @@
 }
 
 // lib-grid: rowHeight default 38px + td overflow:hidden stauchen Dropdowns.
-.grid-category-cell,
-.budget-table__category-cell {
+.grid-category-cell {
   overflow: visible !important;
   max-height: none !important;
   height: auto !important;

@@ -1,0 +1,290 @@
+<div
+  class="toolbar filters-bar"
+  role="group"
+  aria-label="Auswertungsfilter">
+  <fieldset class="household-select">
+    <legend class="household-select__legend">Haushalte</legend>
+    @for (household of households(); track household.householdId) {
+      <home-checkbox
+        [label]="household.name"
+        [checked]="isHouseholdSelected(household.householdId)"
+        (checkedChange)="toggleHousehold(household.householdId, $event)"></home-checkbox>
+    } @empty {
+      <span class="household-select__empty">Keine Haushalte vorhanden.</span>
+    }
+  </fieldset>
+  <div class="year-picker">
+    <lib-button
+      [label]="''"
+      icon="bi-chevron-left"
+      ariaLabel="Vorheriges Jahr"
+      (clicked)="previousYear()"></lib-button>
+    <lib-input-field
+      label="Jahr"
+      type="number"
+      effectStyle="box"
+      [value]="year()"
+      (valueChange)="setYear($event)"></lib-input-field>
+    <lib-button
+      [label]="''"
+      icon="bi-chevron-right"
+      ariaLabel="Nächstes Jahr"
+      (clicked)="nextYear()"></lib-button>
+  </div>
+</div>
+
+@if (!selectedHouseholdIds().length) {
+  <home-empty-state
+    icon="bi-house"
+    title="Haushalt auswählen"
+    description="Wähle oben mindestens einen Haushalt, um die Einnahmen und Ausgaben zu sehen."></home-empty-state>
+} @else if (store.evaReportResource.isLoading()) {
+  <lib-skeleton aria-hidden="true"></lib-skeleton>
+  <p
+    class="visually-hidden"
+    role="status"
+    aria-live="polite">
+    Auswertung wird geladen …
+  </p>
+} @else if (store.evaReportResource.error() || !report()) {
+  <div
+    class="status-banner status-banner--danger"
+    role="alert">
+    <i
+      class="bi bi-exclamation-triangle-fill"
+      aria-hidden="true"></i>
+    <span>Auswertung konnte nicht geladen werden.</span>
+    <button
+      type="button"
+      class="btn"
+      (click)="store.evaReportResource.reload()">
+      Erneut versuchen
+    </button>
+  </div>
+} @else if (!hasAnyRows()) {
+  <home-empty-state
+    icon="bi-pie-chart"
+    title="Noch keine Daten"
+    description="Für dieses Jahr gibt es keine Buchungen. Importiere Buchungen und ordne sie Kategorien zu – die Auswertung entsteht automatisch."></home-empty-state>
+} @else {
+  <div class="grid-scroll">
+    <table class="eva-table">
+      <caption class="visually-hidden">
+        Einnahmen und Ausgaben {{ report()!.year }} nach Gruppen und Monaten
+      </caption>
+      <thead>
+        <tr>
+          <th
+            scope="col"
+            class="eva-table__label">
+            Kategorie
+          </th>
+          @for (month of monthLabels; track month) {
+            <th
+              scope="col"
+              class="num">
+              {{ month }}
+            </th>
+          }
+          <th
+            scope="col"
+            class="num eva-table__year">
+            Summe
+          </th>
+          <th
+            scope="col"
+            class="num">
+            Ziel&nbsp;%
+          </th>
+          <th
+            scope="col"
+            class="num">
+            Ist&nbsp;%
+          </th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr class="eva-table__section eva-table__section--income">
+          <th
+            scope="rowgroup"
+            colspan="16">
+            <i
+              class="bi bi-graph-up-arrow"
+              aria-hidden="true"></i>
+            Einnahmen
+          </th>
+        </tr>
+        @for (group of incomeGroups(); track trackGroup(group)) {
+          <tr class="eva-table__group">
+            <th scope="row">{{ group.name }}</th>
+            @for (value of group.ist; track $index) {
+              <td class="num">{{ value !== 0 ? (value | number: '1.0-0') : '–' }}</td>
+            }
+            <td class="num eva-table__year">{{ group.yearIst | number: '1.0-0' }}</td>
+            <td class="num">
+              {{ group.targetPercent != null ? (group.targetPercent | number: '1.0-1') : '–' }}
+            </td>
+            <td class="num">
+              {{
+                group.actualPercentOfIncome != null
+                  ? (group.actualPercentOfIncome | number: '1.0-1')
+                  : '–'
+              }}
+            </td>
+          </tr>
+          @for (category of group.categories; track trackCategory(category)) {
+            <tr class="eva-table__category">
+              <th scope="row">{{ category.name }}</th>
+              @for (value of category.ist; track $index) {
+                <td class="num">{{ value !== 0 ? (value | number: '1.0-0') : '–' }}</td>
+              }
+              <td class="num eva-table__year">{{ category.yearIst | number: '1.0-0' }}</td>
+              <td class="num"></td>
+              <td class="num"></td>
+            </tr>
+          }
+        }
+        @for (category of ungroupedIncome(); track trackCategory(category)) {
+          <tr class="eva-table__group">
+            <th scope="row">{{ category.name }}</th>
+            @for (value of category.ist; track $index) {
+              <td class="num">{{ value !== 0 ? (value | number: '1.0-0') : '–' }}</td>
+            }
+            <td class="num eva-table__year">{{ category.yearIst | number: '1.0-0' }}</td>
+            <td class="num"></td>
+            <td class="num"></td>
+          </tr>
+        }
+        <tr class="eva-table__total">
+          <th scope="row">Summe Einnahmen</th>
+          @for (value of report()!.totals.incomeIst; track $index) {
+            <td class="num">{{ value !== 0 ? (value | number: '1.0-0') : '–' }}</td>
+          }
+          <td class="num eva-table__year">
+            {{ report()!.totals.yearIncomeIst | number: '1.0-0' }}
+          </td>
+          <td class="num"></td>
+          <td class="num"></td>
+        </tr>
+
+        <tr class="eva-table__section eva-table__section--expense">
+          <th
+            scope="rowgroup"
+            colspan="16">
+            <i
+              class="bi bi-graph-down-arrow"
+              aria-hidden="true"></i>
+            Ausgaben
+          </th>
+        </tr>
+        @for (group of expenseGroups(); track trackGroup(group)) {
+          <tr class="eva-table__group">
+            <th scope="row">{{ group.name }}</th>
+            @for (value of group.ist; track $index) {
+              <td class="num">{{ value !== 0 ? (value | number: '1.0-0') : '–' }}</td>
+            }
+            <td class="num eva-table__year">{{ group.yearIst | number: '1.0-0' }}</td>
+            <td class="num">
+              {{ group.targetPercent != null ? (group.targetPercent | number: '1.0-1') : '–' }}
+            </td>
+            <td
+              class="num"
+              [class.num--over]="percentState(group) === 'over'"
+              [class.num--under]="percentState(group) === 'under'">
+              {{
+                group.actualPercentOfIncome != null
+                  ? (group.actualPercentOfIncome | number: '1.0-1')
+                  : '–'
+              }}
+            </td>
+          </tr>
+          @for (category of group.categories; track trackCategory(category)) {
+            <tr class="eva-table__category">
+              <th scope="row">{{ category.name }}</th>
+              @for (value of category.ist; track $index) {
+                <td class="num">{{ value !== 0 ? (value | number: '1.0-0') : '–' }}</td>
+              }
+              <td class="num eva-table__year">{{ category.yearIst | number: '1.0-0' }}</td>
+              <td class="num"></td>
+              <td class="num"></td>
+            </tr>
+          }
+        }
+        @for (category of ungroupedExpense(); track trackCategory(category)) {
+          <tr class="eva-table__group">
+            <th scope="row">{{ category.name }}</th>
+            @for (value of category.ist; track $index) {
+              <td class="num">{{ value !== 0 ? (value | number: '1.0-0') : '–' }}</td>
+            }
+            <td class="num eva-table__year">{{ category.yearIst | number: '1.0-0' }}</td>
+            <td class="num"></td>
+            <td class="num"></td>
+          </tr>
+        }
+        <tr class="eva-table__total">
+          <th scope="row">Summe Ausgaben</th>
+          @for (value of report()!.totals.expenseIst; track $index) {
+            <td class="num">{{ value !== 0 ? (value | number: '1.0-0') : '–' }}</td>
+          }
+          <td class="num eva-table__year">
+            {{ report()!.totals.yearExpenseIst | number: '1.0-0' }}
+          </td>
+          <td class="num"></td>
+          <td class="num"></td>
+        </tr>
+
+        @if (hasUnassigned()) {
+          <tr class="eva-table__unassigned">
+            <th scope="row">
+              Nicht zugeordnet
+              <span class="chip chip--warning">
+                {{ report()!.unassignedTransactionCount }}
+              </span>
+            </th>
+            @for (value of report()!.unassignedIst; track $index) {
+              <td
+                class="num"
+                [class.num--negative]="value < 0">
+                {{ value !== 0 ? (value | number: '1.0-0') : '–' }}
+              </td>
+            }
+            <td class="num eva-table__year"></td>
+            <td class="num"></td>
+            <td class="num"></td>
+          </tr>
+        }
+
+        <tr class="eva-table__diff">
+          <th scope="row">Differenz</th>
+          @for (value of report()!.totals.diffIst; track $index) {
+            <td
+              class="num"
+              [class.num--negative]="value < 0"
+              [class.num--positive]="value > 0">
+              {{ value !== 0 ? (value | number: '1.0-0') : '–' }}
+            </td>
+          }
+          <td
+            class="num eva-table__year"
+            [class.num--negative]="report()!.totals.yearDiffIst < 0"
+            [class.num--positive]="report()!.totals.yearDiffIst > 0">
+            {{ report()!.totals.yearDiffIst | number: '1.0-0' }}
+          </td>
+          <td class="num"></td>
+          <td class="num"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  @if (hasUnassigned()) {
+    <p class="eva-hint">
+      <i
+        class="bi bi-info-circle"
+        aria-hidden="true"></i>
+      {{ report()!.unassignedTransactionCount }} Buchungen sind noch keiner Kategorie zugeordnet.
+      Ordne sie im Tab „Buchungen" zu, damit die Auswertung vollständig wird.
+    </p>
+  }
+}

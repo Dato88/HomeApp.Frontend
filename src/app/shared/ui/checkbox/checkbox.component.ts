@@ -14,8 +14,11 @@ import { Component, input, model } from '@angular/core';
           class="checkbox-input"
           [checked]="checked()"
           [disabled]="disabled()"
+          [attr.aria-label]="ariaLabel() ?? null"
           (change)="onChange($event)" />
-        <span class="checkbox-box" aria-hidden="true">
+        <span
+          class="checkbox-box"
+          aria-hidden="true">
           <i class="bi bi-check-lg"></i>
         </span>
       </span>
@@ -60,7 +63,9 @@ import { Component, input, model } from '@angular/core';
       background: var(--app-surface);
       border: 1px solid var(--app-border);
       border-radius: var(--app-radius-sm);
-      transition: background-color 120ms ease, border-color 120ms ease;
+      transition:
+        background-color 120ms ease,
+        border-color 120ms ease;
     }
 
     .checkbox-input:checked + .checkbox-box {
@@ -78,6 +83,8 @@ import { Component, input, model } from '@angular/core';
 export class CheckboxComponent {
   readonly label = input.required<string>();
   readonly disabled = input(false);
+  /** Für Checkboxen ohne sichtbares Label (z. B. Auswahlspalten in Tabellen). */
+  readonly ariaLabel = input<string | undefined>(undefined);
   readonly checked = model(false);
 
   protected onChange(event: Event): void {

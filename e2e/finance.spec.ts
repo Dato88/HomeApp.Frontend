@@ -10,7 +10,7 @@ test.describe('Finance Module - All Viewports', () => {
   });
 
   test('should load with all tabs available', async ({ page }) => {
-    const tabs = ['Konten', 'Buchungen', 'Kategorien'];
+    const tabs = ['Konten', 'Buchungen', 'Kategorien', 'Auswertung'];
 
     for (const tab of tabs) {
       const tabButton = page.getByRole('tab', { name: tab });
@@ -19,7 +19,7 @@ test.describe('Finance Module - All Viewports', () => {
   });
 
   test('should navigate between tabs with proper ARIA attributes', async ({ page }) => {
-    const tabs = ['Konten', 'Buchungen', 'Kategorien'];
+    const tabs = ['Konten', 'Buchungen', 'Kategorien', 'Auswertung'];
 
     for (const tab of tabs) {
       const tabButton = page.getByRole('tab', { name: tab });
@@ -35,13 +35,15 @@ test.describe('Finance Module - All Viewports', () => {
 
     // Press Right Arrow to move to next tab
     await page.keyboard.press('ArrowRight');
-    const secondTabFocus = await page.evaluate(() => document.activeElement?.getAttribute('aria-label'));
+    const secondTabFocus = await page.evaluate(() =>
+      document.activeElement?.getAttribute('aria-label')
+    );
     expect(secondTabFocus).toBeTruthy();
   });
 
   test('should have no accessibility violations', async ({ page }) => {
     // Test all tabs for a11y
-    const tabs = ['Konten', 'Buchungen', 'Kategorien'];
+    const tabs = ['Konten', 'Buchungen', 'Kategorien', 'Auswertung'];
     for (const tab of tabs) {
       await page.getByRole('tab', { name: tab }).click();
       await checkA11y(page);

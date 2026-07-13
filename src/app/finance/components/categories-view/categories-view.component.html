@@ -12,11 +12,15 @@
       [label]="'Kategorie hinzufügen'"
       icon="bi-plus-lg"
       (clicked)="openCreate()"></lib-button>
+    <lib-button
+      [label]="'Gruppe hinzufügen'"
+      icon="bi-collection"
+      (clicked)="openCreateGroup()"></lib-button>
   }
 </div>
 
 @if (store.selectedHouseholdId()) {
-  @if (store.categoriesResource.isLoading()) {
+  @if (store.categoriesResource.isLoading() || store.categoryGroupsResource.isLoading()) {
     <lib-skeleton aria-hidden="true"></lib-skeleton>
     <p
       class="visually-hidden"
@@ -24,7 +28,7 @@
       aria-live="polite">
       Kategorien werden geladen …
     </p>
-  } @else if (store.categoriesResource.error()) {
+  } @else if (store.categoriesResource.error() || store.categoryGroupsResource.error()) {
     <div
       class="status-banner status-banner--danger"
       role="alert">
@@ -35,11 +39,100 @@
       <button
         type="button"
         class="btn"
-        (click)="store.categoriesResource.reload()">
+        (click)="store.categoriesResource.reload(); store.categoryGroupsResource.reload()">
         Erneut versuchen
       </button>
     </div>
   } @else {
+    <h2 class="category-section-heading category-section-heading--group">
+      <span class="category-section-heading__icon">
+        <i
+          class="bi bi-collection"
+          aria-hidden="true"></i>
+      </span>
+      Gruppen
+      <span class="chip">{{ categoryGroups().length }}</span>
+    </h2>
+    <lib-grid
+      [data]="categoryGroups()"
+      [hoverable]="true"
+      [zebra]="true">
+      <lib-grid-column
+        field="name"
+        title="Name"
+        [sortable]="true"></lib-grid-column>
+      <lib-grid-column
+        field="categoryGroupType"
+        title="Typ"
+        width="8rem">
+        <ng-template
+          libGridCellTemplate
+          let-group>
+          {{ categoryTypeLabel(group.categoryGroupType) }}
+        </ng-template>
+      </lib-grid-column>
+      <lib-grid-column
+        field="targetPercent"
+        title="Ziel %"
+        width="7rem"
+        align="right">
+        <ng-template
+          libGridCellTemplate
+          let-group>
+          @if (group.targetPercent != null) {
+            {{ group.targetPercent | number: '1.0-1' }} %
+          } @else {
+            —
+          }
+        </ng-template>
+      </lib-grid-column>
+      <lib-grid-column
+        field="categoryGroupId"
+        title="Kategorien"
+        width="7rem"
+        align="right">
+        <ng-template
+          libGridCellTemplate
+          let-group>
+          {{ categoriesInGroup(group) }}
+        </ng-template>
+      </lib-grid-column>
+      <lib-grid-column
+        field="categoryGroupId"
+        title="Aktionen"
+        width="8rem">
+        <ng-template
+          libGridCellTemplate
+          let-group>
+          <div class="row-actions">
+            <button
+              type="button"
+              class="icon-button"
+              [attr.aria-label]="'Gruppe ' + group.name + ' bearbeiten'"
+              (click)="openEditGroup(group)">
+              <i
+                class="bi bi-pencil"
+                aria-hidden="true"></i>
+            </button>
+            <button
+              type="button"
+              class="icon-button icon-button--danger"
+              [attr.aria-label]="'Gruppe ' + group.name + ' löschen'"
+              (click)="deleteGroupDialog.open(group)">
+              <i
+                class="bi bi-trash"
+                aria-hidden="true"></i>
+            </button>
+          </div>
+        </ng-template>
+      </lib-grid-column>
+      <home-empty-state
+        noEntries
+        icon="bi-collection"
+        title="Keine Gruppen"
+        description="Lege Gruppen wie Wohnen, Versicherungen oder Sparen an, um die Auswertung zu strukturieren."></home-empty-state>
+    </lib-grid>
+
     <h2 class="category-section-heading category-section-heading--income">
       <span class="category-section-heading__icon">
         <i
@@ -58,8 +151,18 @@
         title="Name"
         [sortable]="true"></lib-grid-column>
       <lib-grid-column
+        field="categoryGroupId"
+        title="Gruppe">
+        <ng-template
+          libGridCellTemplate
+          let-category>
+          {{ groupNameOf(category) }}
+        </ng-template>
+      </lib-grid-column>
+      <lib-grid-column
         field="categoryId"
-        title="Aktionen">
+        title="Aktionen"
+        width="8rem">
         <ng-template
           libGridCellTemplate
           let-category>
@@ -109,8 +212,18 @@
         title="Name"
         [sortable]="true"></lib-grid-column>
       <lib-grid-column
+        field="categoryGroupId"
+        title="Gruppe">
+        <ng-template
+          libGridCellTemplate
+          let-category>
+          {{ groupNameOf(category) }}
+        </ng-template>
+      </lib-grid-column>
+      <lib-grid-column
         field="categoryId"
-        title="Aktionen">
+        title="Aktionen"
+        width="8rem">
         <ng-template
           libGridCellTemplate
           let-category>
@@ -188,10 +301,73 @@
       [defaultText]="'Typ wählen'"
       [width]="'100%'"
       [(selectedValue)]="categoryType"></lib-dropdown-list>
+    <lib-dropdown-list
+      label="Gruppe (optional)"
+      dropdownName="category-form-group"
+      [dropdownData]="categoryGroupOptions()"
+      [defaultText]="'Ohne Gruppe'"
+      [width]="'100%'"
+      [(selectedValue)]="categoryGroupId"></lib-dropdown-list>
     <div class="dialog-actions">
       <lib-button
         [label]="'Abbrechen'"
         (clicked)="closeFormDialog()"></lib-button>
+      <lib-button
+        [type]="'submit'"
+        [label]="'Speichern'"></lib-button>
+    </div>
+  </form>
+</lib-dialog>
+
+<lib-dialog
+  #groupFormDialog
+  [isModal]="true"
+  dialogClass="app-dialog app-dialog--narrow"
+  ariaLabelledBy="category-group-form-title"
+  (closed)="onGroupFormDialogClosed()">
+  <div class="dialog-header">
+    <h2 id="category-group-form-title">
+      {{ editingGroup() ? 'Gruppe bearbeiten' : 'Gruppe hinzufügen' }}
+    </h2>
+    <button
+      type="button"
+      class="icon-button"
+      aria-label="Dialog schließen"
+      (click)="closeGroupFormDialog()">
+      <i
+        class="bi bi-x-lg"
+        aria-hidden="true"></i>
+    </button>
+  </div>
+  <form
+    class="form-grid"
+    (submit)="$event.preventDefault(); submitGroup()"
+    novalidate>
+    <lib-input-field
+      label="Name"
+      effectStyle="box"
+      [required]="true"
+      [value]="groupName()"
+      (valueChange)="groupName.set($event)"
+      [validationState]="showGroupNameError() ? 'error' : null"
+      [errorMessage]="showGroupNameError() ? 'Name ist erforderlich' : ''"></lib-input-field>
+    <lib-dropdown-list
+      label="Typ"
+      dropdownName="category-group-form-type"
+      [dropdownData]="categoryTypeOptions()"
+      [defaultText]="'Typ wählen'"
+      [width]="'100%'"
+      [(selectedValue)]="groupType"></lib-dropdown-list>
+    <lib-input-field
+      label="Ziel-Anteil am Einkommen in % (optional)"
+      type="number"
+      effectStyle="box"
+      [value]="groupTargetPercent()"
+      (valueChange)="groupTargetPercent.set($event)"></lib-input-field>
+    <div class="dialog-actions">
+      <lib-button
+        [label]="'Abbrechen'"
+        (clicked)="closeGroupFormDialog()"></lib-button>
       <lib-button
         [type]="'submit'"
         [label]="'Speichern'"></lib-button>
@@ -204,3 +380,9 @@
   title="Kategorie löschen?"
   message="Die Kategorie wird entfernt. Zugeordnete Buchungen bleiben ohne Kategorie."
   (confirmed)="deleteCategory($event)"></home-confirm-dialog>
+
+<home-confirm-dialog
+  #deleteGroupDialog
+  title="Gruppe löschen?"
+  message="Die Gruppe wird entfernt. Zugeordnete Kategorien bleiben erhalten und sind danach ohne Gruppe."
+  (confirmed)="deleteGroup($event)"></home-confirm-dialog>

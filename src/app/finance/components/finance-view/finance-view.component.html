@@ -3,7 +3,7 @@
   aria-labelledby="finance-heading">
   <home-page-header
     title="Finanzen"
-    subtitle="Konten, Buchungen und Kategorien im Überblick"
+    subtitle="Konten, Buchungen, Kategorien und Auswertung im Überblick"
     headingId="finance-heading"></home-page-header>
 
   @if (store.error()) {
@@ -34,6 +34,9 @@
         }
         @case ('categories') {
           <home-categories-view class="tab-panel-enter"></home-categories-view>
+        }
+        @case ('report') {
+          <home-report-view class="tab-panel-enter"></home-report-view>
         }
       }
     </div>

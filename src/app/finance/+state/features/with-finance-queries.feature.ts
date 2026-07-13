@@ -3,14 +3,25 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { patchState, signalStoreFeature, type, withMethods, withProps } from '@ngrx/signals';
 import { map, of } from 'rxjs';
 import { AccountService } from '../../services/account.service';
+import { CategoryGroupService } from '../../services/category-group.service';
 import { CategoryService } from '../../services/category.service';
+import { ReportService } from '../../services/report.service';
 import { TransactionService } from '../../services/transaction.service';
-import { AccountDto, CategoryDto, TransactionFilter, TransactionListResponse } from '../models';
+import {
+  AccountDto,
+  CategoryDto,
+  CategoryGroupDto,
+  EvaReportFilter,
+  EvaReportResponse,
+  TransactionFilter,
+  TransactionListResponse,
+} from '../models';
 
 export interface FinanceQueryState {
   selectedAccountId: string;
   selectedHouseholdId: number | undefined;
   transactionFilter: TransactionFilter | undefined;
+  evaReportFilter: EvaReportFilter | undefined;
 }
 
 export function withFinanceQueries() {
@@ -19,6 +30,8 @@ export function withFinanceQueries() {
       props: type<{
         _accountService: AccountService;
         _categoryService: CategoryService;
+        _categoryGroupService: CategoryGroupService;
+        _reportService: ReportService;
         _transactionService: TransactionService;
       }>(),
       state: type<FinanceQueryState>(),
@@ -40,6 +53,16 @@ export function withFinanceQueries() {
             .getCategories(params.householdId)
             .pipe(map((result) => (result.isSuccess ? result.value : []))),
       }) as ResourceRef<CategoryDto[]>,
+      categoryGroupsResource: rxResource({
+        params: () => {
+          const householdId = store.selectedHouseholdId();
+          return householdId ? { householdId } : undefined;
+        },
+        stream: ({ params }) =>
+          store._categoryGroupService
+            .getCategoryGroups(params.householdId)
+            .pipe(map((result) => (result.isSuccess ? result.value : []))),
+      }) as ResourceRef<CategoryGroupDto[]>,
       transactionsResource: rxResource({
         params: () => store.transactionFilter(),
         stream: ({ params }) => {
@@ -56,6 +79,16 @@ export function withFinanceQueries() {
             );
         },
       }) as ResourceRef<TransactionListResponse>,
+      evaReportResource: rxResource({
+        params: () => {
+          const filter = store.evaReportFilter();
+          return filter?.householdIds.length ? filter : undefined;
+        },
+        stream: ({ params }) =>
+          store._reportService
+            .getEvaReport(params)
+            .pipe(map((result) => (result.isSuccess ? result.value : null))),
+      }) as ResourceRef<EvaReportResponse | null>,
     })),
     withMethods((store) => ({
       setSelectedAccountId(accountId: string): void {
@@ -66,6 +99,9 @@ export function withFinanceQueries() {
       },
       setTransactionFilter(filter: TransactionFilter | undefined): void {
         patchState(store, { transactionFilter: filter });
+      },
+      setEvaReportFilter(filter: EvaReportFilter | undefined): void {
+        patchState(store, { evaReportFilter: filter });
       },
     }))
   );

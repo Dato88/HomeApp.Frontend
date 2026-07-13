@@ -22,12 +22,6 @@ test.describe('App Navigation & Dashboard', () => {
     await assertNoPageOverflow(page);
   });
 
-  test('navigates to budget page', async ({ page }) => {
-    await page.goto('/budget');
-    await expect(page.getByRole('heading', { name: 'Budget' })).toBeVisible();
-    await assertNoPageOverflow(page);
-  });
-
   test('navigates to household page', async ({ page }) => {
     await page.goto('/household');
     await expect(page.getByRole('heading', { name: 'Haushalte' })).toBeVisible();
@@ -50,7 +44,7 @@ test.describe('App Navigation & Dashboard', () => {
   });
 
   test('should handle all major routes without errors', async ({ page }) => {
-    const routes = ['/', '/todo', '/finance', '/budget', '/household'];
+    const routes = ['/', '/todo', '/finance', '/household'];
 
     for (const route of routes) {
       await page.goto(route, { waitUntil: 'networkidle' });

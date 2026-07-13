@@ -1,9 +1,17 @@
-<section class="page" aria-labelledby="households-heading">
-  <home-page-header title="Haushalte" headingId="households-heading"></home-page-header>
+<section
+  class="page"
+  aria-labelledby="households-heading">
+  <home-page-header
+    title="Haushalte"
+    headingId="households-heading"></home-page-header>
 
   @if (store.error()) {
-    <div class="status-banner status-banner--danger" role="alert">
-      <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+    <div
+      class="status-banner status-banner--danger"
+      role="alert">
+      <i
+        class="bi bi-exclamation-triangle-fill"
+        aria-hidden="true"></i>
       <span>{{ store.error() }}</span>
     </div>
   }
@@ -12,12 +20,24 @@
 
   @if (store.householdsResource.isLoading()) {
     <lib-skeleton aria-hidden="true"></lib-skeleton>
-    <p class="visually-hidden" role="status" aria-live="polite">Haushalte werden geladen …</p>
+    <p
+      class="visually-hidden"
+      role="status"
+      aria-live="polite">
+      Haushalte werden geladen …
+    </p>
   } @else if (store.householdsResource.error()) {
-    <div class="status-banner status-banner--danger" role="alert">
-      <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+    <div
+      class="status-banner status-banner--danger"
+      role="alert">
+      <i
+        class="bi bi-exclamation-triangle-fill"
+        aria-hidden="true"></i>
       <span>Haushalte konnten nicht geladen werden.</span>
-      <button type="button" class="btn" (click)="store.householdsResource.reload()">
+      <button
+        type="button"
+        class="btn"
+        (click)="store.householdsResource.reload()">
         Erneut versuchen
       </button>
     </div>
@@ -25,7 +45,7 @@
     <home-empty-state
       icon="bi-house-heart"
       title="Noch keine Haushalte"
-      description="Lege einen Haushalt an, um Budget und Finanzen zu organisieren."></home-empty-state>
+      description="Lege einen Haushalt an, um Finanzen gemeinsam zu organisieren."></home-empty-state>
   } @else {
     <div class="household-list">
       @for (household of store.householdEntities(); track household.householdId) {
@@ -43,5 +63,5 @@
 <home-confirm-dialog
   #deleteDialog
   title="Haushalt löschen?"
-  message="Budgets, Kategorien und Kontofreigaben dieses Haushalts werden dauerhaft gelöscht. Das lässt sich nicht rückgängig machen."
+  message="Kategorien, Kategorie-Gruppen und Kontofreigaben dieses Haushalts werden dauerhaft gelöscht. Das lässt sich nicht rückgängig machen."
   (confirmed)="confirmDelete($event)"></home-confirm-dialog>

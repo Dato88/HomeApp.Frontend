@@ -35,4 +35,9 @@
     color: var(--app-danger);
     background: var(--app-danger-soft);
   }
+
+  &--group .category-section-heading__icon {
+    color: var(--app-info);
+    background: var(--app-info-soft);
+  }
 }

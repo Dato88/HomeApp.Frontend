@@ -7,6 +7,7 @@ interface DashboardNavItem {
   readonly description: string;
   readonly icon: string;
   readonly route: string;
+  readonly queryParams?: Record<string, string>;
 }
 
 @Component({
@@ -31,10 +32,11 @@ export class DashboardComponent {
       route: '/finance',
     },
     {
-      title: 'Budget',
-      description: 'Budgetplanung',
+      title: 'Auswertung',
+      description: 'Einnahmen & Ausgaben im Jahresüberblick',
       icon: 'bi-pie-chart',
-      route: '/budget',
+      route: '/finance',
+      queryParams: { tab: 'report' },
     },
     {
       title: 'Haushalte',

@@ -2,18 +2,21 @@ import { inject, ResourceRef } from '@angular/core';
 import { patchState, signalStoreFeature, type, withMethods } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { tapResponse } from '@ngrx/operators';
-import { NamedEntityState, updateEntity } from '@ngrx/signals/entities';
+import { NamedEntityState, updateEntities } from '@ngrx/signals/entities';
 import { concatMap, exhaustMap, pipe, tap } from 'rxjs';
 import { Result } from '../../../core/models';
 import { ToastService } from '../../../shared/ui/toast/toast.service';
 import { AccountService } from '../../services/account.service';
+import { CategoryGroupService } from '../../services/category-group.service';
 import { CategoryService } from '../../services/category.service';
 import { TransactionService } from '../../services/transaction.service';
 import { transactionEntities } from '../configs/transaction.config';
 import {
   AccountDto,
   CategoryDto,
+  CategoryGroupDto,
   CreateAccountRequest,
+  CreateCategoryGroupRequest,
   CreateCategoryRequest,
   CreateTransactionRequest,
   ImportTransactionsRequest,
@@ -24,6 +27,7 @@ import {
   TransactionFilter,
   TransactionListResponse,
   UpdateAccountRequest,
+  UpdateCategoryGroupRequest,
   UpdateCategoryRequest,
   UpdateTransactionRequest,
 } from '../models';
@@ -40,9 +44,11 @@ export function withFinanceCommands() {
       props: type<{
         _accountService: AccountService;
         _categoryService: CategoryService;
+        _categoryGroupService: CategoryGroupService;
         _transactionService: TransactionService;
         accountsResource: ResourceRef<AccountDto[]>;
         categoriesResource: ResourceRef<CategoryDto[]>;
+        categoryGroupsResource: ResourceRef<CategoryGroupDto[]>;
         transactionsResource: ResourceRef<TransactionListResponse>;
       }>(),
       methods: type<{ _handleError: (error: unknown) => void }>(),
@@ -67,6 +73,10 @@ export function withFinanceCommands() {
 
       const reloadCategories = (): void => {
         store.categoriesResource.reload();
+      };
+
+      const reloadCategoryGroups = (): void => {
+        store.categoryGroupsResource.reload();
       };
 
       const reloadTransactions = (): void => {
@@ -153,6 +163,28 @@ export function withFinanceCommands() {
           reloadCategories,
           'Kategorie gelöscht'
         ),
+        createCategoryGroup: command<CreateCategoryGroupRequest>(
+          (request) => store._categoryGroupService.createCategoryGroup(request),
+          'Gruppe konnte nicht angelegt werden',
+          reloadCategoryGroups,
+          'Gruppe angelegt'
+        ),
+        updateCategoryGroup: command<UpdateCategoryGroupRequest>(
+          (request) => store._categoryGroupService.updateCategoryGroup(request),
+          'Gruppe konnte nicht aktualisiert werden',
+          reloadCategoryGroups,
+          'Gruppe gespeichert'
+        ),
+        // Kategorien mitladen: das Backend hängt Kategorien der gelöschten Gruppe aus.
+        deleteCategoryGroup: command<number>(
+          (categoryGroupId) => store._categoryGroupService.deleteCategoryGroup(categoryGroupId),
+          'Gruppe konnte nicht gelöscht werden',
+          () => {
+            reloadCategoryGroups();
+            reloadCategories();
+          },
+          'Gruppe gelöscht'
+        ),
         createTransaction: command<CreateTransactionRequest>(
           (request) => store._transactionService.createTransaction(request),
           'Buchung konnte nicht angelegt werden',
@@ -197,8 +229,11 @@ export function withFinanceCommands() {
 
                     patchState(
                       store,
-                      updateEntity(
-                        { id: request.transactionId, changes: { categoryId: request.categoryId } },
+                      updateEntities(
+                        {
+                          ids: request.transactionIds,
+                          changes: { categoryId: request.categoryId },
+                        },
                         transactionEntities
                       )
                     );
