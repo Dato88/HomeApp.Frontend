@@ -25,6 +25,7 @@ import { ConfirmDialogComponent } from '../../../shared/ui/confirm-dialog/confir
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { ViewportService } from '../../../shared/services/viewport/viewport.service';
 import { DropdownData } from '../../../shared/models/dropdown-data.model';
+import { formatIban, IbanFormatPipe } from '../../../shared/pipes/iban-format.pipe';
 
 @Component({
   selector: 'home-accounts-view',
@@ -41,6 +42,7 @@ import { DropdownData } from '../../../shared/models/dropdown-data.model';
     CheckboxComponent,
     ConfirmDialogComponent,
     EmptyStateComponent,
+    IbanFormatPipe,
   ],
   templateUrl: './accounts-view.component.html',
   styleUrl: './accounts-view.component.scss',
@@ -139,7 +141,7 @@ export class AccountsViewComponent {
     this.editingAccount.set(account);
     this.submitted.set(false);
     this.name.set(account.name);
-    this.iban.set(account.iban ?? '');
+    this.iban.set(formatIban(account.iban));
     this.bic.set(account.bic ?? '');
     this.currencyCode.set(account.currencyCode);
     this.description.set(account.description ?? '');
@@ -158,6 +160,10 @@ export class AccountsViewComponent {
     this.submitted.set(false);
   }
 
+  onIbanInput(value: string): void {
+    this.iban.set(formatIban(value));
+  }
+
   submitAccount(): void {
     this.submitted.set(true);
     const trimmedName = this.name().trim();
@@ -173,7 +179,7 @@ export class AccountsViewComponent {
       const request: UpdateAccountRequest = {
         accountId: editing.accountId,
         name: trimmedName,
-        iban: this.iban().trim() || null,
+        iban: this.iban().replace(/\s+/g, '') || null,
         bic: this.bic().trim() || null,
         accountType,
         currencyCode: this.currencyCode().trim() || 'EUR',
@@ -188,7 +194,7 @@ export class AccountsViewComponent {
 
       const request: CreateAccountRequest = {
         name: trimmedName,
-        iban: this.iban().trim() || null,
+        iban: this.iban().replace(/\s+/g, '') || null,
         bic: this.bic().trim() || null,
         accountType,
         currencyCode: this.currencyCode().trim() || 'EUR',

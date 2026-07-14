@@ -146,9 +146,9 @@
         [rowHeight]="gridRowHeight"
         [detailsExpandedBy]="isDetailsExpanded">
         <lib-grid-column
-          field="transactionId"
+          field=""
           title=""
-          width="7rem">
+          width="3rem">
           <ng-template
             libGridCellTemplate
             let-transaction>
@@ -200,7 +200,7 @@
                 class="cell-truncate-text"
                 [attr.title]="
                   transaction.paymentPartnerIban
-                    ? (value || '—') + ' · ' + transaction.paymentPartnerIban
+                    ? (value || '—') + ' · ' + (transaction.paymentPartnerIban | ibanFormat)
                     : value || null
                 ">
                 {{ value || '—' }}
@@ -316,7 +316,7 @@
               <dt>Empfänger</dt>
               <dd>{{ transaction.paymentPartnerName || '—' }}</dd>
               <dt>IBAN</dt>
-              <dd>{{ transaction.paymentPartnerIban || '—' }}</dd>
+              <dd>{{ (transaction.paymentPartnerIban | ibanFormat) || '—' }}</dd>
               <dt>Verwendungszweck</dt>
               <dd>{{ transaction.purpose || '—' }}</dd>
             </dl>
@@ -494,7 +494,7 @@
           [checked]="isIbanSelected(candidate.iban)"
           (checkedChange)="toggleIbanSelection(candidate.iban, $event)"></home-checkbox>
         <span class="iban-candidate__meta">
-          <code>{{ candidate.iban }}</code>
+          <code>{{ candidate.iban | ibanFormat }}</code>
           <span class="chip chip--muted">{{ candidate.count }}×</span>
         </span>
       </li>

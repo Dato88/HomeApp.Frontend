@@ -21,7 +21,7 @@
     <div class="recipient-summary">
       <strong>{{ sourceTransaction()?.paymentPartnerName || '—' }}</strong>
       @if (sourceTransaction()?.paymentPartnerIban) {
-        <code>{{ sourceTransaction()?.paymentPartnerIban }}</code>
+        <code>{{ sourceTransaction()?.paymentPartnerIban | ibanFormat }}</code>
       }
     </div>
 
@@ -89,9 +89,9 @@
           [hoverable]="true"
           [zebra]="true">
           <lib-grid-column
-            field="transactionId"
+            field=""
             title=""
-            width="max-content">
+            width="3rem">
             <ng-template
               libGridCellTemplate
               let-transaction>

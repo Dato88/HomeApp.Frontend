@@ -32,6 +32,7 @@ import { TransactionService } from '../../../services/transaction.service';
 import { CheckboxComponent } from '../../../../shared/ui/checkbox/checkbox.component';
 import { EmptyStateComponent } from '../../../../shared/ui/empty-state/empty-state.component';
 import { DropdownData } from '../../../../shared/models/dropdown-data.model';
+import { IbanFormatPipe } from '../../../../shared/pipes/iban-format.pipe';
 
 /** Max des Transaktionsfilters, sicher unter dem 500er-Limit des Batch-Endpoints. */
 const PAGE_SIZE = 200;
@@ -56,6 +57,7 @@ const PAGE_SIZE = 200;
     SkeletonComponent,
     CheckboxComponent,
     EmptyStateComponent,
+    IbanFormatPipe,
   ],
   templateUrl: './recipient-bulk-category-dialog.component.html',
   styleUrl: './recipient-bulk-category-dialog.component.scss',

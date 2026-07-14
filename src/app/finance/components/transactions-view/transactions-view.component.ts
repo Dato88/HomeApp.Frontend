@@ -31,6 +31,7 @@ import {
   DropdownData,
   GRID_ROW_HEIGHT_WITH_DROPDOWN,
 } from '../../../shared/models/dropdown-data.model';
+import { formatIban, IbanFormatPipe } from '../../../shared/pipes/iban-format.pipe';
 
 @Component({
   selector: 'home-transactions-view',
@@ -50,6 +51,7 @@ import {
     ConfirmDialogComponent,
     EmptyStateComponent,
     FileUploadComponent,
+    IbanFormatPipe,
     RecipientBulkCategoryDialogComponent,
   ],
   templateUrl: './transactions-view.component.html',
@@ -117,7 +119,7 @@ export class TransactionsViewComponent {
   readonly accountOptions = computed<DropdownData[]>(() =>
     this.store.accountEntities().map((account) => ({
       value: String(account.accountId),
-      name: `${account.name}${account.iban ? ` (${account.iban})` : ''}`,
+      name: `${account.name}${account.iban ? ` (${formatIban(account.iban)})` : ''}`,
       trackBy: account.accountId,
     }))
   );

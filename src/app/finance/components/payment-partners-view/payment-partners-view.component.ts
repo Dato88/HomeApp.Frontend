@@ -12,6 +12,7 @@ import { FinanceStore } from '../../+state/finance.store';
 import { MergePaymentPartnersRequest, PaymentPartnerDto } from '../../+state/models';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { DropdownData } from '../../../shared/models/dropdown-data.model';
+import { IbanFormatPipe } from '../../../shared/pipes/iban-format.pipe';
 import { MergePaymentPartnerDialogComponent } from './merge-payment-partner-dialog/merge-payment-partner-dialog.component';
 
 @Component({
@@ -25,6 +26,7 @@ import { MergePaymentPartnerDialogComponent } from './merge-payment-partner-dial
     InputFieldComponent,
     SkeletonComponent,
     EmptyStateComponent,
+    IbanFormatPipe,
     MergePaymentPartnerDialogComponent,
   ],
   templateUrl: './payment-partners-view.component.html',

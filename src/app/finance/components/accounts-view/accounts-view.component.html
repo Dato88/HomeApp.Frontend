@@ -89,7 +89,13 @@
     @if (viewport.isDesktop()) {
       <lib-grid-column
         field="iban"
-        title="IBAN"></lib-grid-column>
+        title="IBAN">
+        <ng-template
+          libGridCellTemplate
+          let-value="value">
+          {{ value | ibanFormat }}
+        </ng-template>
+      </lib-grid-column>
     }
     <lib-grid-column
       field="accountType"
@@ -179,7 +185,7 @@
       <div class="account-details">
         <dl>
           <dt>IBAN</dt>
-          <dd>{{ account.iban || '—' }}</dd>
+          <dd>{{ (account.iban | ibanFormat) || '—' }}</dd>
           <dt>Währung</dt>
           <dd>{{ account.currencyCode }}</dd>
           <dt>Geteilt mit</dt>
@@ -240,8 +246,9 @@
     <lib-input-field
       label="IBAN"
       effectStyle="box"
+      placeholder="DE00 0000 0000 0000 0000 00"
       [value]="iban()"
-      (valueChange)="iban.set($event)"></lib-input-field>
+      (valueChange)="onIbanInput($event)"></lib-input-field>
     <lib-input-field
       label="BIC"
       effectStyle="box"
