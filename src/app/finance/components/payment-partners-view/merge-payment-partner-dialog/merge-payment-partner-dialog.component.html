@@ -1,0 +1,51 @@
+<lib-dialog
+  [isModal]="true"
+  [closeOnOutsideClick]="false"
+  dialogClass="app-dialog app-dialog--narrow"
+  ariaLabelledBy="merge-payment-partner-title"
+  (closed)="onClosed()">
+  <div class="dialog-header">
+    <h2 id="merge-payment-partner-title">Zahlungspartner zusammenführen</h2>
+    <button
+      type="button"
+      class="icon-button"
+      aria-label="Dialog schließen"
+      (click)="close()">
+      <i
+        class="bi bi-x-lg"
+        aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <div class="dialog-body">
+    <p>
+      Alle Buchungen von <strong>{{ sourcePartner()?.displayName }}</strong> werden zum
+      gewählten Ziel-Partner verschoben. <strong>{{ sourcePartner()?.displayName }}</strong>
+      wird anschließend gelöscht. Hat das Ziel keine IBAN, übernimmt es die IBAN und die
+      Eigenkonto-Verknüpfung des gelöschten Partners.
+    </p>
+    <p class="field-hint">
+      Achtung: Ein künftiger Import mit dem bisherigen Namen von
+      {{ sourcePartner()?.displayName }} legt einen neuen Zahlungspartner an — der
+      Zuordnungs-Schlüssel geht beim Zusammenführen verloren.
+    </p>
+
+    <lib-dropdown-list
+      label="Ziel-Partner"
+      dropdownName="merge-payment-partner-target"
+      [dropdownData]="targetOptions()"
+      [defaultText]="'Ziel wählen'"
+      [width]="'100%'"
+      [(selectedValue)]="targetId"></lib-dropdown-list>
+  </div>
+
+  <div class="dialog-actions">
+    <lib-button
+      [label]="'Abbrechen'"
+      (clicked)="close()"></lib-button>
+    <lib-button
+      [label]="'Zusammenführen'"
+      [disabled]="!targetId()"
+      (clicked)="submit()"></lib-button>
+  </div>
+</lib-dialog>

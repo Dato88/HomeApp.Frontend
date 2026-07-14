@@ -9,6 +9,7 @@ import { ToastService } from '../../../shared/ui/toast/toast.service';
 import { AccountService } from '../../services/account.service';
 import { CategoryGroupService } from '../../services/category-group.service';
 import { CategoryService } from '../../services/category.service';
+import { PaymentPartnerService } from '../../services/payment-partner.service';
 import { TransactionService } from '../../services/transaction.service';
 import { transactionEntities } from '../configs/transaction.config';
 import {
@@ -21,6 +22,9 @@ import {
   CreateTransactionRequest,
   ImportTransactionsRequest,
   ImportTransactionsResponse,
+  MergePaymentPartnersRequest,
+  PaymentPartnerDto,
+  RenamePaymentPartnerRequest,
   SetTransactionCategoryRequest,
   ShareAccountRequest,
   TransactionDto,
@@ -45,10 +49,12 @@ export function withFinanceCommands() {
         _accountService: AccountService;
         _categoryService: CategoryService;
         _categoryGroupService: CategoryGroupService;
+        _paymentPartnerService: PaymentPartnerService;
         _transactionService: TransactionService;
         accountsResource: ResourceRef<AccountDto[]>;
         categoriesResource: ResourceRef<CategoryDto[]>;
         categoryGroupsResource: ResourceRef<CategoryGroupDto[]>;
+        paymentPartnersResource: ResourceRef<PaymentPartnerDto[]>;
         transactionsResource: ResourceRef<TransactionListResponse>;
       }>(),
       methods: type<{ _handleError: (error: unknown) => void }>(),
@@ -77,6 +83,10 @@ export function withFinanceCommands() {
 
       const reloadCategoryGroups = (): void => {
         store.categoryGroupsResource.reload();
+      };
+
+      const reloadPaymentPartners = (): void => {
+        store.paymentPartnersResource.reload();
       };
 
       const reloadTransactions = (): void => {
@@ -202,6 +212,23 @@ export function withFinanceCommands() {
           'Buchung konnte nicht gelöscht werden',
           reloadTransactions,
           'Buchung gelöscht'
+        ),
+        renamePaymentPartner: command<RenamePaymentPartnerRequest>(
+          (request) => store._paymentPartnerService.renamePaymentPartner(request),
+          'Zahlungspartner konnte nicht umbenannt werden',
+          reloadPaymentPartners,
+          'Zahlungspartner umbenannt'
+        ),
+        // Verschobene Buchungen tragen danach eine neue paymentPartnerId - ein aktiver
+        // Zahlungspartner-Filter im Buchungen-Tab auf den gelöschten Source liefe sonst leer.
+        mergePaymentPartners: command<MergePaymentPartnersRequest>(
+          (request) => store._paymentPartnerService.mergePaymentPartners(request),
+          'Zahlungspartner konnten nicht zusammengeführt werden',
+          () => {
+            reloadPaymentPartners();
+            reloadTransactions();
+          },
+          'Zahlungspartner zusammengeführt'
         ),
         // Patcht nur den betroffenen Datensatz statt die ganze Liste neu zu laden -
         // ein voller reload() würde das Grid kurz durch ein Skeleton ersetzen und

@@ -67,6 +67,7 @@ export class TransactionsViewComponent {
   readonly fromDate = signal('');
   readonly toDate = signal('');
   readonly uncategorizedOnly = signal(false);
+  readonly selectedPaymentPartnerId = signal('');
   readonly pageIndex = signal(0);
   readonly pageSize = 50;
 
@@ -82,7 +83,7 @@ export class TransactionsViewComponent {
   readonly editingTransaction = signal<TransactionDto | null>(null);
   readonly bookingDate = signal('');
   readonly amount = signal('');
-  readonly counterpartyName = signal('');
+  readonly paymentPartnerName = signal('');
   readonly purpose = signal('');
   readonly categoryId = signal('');
 
@@ -151,6 +152,14 @@ export class TransactionsViewComponent {
     }))
   );
 
+  readonly paymentPartnerFilterOptions = computed<DropdownData[]>(() =>
+    this.store.paymentPartnerEntities().map((partner) => ({
+      value: String(partner.paymentPartnerId),
+      name: partner.displayName,
+      trackBy: partner.paymentPartnerId,
+    }))
+  );
+
   readonly selectedAccount = computed<AccountDto | undefined>(() => {
     const accountId = Number(this.store.selectedAccountId());
 
@@ -187,7 +196,7 @@ export class TransactionsViewComponent {
     const byIban = new Map<string, { iban: string; name: string; count: number }>();
 
     for (const transaction of this.store.transactionEntities()) {
-      const iban = transaction.counterpartyIban;
+      const iban = transaction.paymentPartnerIban;
 
       if (!iban) {
         continue;
@@ -200,7 +209,7 @@ export class TransactionsViewComponent {
       } else {
         byIban.set(iban, {
           iban,
-          name: transaction.counterpartyName ?? '—',
+          name: transaction.paymentPartnerName ?? '—',
           count: 1,
         });
       }
@@ -225,6 +234,9 @@ export class TransactionsViewComponent {
         from: this.fromDate() || null,
         to: this.toDate() || null,
         uncategorized: this.uncategorizedOnly() ? true : undefined,
+        paymentPartnerId: this.selectedPaymentPartnerId()
+          ? Number(this.selectedPaymentPartnerId())
+          : null,
         page: this.pageIndex() + 1,
         pageSize: this.pageSize,
       });
@@ -360,7 +372,7 @@ export class TransactionsViewComponent {
       const next = new Set(current);
 
       for (const transaction of this.store.transactionEntities()) {
-        if (transaction.counterpartyIban && ibans.has(transaction.counterpartyIban)) {
+        if (transaction.paymentPartnerIban && ibans.has(transaction.paymentPartnerIban)) {
           next.add(transaction.transactionId);
         }
       }
@@ -394,7 +406,7 @@ export class TransactionsViewComponent {
     this.submitted.set(false);
     this.bookingDate.set(new Date().toISOString().slice(0, 10));
     this.amount.set('');
-    this.counterpartyName.set('');
+    this.paymentPartnerName.set('');
     this.purpose.set('');
     this.categoryId.set('');
     this.formDialog().open();
@@ -409,7 +421,7 @@ export class TransactionsViewComponent {
     this.submitted.set(false);
     this.bookingDate.set(transaction.bookingDate);
     this.amount.set(String(transaction.amount));
-    this.counterpartyName.set(transaction.counterpartyName ?? '');
+    this.paymentPartnerName.set(transaction.paymentPartnerName ?? '');
     this.purpose.set(transaction.purpose ?? '');
     this.categoryId.set(transaction.categoryId != null ? String(transaction.categoryId) : '');
     this.formDialog().open();
@@ -442,7 +454,7 @@ export class TransactionsViewComponent {
         bookingDate: this.bookingDate(),
         valueDate: editing.valueDate,
         amount: parsedAmount,
-        counterpartyName: this.counterpartyName().trim() || null,
+        paymentPartnerName: this.paymentPartnerName().trim() || null,
         purpose: this.purpose().trim() || null,
       };
       this.store.updateTransaction(request);
@@ -458,7 +470,7 @@ export class TransactionsViewComponent {
         accountId,
         bookingDate: this.bookingDate(),
         amount: parsedAmount,
-        counterpartyName: this.counterpartyName().trim() || null,
+        paymentPartnerName: this.paymentPartnerName().trim() || null,
         purpose: this.purpose().trim() || null,
         categoryId: category,
       };

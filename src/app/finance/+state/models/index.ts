@@ -4,6 +4,7 @@ export { TransactionSource, TRANSACTION_SOURCE_LABELS } from './transaction-sour
 export type { AccountDto } from './account-dto';
 export type { CategoryDto } from './category-dto';
 export type { CategoryGroupDto } from './category-group-dto';
+export type { PaymentPartnerDto } from './payment-partner-dto';
 export type {
   EvaReportCategoryDto,
   EvaReportFilter,
@@ -22,6 +23,8 @@ export type {
   CreateCategoryRequest,
   CreateTransactionRequest,
   ImportTransactionsRequest,
+  MergePaymentPartnersRequest,
+  RenamePaymentPartnerRequest,
   SetTransactionCategoryRequest,
   ShareAccountRequest,
   TransactionFilter,

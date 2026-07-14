@@ -1,6 +1,11 @@
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 
-export type FinanceTab = 'accounts' | 'transactions' | 'categories' | 'report';
+export type FinanceTab =
+  | 'accounts'
+  | 'transactions'
+  | 'categories'
+  | 'paymentPartners'
+  | 'report';
 
 export interface FinanceUiState {
   activeTab: FinanceTab;

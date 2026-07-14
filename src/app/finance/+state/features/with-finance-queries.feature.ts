@@ -5,6 +5,7 @@ import { map, of } from 'rxjs';
 import { AccountService } from '../../services/account.service';
 import { CategoryGroupService } from '../../services/category-group.service';
 import { CategoryService } from '../../services/category.service';
+import { PaymentPartnerService } from '../../services/payment-partner.service';
 import { ReportService } from '../../services/report.service';
 import { TransactionService } from '../../services/transaction.service';
 import {
@@ -13,6 +14,7 @@ import {
   CategoryGroupDto,
   EvaReportFilter,
   EvaReportResponse,
+  PaymentPartnerDto,
   TransactionFilter,
   TransactionListResponse,
 } from '../models';
@@ -31,6 +33,7 @@ export function withFinanceQueries() {
         _accountService: AccountService;
         _categoryService: CategoryService;
         _categoryGroupService: CategoryGroupService;
+        _paymentPartnerService: PaymentPartnerService;
         _reportService: ReportService;
         _transactionService: TransactionService;
       }>(),
@@ -63,6 +66,12 @@ export function withFinanceQueries() {
             .getCategoryGroups(params.householdId)
             .pipe(map((result) => (result.isSuccess ? result.value : []))),
       }) as ResourceRef<CategoryGroupDto[]>,
+      paymentPartnersResource: rxResource({
+        stream: () =>
+          store._paymentPartnerService
+            .getPaymentPartners()
+            .pipe(map((result) => (result.isSuccess ? result.value : []))),
+      }) as ResourceRef<PaymentPartnerDto[]>,
       transactionsResource: rxResource({
         params: () => store.transactionFilter(),
         stream: ({ params }) => {

@@ -22,6 +22,8 @@ export interface UpdateAccountRequest {
   currencyCode?: string | null;
   description?: string | null;
   isActive: boolean;
+  /** Nur zulässig, wenn isActive=false; sonst null senden. */
+  deactivatedFrom?: string | null;
 }
 
 export interface ShareAccountRequest {
@@ -67,8 +69,8 @@ export interface CreateTransactionRequest {
   valueDate?: string | null;
   /** Signed amount: negative = expense, positive = income. */
   amount: number;
-  counterpartyName?: string | null;
-  counterpartyIban?: string | null;
+  paymentPartnerName?: string | null;
+  paymentPartnerIban?: string | null;
   purpose?: string | null;
   categoryId?: number | null;
 }
@@ -79,8 +81,8 @@ export interface UpdateTransactionRequest {
   bookingDate: string;
   valueDate?: string | null;
   amount: number;
-  counterpartyName?: string | null;
-  counterpartyIban?: string | null;
+  paymentPartnerName?: string | null;
+  paymentPartnerIban?: string | null;
   purpose?: string | null;
 }
 
@@ -98,8 +100,10 @@ export interface TransactionFilter {
   to?: string | null;
   categoryId?: number | null;
   uncategorized?: boolean;
-  /** Exakte Gegenkonto-IBAN; Backend-Filter für „Kategorie per Empfänger zuweisen". */
-  counterpartyIban?: string | null;
+  /** Exakte, normalisierte Gegenkonto-IBAN; Spezialfall. Für „per Empfänger" paymentPartnerId nutzen. */
+  paymentPartnerIban?: string | null;
+  /** Filter auf den aufgelösten Zahlungspartner; vom Backend empfohlen. */
+  paymentPartnerId?: number | null;
   /** 1-based page index. */
   page: number;
   /** Max 200. */
@@ -111,4 +115,14 @@ export interface ImportTransactionsRequest {
   file: File;
   /** Optional format hint; backend auto-detects when omitted. */
   format?: string | null;
+}
+
+export interface RenamePaymentPartnerRequest {
+  paymentPartnerId: number;
+  displayName: string;
+}
+
+export interface MergePaymentPartnersRequest {
+  targetPaymentPartnerId: number;
+  sourcePaymentPartnerId: number;
 }

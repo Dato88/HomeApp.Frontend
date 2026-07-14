@@ -48,8 +48,12 @@ export class TransactionService {
       params = params.set('uncategorized', filter.uncategorized);
     }
 
-    if (filter.counterpartyIban) {
-      params = params.set('counterpartyIban', filter.counterpartyIban);
+    if (filter.paymentPartnerIban) {
+      params = params.set('paymentPartnerIban', filter.paymentPartnerIban);
+    }
+
+    if (filter.paymentPartnerId != null) {
+      params = params.set('paymentPartnerId', filter.paymentPartnerId);
     }
 
     return this.#http

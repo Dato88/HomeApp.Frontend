@@ -10,6 +10,8 @@ export interface AccountDto {
   currencyCode: string;
   description: string | null;
   isActive: boolean;
+  /** ISO date string (yyyy-MM-dd); nur gesetzt, wenn isActive=false. */
+  deactivatedFrom: string | null;
   isOwner: boolean;
   sharedHouseholdIds: number[];
 }

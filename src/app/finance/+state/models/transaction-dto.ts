@@ -9,11 +9,12 @@ export interface TransactionDto {
   valueDate: string | null;
   /** Signed amount: negative = expense, positive = income. */
   amount: number;
-  counterpartyName: string | null;
-  counterpartyIban: string | null;
+  paymentPartnerName: string | null;
+  paymentPartnerIban: string | null;
   purpose: string | null;
   bankReference: string | null;
   categoryId: number | null;
+  paymentPartnerId: number | null;
   source: TransactionSource;
 }
 

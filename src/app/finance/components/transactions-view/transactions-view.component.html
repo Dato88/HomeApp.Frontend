@@ -32,6 +32,13 @@
     effectStyle="box"
     [value]="toDate()"
     (valueChange)="toDate.set($event)"></lib-input-field>
+  <lib-dropdown-list
+    label="Zahlungspartner"
+    dropdownName="transaction-payment-partner-filter"
+    [dropdownData]="paymentPartnerFilterOptions()"
+    [defaultText]="'Alle Zahlungspartner'"
+    [width]="'100%'"
+    [(selectedValue)]="selectedPaymentPartnerId"></lib-dropdown-list>
   <home-checkbox
     label="Nur ohne Kategorie"
     [(checked)]="uncategorizedOnly"></home-checkbox>
@@ -181,7 +188,7 @@
         </lib-grid-column>
         @if (viewport.isDesktop()) {
           <lib-grid-column
-            field="counterpartyName"
+            field="paymentPartnerName"
             title="Empfänger"
             width="20%"
             cellClass="cell-truncate">
@@ -192,8 +199,8 @@
               <span
                 class="cell-truncate-text"
                 [attr.title]="
-                  transaction.counterpartyIban
-                    ? (value || '—') + ' · ' + transaction.counterpartyIban
+                  transaction.paymentPartnerIban
+                    ? (value || '—') + ' · ' + transaction.paymentPartnerIban
                     : value || null
                 ">
                 {{ value || '—' }}
@@ -264,7 +271,7 @@
                     aria-hidden="true"></i>
                 </button>
               }
-              @if (transaction.counterpartyIban) {
+              @if (transaction.paymentPartnerId) {
                 <button
                   type="button"
                   class="icon-button"
@@ -307,9 +314,9 @@
           <div class="transaction-details">
             <dl>
               <dt>Empfänger</dt>
-              <dd>{{ transaction.counterpartyName || '—' }}</dd>
+              <dd>{{ transaction.paymentPartnerName || '—' }}</dd>
               <dt>IBAN</dt>
-              <dd>{{ transaction.counterpartyIban || '—' }}</dd>
+              <dd>{{ transaction.paymentPartnerIban || '—' }}</dd>
               <dt>Verwendungszweck</dt>
               <dd>{{ transaction.purpose || '—' }}</dd>
             </dl>
@@ -392,8 +399,8 @@
     <lib-input-field
       label="Empfänger"
       effectStyle="box"
-      [value]="counterpartyName()"
-      (valueChange)="counterpartyName.set($event)"></lib-input-field>
+      [value]="paymentPartnerName()"
+      (valueChange)="paymentPartnerName.set($event)"></lib-input-field>
     <lib-input-field
       label="Verwendungszweck"
       effectStyle="box"

@@ -19,8 +19,10 @@
 
   <div class="dialog-body">
     <div class="recipient-summary">
-      <strong>{{ sourceTransaction()?.counterpartyName || '—' }}</strong>
-      <code>{{ sourceTransaction()?.counterpartyIban }}</code>
+      <strong>{{ sourceTransaction()?.paymentPartnerName || '—' }}</strong>
+      @if (sourceTransaction()?.paymentPartnerIban) {
+        <code>{{ sourceTransaction()?.paymentPartnerIban }}</code>
+      }
     </div>
 
     <lib-dropdown-list

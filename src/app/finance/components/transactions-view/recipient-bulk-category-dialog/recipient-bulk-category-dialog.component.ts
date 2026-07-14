@@ -132,7 +132,7 @@ export class RecipientBulkCategoryDialogComponent {
   }
 
   open(transaction: TransactionDto): void {
-    if (!transaction.counterpartyIban) {
+    if (!transaction.paymentPartnerId) {
       return;
     }
 
@@ -141,10 +141,10 @@ export class RecipientBulkCategoryDialogComponent {
     this.categoryId.set(this.#categoryValue(transaction.categoryId));
     this.#seedPending = true;
     // Frisches Filter-Objekt: der Referenzwechsel lädt auch beim erneuten
-    // Öffnen mit derselben IBAN garantiert neu.
+    // Öffnen mit demselben Partner garantiert neu.
     this.#filter.set({
       accountId: transaction.accountId,
-      counterpartyIban: transaction.counterpartyIban,
+      paymentPartnerId: transaction.paymentPartnerId,
       page: 1,
       pageSize: PAGE_SIZE,
     });

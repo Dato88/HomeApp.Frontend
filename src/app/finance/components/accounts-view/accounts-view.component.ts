@@ -20,6 +20,7 @@ import {
   ShareAccountRequest,
   UpdateAccountRequest,
 } from '../../+state/models';
+import { CheckboxComponent } from '../../../shared/ui/checkbox/checkbox.component';
 import { ConfirmDialogComponent } from '../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { ViewportService } from '../../../shared/services/viewport/viewport.service';
@@ -37,6 +38,7 @@ import { DropdownData } from '../../../shared/models/dropdown-data.model';
     GridRowDetailsTemplateDirective,
     InputFieldComponent,
     SkeletonComponent,
+    CheckboxComponent,
     ConfirmDialogComponent,
     EmptyStateComponent,
   ],
@@ -62,6 +64,8 @@ export class AccountsViewComponent {
   readonly description = signal('');
   readonly accountType = signal(String(AccountType.Checking));
   readonly createHouseholdId = signal(''); // Single household for creation
+  readonly isActive = signal(true);
+  readonly deactivatedFrom = signal('');
 
   private readonly submitted = signal(false);
   private readonly expandedAccountId = signal<number | null>(null);
@@ -122,6 +126,8 @@ export class AccountsViewComponent {
     this.description.set('');
     this.accountType.set(String(AccountType.Checking));
     this.createHouseholdId.set('');
+    this.isActive.set(true);
+    this.deactivatedFrom.set('');
     this.createDialog().open();
   }
 
@@ -138,6 +144,8 @@ export class AccountsViewComponent {
     this.currencyCode.set(account.currencyCode);
     this.description.set(account.description ?? '');
     this.accountType.set(String(account.accountType));
+    this.isActive.set(account.isActive);
+    this.deactivatedFrom.set(account.deactivatedFrom ?? '');
     this.createDialog().open();
   }
 
@@ -170,7 +178,8 @@ export class AccountsViewComponent {
         accountType,
         currencyCode: this.currencyCode().trim() || 'EUR',
         description: this.description().trim() || null,
-        isActive: editing.isActive,
+        isActive: this.isActive(),
+        deactivatedFrom: this.isActive() ? null : this.deactivatedFrom() || null,
       };
       this.store.updateAccount(request);
     } else {

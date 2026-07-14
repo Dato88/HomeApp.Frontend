@@ -1,0 +1,157 @@
+@if (store.paymentPartnersResource.isLoading()) {
+  <lib-skeleton aria-hidden="true"></lib-skeleton>
+  <p
+    class="visually-hidden"
+    role="status"
+    aria-live="polite">
+    Zahlungspartner werden geladen …
+  </p>
+} @else if (store.paymentPartnersResource.error()) {
+  <div
+    class="status-banner status-banner--danger"
+    role="alert">
+    <i
+      class="bi bi-exclamation-triangle-fill"
+      aria-hidden="true"></i>
+    <span>Zahlungspartner konnten nicht geladen werden.</span>
+    <button
+      type="button"
+      class="btn"
+      (click)="store.paymentPartnersResource.reload()">
+      Erneut versuchen
+    </button>
+  </div>
+} @else {
+  <lib-grid
+    [data]="store.paymentPartnerEntities()"
+    [loading]="store.paymentPartnersResource.isLoading()"
+    [hoverable]="true"
+    [zebra]="true">
+    <lib-grid-column
+      field="displayName"
+      title="Anzeigename"
+      [sortable]="true">
+      <ng-template
+        libGridCellTemplate
+        let-partner
+        let-value="value">
+        <span class="partner-name-cell">
+          {{ value }}
+          @if (linkedAccountName(partner); as accountName) {
+            <span
+              class="chip chip--muted"
+              [title]="'Eigenkonto: ' + accountName">
+              Eigenkonto
+            </span>
+          }
+        </span>
+      </ng-template>
+    </lib-grid-column>
+    <lib-grid-column
+      field="iban"
+      title="IBAN"></lib-grid-column>
+    <lib-grid-column
+      field="transactionCount"
+      title="Buchungen"
+      align="right"
+      width="8rem"></lib-grid-column>
+    <lib-grid-column
+      field="lastBookingDate"
+      title="Letzte Buchung"
+      width="10rem">
+      <ng-template
+        libGridCellTemplate
+        let-value="value">
+        {{ value || '—' }}
+      </ng-template>
+    </lib-grid-column>
+    <lib-grid-column
+      field="paymentPartnerId"
+      title="Aktionen"
+      width="8rem">
+      <ng-template
+        libGridCellTemplate
+        let-partner>
+        <div class="row-actions">
+          <button
+            type="button"
+            class="icon-button"
+            [attr.aria-label]="'Zahlungspartner ' + partner.displayName + ' umbenennen'"
+            (click)="openRename(partner)">
+            <i
+              class="bi bi-pencil"
+              aria-hidden="true"></i>
+          </button>
+          @if (canMerge()) {
+            <button
+              type="button"
+              class="icon-button"
+              [attr.aria-label]="'Zahlungspartner ' + partner.displayName + ' zusammenführen'"
+              title="Mit anderem Zahlungspartner zusammenführen"
+              (click)="openMerge(partner)">
+              <i
+                class="bi bi-union"
+                aria-hidden="true"></i>
+            </button>
+          }
+        </div>
+      </ng-template>
+    </lib-grid-column>
+    <home-empty-state
+      noEntries
+      icon="bi-people"
+      title="Noch keine Zahlungspartner"
+      description="Zahlungspartner entstehen automatisch beim Import oder Erfassen von Buchungen mit Empfänger."></home-empty-state>
+  </lib-grid>
+}
+
+<lib-dialog
+  #renameDialog
+  [isModal]="true"
+  [closeOnOutsideClick]="false"
+  dialogClass="app-dialog app-dialog--narrow"
+  ariaLabelledBy="rename-payment-partner-title"
+  (closed)="onRenameDialogClosed()">
+  <div class="dialog-header">
+    <h2 id="rename-payment-partner-title">Zahlungspartner umbenennen</h2>
+    <button
+      type="button"
+      class="icon-button"
+      aria-label="Dialog schließen"
+      (click)="closeRenameDialog()">
+      <i
+        class="bi bi-x-lg"
+        aria-hidden="true"></i>
+    </button>
+  </div>
+  <form
+    class="form-grid"
+    (submit)="$event.preventDefault(); submitRename()"
+    novalidate>
+    <lib-input-field
+      label="Anzeigename"
+      effectStyle="box"
+      [required]="true"
+      [value]="displayName()"
+      (valueChange)="displayName.set($event)"
+      [validationState]="showNameError() ? 'error' : null"
+      [errorMessage]="showNameError() ? 'Anzeigename ist erforderlich' : ''"></lib-input-field>
+    <p class="field-hint">
+      Ändert nur den Anzeigenamen in dieser Liste. Die Rohdaten aus dem Bank-Import bleiben in
+      den Buchungen unverändert sichtbar.
+    </p>
+    <div class="dialog-actions">
+      <lib-button
+        [label]="'Abbrechen'"
+        (clicked)="closeRenameDialog()"></lib-button>
+      <lib-button
+        [type]="'submit'"
+        [label]="'Speichern'"></lib-button>
+    </div>
+  </form>
+</lib-dialog>
+
+<home-merge-payment-partner-dialog
+  #mergeDialog
+  [targetOptions]="mergeTargetOptions()"
+  (merged)="onMerged($event)"></home-merge-payment-partner-dialog>

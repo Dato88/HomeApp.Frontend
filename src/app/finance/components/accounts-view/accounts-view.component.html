@@ -80,6 +80,9 @@
             class="bi {{ accountTypeIcon(account) }}"
             aria-hidden="true"></i>
           {{ account.name }}
+          @if (!account.isActive) {
+            <span class="chip chip--muted">Inaktiv</span>
+          }
         </span>
       </ng-template>
     </lib-grid-column>
@@ -181,6 +184,10 @@
           <dd>{{ account.currencyCode }}</dd>
           <dt>Geteilt mit</dt>
           <dd>{{ sharedHouseholdNames(account) || '—' }}</dd>
+          @if (!account.isActive) {
+            <dt>Inaktiv seit</dt>
+            <dd>{{ account.deactivatedFrom || '—' }}</dd>
+          }
         </dl>
       </div>
     </ng-template>
@@ -257,6 +264,19 @@
       [defaultText]="'Typ wählen'"
       [width]="'100%'"
       [(selectedValue)]="accountType"></lib-dropdown-list>
+    @if (editingAccount()) {
+      <home-checkbox
+        label="Aktiv"
+        [(checked)]="isActive"></home-checkbox>
+      @if (!isActive()) {
+        <lib-input-field
+          label="Deaktiviert seit"
+          type="date"
+          effectStyle="box"
+          [value]="deactivatedFrom()"
+          (valueChange)="deactivatedFrom.set($event)"></lib-input-field>
+      }
+    }
     @if (!editingAccount()) {
       <lib-dropdown-list
         label="Haushalt"
