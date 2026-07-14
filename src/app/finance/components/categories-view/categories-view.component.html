@@ -10,13 +10,13 @@
     (selectedValueChange)="setSelectedHouseholdId($event)"></lib-dropdown-list>
   @if (store.selectedHouseholdId()) {
     <lib-button
-      [label]="'Kategorie hinzufügen'"
-      icon="bi-plus-lg"
-      (clicked)="openCreate()"></lib-button>
-    <lib-button
       [label]="'Gruppe hinzufügen'"
       icon="bi-collection"
       (clicked)="openCreateGroup()"></lib-button>
+    <lib-button
+      [label]="'Kategorie hinzufügen'"
+      icon="bi-plus-lg"
+      (clicked)="openCreate()"></lib-button>
   }
 </div>
 
@@ -45,216 +45,214 @@
       </button>
     </div>
   } @else {
-    <h2 class="category-section-heading category-section-heading--group">
-      <span class="category-section-heading__icon">
-        <i
-          class="bi bi-collection"
-          aria-hidden="true"></i>
-      </span>
-      Gruppen
-      <span class="chip">{{ categoryGroups().length }}</span>
-    </h2>
-    <lib-grid
-      [data]="categoryGroups()"
-      [hoverable]="true"
-      [zebra]="true">
-      <lib-grid-column
-        field="name"
-        title="Name"
-        [sortable]="true"></lib-grid-column>
-      <lib-grid-column
-        field="categoryGroupType"
-        title="Typ"
-        width="8rem">
-        <ng-template
-          libGridCellTemplate
-          let-group>
-          {{ categoryTypeLabel(group.categoryGroupType) }}
-        </ng-template>
-      </lib-grid-column>
-      <lib-grid-column
-        field="targetPercent"
-        title="Ziel %"
-        width="7rem"
-        align="right">
-        <ng-template
-          libGridCellTemplate
-          let-group>
-          @if (group.targetPercent != null) {
-            {{ group.targetPercent | number: '1.0-1' }} %
-          } @else {
-            —
-          }
-        </ng-template>
-      </lib-grid-column>
-      <lib-grid-column
-        field="categoryGroupId"
-        title="Kategorien"
-        width="7rem"
-        align="right">
-        <ng-template
-          libGridCellTemplate
-          let-group>
-          {{ categoriesInGroup(group) }}
-        </ng-template>
-      </lib-grid-column>
-      <lib-grid-column
-        field="categoryGroupId"
-        title="Aktionen"
-        width="8rem">
-        <ng-template
-          libGridCellTemplate
-          let-group>
-          <div class="row-actions">
-            <button
-              type="button"
-              class="icon-button"
-              [attr.aria-label]="'Gruppe ' + group.name + ' bearbeiten'"
-              (click)="openEditGroup(group)">
-              <i
-                class="bi bi-pencil"
-                aria-hidden="true"></i>
-            </button>
-            <button
-              type="button"
-              class="icon-button icon-button--danger"
-              [attr.aria-label]="'Gruppe ' + group.name + ' löschen'"
-              (click)="deleteGroupDialog.open(group)">
-              <i
-                class="bi bi-trash"
-                aria-hidden="true"></i>
-            </button>
-          </div>
-        </ng-template>
-      </lib-grid-column>
-      <home-empty-state
-        noEntries
-        icon="bi-collection"
-        title="Keine Gruppen"
-        description="Lege Gruppen wie Wohnen, Versicherungen oder Sparen an, um die Auswertung zu strukturieren."></home-empty-state>
-    </lib-grid>
+    <div class="category-sections">
+      <div class="category-section">
+        <h2 class="category-section-heading category-section-heading--group">
+          <span class="category-section-heading__icon">
+            <i
+              class="bi bi-collection"
+              aria-hidden="true"></i>
+          </span>
+          Gruppen
+          <span class="chip">{{ categoryGroups().length }}</span>
+        </h2>
 
-    <h2 class="category-section-heading category-section-heading--income">
-      <span class="category-section-heading__icon">
-        <i
-          class="bi bi-graph-up-arrow"
-          aria-hidden="true"></i>
-      </span>
-      Einnahmen
-      <span class="chip chip--success">{{ incomeCategories().length }}</span>
-    </h2>
-    <lib-grid
-      [data]="incomeCategories()"
-      [hoverable]="true"
-      [zebra]="true">
-      <lib-grid-column
-        field="name"
-        title="Name"
-        [sortable]="true"></lib-grid-column>
-      <lib-grid-column
-        field="categoryGroupId"
-        title="Gruppe">
-        <ng-template
-          libGridCellTemplate
-          let-category>
-          {{ groupNameOf(category) }}
-        </ng-template>
-      </lib-grid-column>
-      <lib-grid-column
-        field="categoryId"
-        title="Aktionen"
-        width="8rem">
-        <ng-template
-          libGridCellTemplate
-          let-category>
-          <div class="row-actions">
-            <button
-              type="button"
-              class="icon-button"
-              [attr.aria-label]="'Kategorie ' + category.name + ' bearbeiten'"
-              (click)="openEdit(category)">
-              <i
-                class="bi bi-pencil"
-                aria-hidden="true"></i>
-            </button>
-            <button
-              type="button"
-              class="icon-button icon-button--danger"
-              [attr.aria-label]="'Kategorie ' + category.name + ' löschen'"
-              (click)="deleteDialog.open(category)">
-              <i
-                class="bi bi-trash"
-                aria-hidden="true"></i>
-            </button>
-          </div>
-        </ng-template>
-      </lib-grid-column>
-      <home-empty-state
-        noEntries
-        icon="bi-graph-up-arrow"
-        title="Keine Einnahmen-Kategorien"></home-empty-state>
-    </lib-grid>
+        <lib-grid
+          [data]="categoryGroups()"
+          [hoverable]="true"
+          [zebra]="true">
+          <lib-grid-column
+            field="name"
+            title="Name"
+            [sortable]="true"></lib-grid-column>
+          <lib-grid-column
+            field="targetPercent"
+            title="Ziel %"
+            width="7rem"
+            align="right">
+            <ng-template
+              libGridCellTemplate
+              let-group>
+              @if (group.targetPercent != null) {
+                {{ group.targetPercent | number: '1.0-1' }} %
+              } @else {
+                —
+              }
+            </ng-template>
+          </lib-grid-column>
+          <lib-grid-column
+            field="categoryGroupId"
+            title="Kategorien"
+            width="7rem"
+            align="right">
+            <ng-template
+              libGridCellTemplate
+              let-group>
+              {{ categoriesInGroup(group) }}
+            </ng-template>
+          </lib-grid-column>
+          <lib-grid-column
+            field="categoryGroupId"
+            title="Aktionen"
+            width="8rem">
+            <ng-template
+              libGridCellTemplate
+              let-group>
+              <div class="row-actions">
+                <button
+                  type="button"
+                  class="icon-button"
+                  [attr.aria-label]="'Gruppe ' + group.name + ' bearbeiten'"
+                  (click)="openEditGroup(group)">
+                  <i
+                    class="bi bi-pencil"
+                    aria-hidden="true"></i>
+                </button>
+                <button
+                  type="button"
+                  class="icon-button icon-button--danger"
+                  [attr.aria-label]="'Gruppe ' + group.name + ' löschen'"
+                  (click)="deleteGroupDialog.open(group)">
+                  <i
+                    class="bi bi-trash"
+                    aria-hidden="true"></i>
+                </button>
+              </div>
+            </ng-template>
+          </lib-grid-column>
+          <home-empty-state
+            noEntries
+            icon="bi-collection"
+            title="Keine Gruppen"
+            description="Lege Gruppen wie Wohnen, Versicherungen oder Sparen an, um die Auswertung zu strukturieren."></home-empty-state>
+        </lib-grid>
+      </div>
+      <div class="category-section">
+        <h2 class="category-section-heading category-section-heading--income">
+          <span class="category-section-heading__icon">
+            <i
+              class="bi bi-graph-up-arrow"
+              aria-hidden="true"></i>
+          </span>
+          Einnahmen
+          <span class="chip chip--success">{{ incomeCategories().length }}</span>
+        </h2>
+        <lib-grid
+          [data]="incomeCategories()"
+          [hoverable]="true"
+          [zebra]="true">
+          <lib-grid-column
+            field="name"
+            title="Name"
+            [sortable]="true"></lib-grid-column>
+          <lib-grid-column
+            field="categoryGroupId"
+            title="Gruppe">
+            <ng-template
+              libGridCellTemplate
+              let-category>
+              {{ groupNameOf(category) }}
+            </ng-template>
+          </lib-grid-column>
+          <lib-grid-column
+            field="categoryId"
+            title="Aktionen"
+            width="8rem">
+            <ng-template
+              libGridCellTemplate
+              let-category>
+              <div class="row-actions">
+                <button
+                  type="button"
+                  class="icon-button"
+                  [attr.aria-label]="'Kategorie ' + category.name + ' bearbeiten'"
+                  (click)="openEdit(category)">
+                  <i
+                    class="bi bi-pencil"
+                    aria-hidden="true"></i>
+                </button>
+                <button
+                  type="button"
+                  class="icon-button icon-button--danger"
+                  [attr.aria-label]="'Kategorie ' + category.name + ' löschen'"
+                  (click)="deleteDialog.open(category)">
+                  <i
+                    class="bi bi-trash"
+                    aria-hidden="true"></i>
+                </button>
+              </div>
+            </ng-template>
+          </lib-grid-column>
+          <home-empty-state
+            noEntries
+            icon="bi-graph-up-arrow"
+            title="Keine Einnahmen-Kategorien"></home-empty-state>
+        </lib-grid>
+      </div>
 
-    <h2 class="category-section-heading category-section-heading--expense">
-      <span class="category-section-heading__icon">
-        <i
-          class="bi bi-graph-down-arrow"
-          aria-hidden="true"></i>
-      </span>
-      Ausgaben
-      <span class="chip chip--danger">{{ expenseCategories().length }}</span>
-    </h2>
-    <lib-grid
-      [data]="expenseCategories()"
-      [hoverable]="true"
-      [zebra]="true">
-      <lib-grid-column
-        field="name"
-        title="Name"
-        [sortable]="true"></lib-grid-column>
-      <lib-grid-column
-        field="categoryGroupId"
-        title="Gruppe">
-        <ng-template
-          libGridCellTemplate
-          let-category>
-          {{ groupNameOf(category) }}
-        </ng-template>
-      </lib-grid-column>
-      <lib-grid-column
-        field="categoryId"
-        title="Aktionen"
-        width="8rem">
-        <ng-template
-          libGridCellTemplate
-          let-category>
-          <div class="row-actions">
-            <button
-              type="button"
-              class="icon-button"
-              [attr.aria-label]="'Kategorie ' + category.name + ' bearbeiten'"
-              (click)="openEdit(category)">
-              <i
-                class="bi bi-pencil"
-                aria-hidden="true"></i>
-            </button>
-            <button
-              type="button"
-              class="icon-button icon-button--danger"
-              [attr.aria-label]="'Kategorie ' + category.name + ' löschen'"
-              (click)="deleteDialog.open(category)">
-              <i
-                class="bi bi-trash"
-                aria-hidden="true"></i>
-            </button>
-          </div>
-        </ng-template>
-      </lib-grid-column>
-      <home-empty-state
-        noEntries
-        icon="bi-graph-down-arrow"
-        title="Keine Ausgaben-Kategorien"></home-empty-state>
-    </lib-grid>
+      <div class="category-section">
+        <h2 class="category-section-heading category-section-heading--expense">
+          <span class="category-section-heading__icon">
+            <i
+              class="bi bi-graph-down-arrow"
+              aria-hidden="true"></i>
+          </span>
+          Ausgaben
+          <span class="chip chip--danger">{{ expenseCategories().length }}</span>
+        </h2>
+        <lib-grid
+          [data]="expenseCategories()"
+          [hoverable]="true"
+          [zebra]="true">
+          <lib-grid-column
+            field="name"
+            title="Name"
+            [sortable]="true"></lib-grid-column>
+          <lib-grid-column
+            field="categoryGroupId"
+            title="Gruppe">
+            <ng-template
+              libGridCellTemplate
+              let-category>
+              {{ groupNameOf(category) }}
+            </ng-template>
+          </lib-grid-column>
+          <lib-grid-column
+            field="categoryId"
+            title="Aktionen"
+            width="8rem">
+            <ng-template
+              libGridCellTemplate
+              let-category>
+              <div class="row-actions">
+                <button
+                  type="button"
+                  class="icon-button"
+                  [attr.aria-label]="'Kategorie ' + category.name + ' bearbeiten'"
+                  (click)="openEdit(category)">
+                  <i
+                    class="bi bi-pencil"
+                    aria-hidden="true"></i>
+                </button>
+                <button
+                  type="button"
+                  class="icon-button icon-button--danger"
+                  [attr.aria-label]="'Kategorie ' + category.name + ' löschen'"
+                  (click)="deleteDialog.open(category)">
+                  <i
+                    class="bi bi-trash"
+                    aria-hidden="true"></i>
+                </button>
+              </div>
+            </ng-template>
+          </lib-grid-column>
+          <home-empty-state
+            noEntries
+            icon="bi-graph-down-arrow"
+            title="Keine Ausgaben-Kategorien"></home-empty-state>
+        </lib-grid>
+      </div>
+    </div>
   }
 } @else {
   <home-empty-state

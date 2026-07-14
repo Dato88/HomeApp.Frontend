@@ -4,6 +4,26 @@
   align-content: start;
 }
 
+// Drei Spalten nebeneinander, sobald der verfügbare Platz reicht (Gruppen
+// braucht durch die Zusatzspalten am meisten Breite); darunter automatisch
+// zwei bzw. eine Spalte — ganz ohne Breakpoint, analog zu .stat-row in
+// accounts-view.
+.category-sections {
+  display: grid;
+  // min(420px, 100%) statt nur 420px: sonst erzwingt die Mindestbreite auf
+  // schmalen Screens ein Überlaufen, weil minmax() nie unter sein Minimum
+  // schrumpft, selbst wenn der Container schmaler ist.
+  grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr));
+  gap: var(--app-space-4);
+  align-items: start;
+}
+
+.category-section {
+  display: grid;
+  gap: var(--app-space-2);
+  min-width: 0;
+}
+
 .row-actions {
   display: flex;
   gap: var(--app-space-1);

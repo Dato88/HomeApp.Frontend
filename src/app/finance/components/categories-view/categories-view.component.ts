@@ -270,10 +270,6 @@ export class CategoriesViewComponent {
     this.store.deleteCategoryGroup(group.categoryGroupId);
   }
 
-  categoryTypeLabel(categoryType: CategoryType): string {
-    return CATEGORY_TYPE_LABELS[categoryType] ?? 'Unbekannt';
-  }
-
   groupNameOf(category: CategoryDto): string {
     if (category.categoryGroupId == null) {
       return '—';
