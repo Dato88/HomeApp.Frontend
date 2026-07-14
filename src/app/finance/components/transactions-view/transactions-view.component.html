@@ -233,15 +233,14 @@
             <ng-template
               libGridCellTemplate
               let-transaction>
-              <lib-dropdown-list
+              <lib-dropdown-combobox
                 [dropdownName]="'transaction-category-' + transaction.transactionId"
                 [dropdownData]="categoryOptions()"
                 [defaultText]="'Ohne Kategorie'"
                 [width]="'12rem'"
-                [height]="'3rem'"
                 [ariaLabel]="'Kategorie für Buchung vom ' + transaction.bookingDate"
                 [selectedValue]="categoryValue(transaction.categoryId)"
-                (selectedValueChange)="setCategory(transaction, $event)"></lib-dropdown-list>
+                (selectedValueChange)="setCategory(transaction, $event)"></lib-dropdown-combobox>
             </ng-template>
           </lib-grid-column>
         }
@@ -320,14 +319,14 @@
               <dt>Verwendungszweck</dt>
               <dd>{{ transaction.purpose || '—' }}</dd>
             </dl>
-            <lib-dropdown-list
+            <lib-dropdown-combobox
               label="Kategorie"
               dropdownName="transaction-category-mobile"
               [dropdownData]="categoryOptions()"
               [defaultText]="'Ohne Kategorie'"
               [width]="'100%'"
               [selectedValue]="categoryValue(transaction.categoryId)"
-              (selectedValueChange)="setCategory(transaction, $event)"></lib-dropdown-list>
+              (selectedValueChange)="setCategory(transaction, $event)"></lib-dropdown-combobox>
           </div>
         </ng-template>
         <home-empty-state
@@ -406,13 +405,13 @@
       effectStyle="box"
       [value]="purpose()"
       (valueChange)="purpose.set($event)"></lib-input-field>
-    <lib-dropdown-list
+    <lib-dropdown-combobox
       label="Kategorie"
       dropdownName="transaction-form-category"
       [dropdownData]="categoryOptions()"
       [defaultText]="'Ohne Kategorie'"
       [width]="'100%'"
-      [(selectedValue)]="categoryId"></lib-dropdown-list>
+      [(selectedValue)]="categoryId"></lib-dropdown-combobox>
     <div class="dialog-actions">
       <lib-button
         [label]="'Abbrechen'"
@@ -446,13 +445,13 @@
     class="form-grid"
     (submit)="$event.preventDefault(); submitBulkCategory()"
     novalidate>
-    <lib-dropdown-list
+    <lib-dropdown-combobox
       label="Kategorie"
       dropdownName="bulk-category"
       [dropdownData]="categoryOptions()"
       [defaultText]="'Ohne Kategorie'"
       [width]="'100%'"
-      [(selectedValue)]="bulkCategoryId"></lib-dropdown-list>
+      [(selectedValue)]="bulkCategoryId"></lib-dropdown-combobox>
     <div class="dialog-actions">
       <lib-button
         [label]="'Abbrechen'"

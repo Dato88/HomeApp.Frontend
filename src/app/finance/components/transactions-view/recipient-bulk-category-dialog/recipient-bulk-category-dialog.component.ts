@@ -15,7 +15,7 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import {
   ButtonComponent,
   DialogComponent,
-  DropdownListComponent,
+  DropdownComboboxComponent,
   GridCellTemplateDirective,
   GridColumnComponent,
   GridComponent,
@@ -50,7 +50,7 @@ const PAGE_SIZE = 200;
     DecimalPipe,
     ButtonComponent,
     DialogComponent,
-    DropdownListComponent,
+    DropdownComboboxComponent,
     GridCellTemplateDirective,
     GridColumnComponent,
     GridComponent,

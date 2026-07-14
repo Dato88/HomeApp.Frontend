@@ -3,6 +3,7 @@ import { Component, computed, effect, inject, signal, viewChild } from '@angular
 import {
   ButtonComponent,
   DialogComponent,
+  DropdownComboboxComponent,
   DropdownListComponent,
   GridCellTemplateDirective,
   GridColumnComponent,
@@ -39,6 +40,7 @@ import { formatIban, IbanFormatPipe } from '../../../shared/pipes/iban-format.pi
     DecimalPipe,
     ButtonComponent,
     DialogComponent,
+    DropdownComboboxComponent,
     DropdownListComponent,
     GridCellTemplateDirective,
     GridColumnComponent,

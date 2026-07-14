@@ -25,14 +25,14 @@
       }
     </div>
 
-    <lib-dropdown-list
+    <lib-dropdown-combobox
       label="Kategorie"
       dropdownName="recipient-bulk-category"
       [dropdownData]="categoryOptions()"
       [defaultText]="'Ohne Kategorie'"
       [width]="'100%'"
       [selectedValue]="categoryId()"
-      (selectedValueChange)="onCategoryChange($event)"></lib-dropdown-list>
+      (selectedValueChange)="onCategoryChange($event)"></lib-dropdown-combobox>
 
     @if (transactionsResource.isLoading()) {
       <lib-skeleton aria-hidden="true"></lib-skeleton>
