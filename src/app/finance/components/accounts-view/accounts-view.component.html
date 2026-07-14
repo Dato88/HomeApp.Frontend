@@ -270,6 +270,7 @@
       [dropdownData]="accountTypeOptions()"
       [defaultText]="'Typ wählen'"
       [width]="'100%'"
+      [panelWidth]="'content'"
       [(selectedValue)]="accountType"></lib-dropdown-list>
     @if (editingAccount()) {
       <home-checkbox
@@ -291,6 +292,7 @@
         [dropdownData]="householdOptions()"
         [defaultText]="'Haushalt wählen'"
         [width]="'100%'"
+        [panelWidth]="'content'"
         [selectedValue]="createHouseholdId()"
         (selectedValueChange)="createHouseholdId.set($event)"></lib-dropdown-list>
       <p class="field-hint">
@@ -338,6 +340,7 @@
     [dropdownData]="householdOptions()"
     [defaultText]="'Haushalt wählen'"
     [width]="'100%'"
+    [panelWidth]="'content'"
     [(selectedValue)]="shareHouseholdId"></lib-dropdown-list>
   <div class="dialog-actions">
     <lib-button

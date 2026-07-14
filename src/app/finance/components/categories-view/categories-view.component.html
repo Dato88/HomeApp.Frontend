@@ -5,6 +5,7 @@
     [dropdownData]="householdOptions()"
     [defaultText]="'Haushalt wählen'"
     [width]="'min(100%, 16rem)'"
+    [panelWidth]="'content'"
     [selectedValue]="selectedHouseholdIdValue()"
     (selectedValueChange)="setSelectedHouseholdId($event)"></lib-dropdown-list>
   @if (store.selectedHouseholdId()) {
@@ -301,6 +302,7 @@
       [dropdownData]="categoryTypeOptions()"
       [defaultText]="'Typ wählen'"
       [width]="'100%'"
+      [panelWidth]="'content'"
       [(selectedValue)]="categoryType"></lib-dropdown-list>
     <lib-dropdown-list
       label="Gruppe (optional)"
@@ -308,6 +310,7 @@
       [dropdownData]="categoryGroupOptions()"
       [defaultText]="'Ohne Gruppe'"
       [width]="'100%'"
+      [panelWidth]="'content'"
       [(selectedValue)]="categoryGroupId"></lib-dropdown-list>
     <div class="dialog-actions">
       <lib-button
@@ -359,6 +362,7 @@
       [dropdownData]="categoryTypeOptions()"
       [defaultText]="'Typ wählen'"
       [width]="'100%'"
+      [panelWidth]="'content'"
       [(selectedValue)]="groupType"></lib-dropdown-list>
     <lib-input-field
       label="Ziel-Anteil am Einkommen in % (optional)"

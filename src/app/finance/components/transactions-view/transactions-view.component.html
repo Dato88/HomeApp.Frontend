@@ -8,6 +8,7 @@
     [dropdownData]="accountOptions()"
     [defaultText]="'Konto wählen'"
     [width]="'100%'"
+    [panelWidth]="'content'"
     [selectedValue]="store.selectedAccountId()"
     (selectedValueChange)="
       store.setSelectedAccountId($event); onAccountFilterChange()
@@ -18,6 +19,7 @@
     [dropdownData]="householdOptions()"
     [defaultText]="'Haushalt wählen'"
     [width]="'100%'"
+    [panelWidth]="'content'"
     [selectedValue]="selectedHouseholdIdValue()"
     (selectedValueChange)="setSelectedHouseholdId($event)"></lib-dropdown-list>
   <lib-input-field
@@ -38,6 +40,7 @@
     [dropdownData]="paymentPartnerFilterOptions()"
     [defaultText]="'Alle Zahlungspartner'"
     [width]="'100%'"
+    [panelWidth]="'content'"
     [(selectedValue)]="selectedPaymentPartnerId"></lib-dropdown-list>
   <home-checkbox
     label="Nur ohne Kategorie"
@@ -238,6 +241,7 @@
                 [dropdownData]="categoryOptions()"
                 [defaultText]="'Ohne Kategorie'"
                 [width]="'12rem'"
+                [panelWidth]="'content'"
                 [ariaLabel]="'Kategorie für Buchung vom ' + transaction.bookingDate"
                 [selectedValue]="categoryValue(transaction.categoryId)"
                 (selectedValueChange)="setCategory(transaction, $event)"></lib-dropdown-combobox>
@@ -325,6 +329,7 @@
               [dropdownData]="categoryOptions()"
               [defaultText]="'Ohne Kategorie'"
               [width]="'100%'"
+              [panelWidth]="'content'"
               [selectedValue]="categoryValue(transaction.categoryId)"
               (selectedValueChange)="setCategory(transaction, $event)"></lib-dropdown-combobox>
           </div>
@@ -411,6 +416,7 @@
       [dropdownData]="categoryOptions()"
       [defaultText]="'Ohne Kategorie'"
       [width]="'100%'"
+      [panelWidth]="'content'"
       [(selectedValue)]="categoryId"></lib-dropdown-combobox>
     <div class="dialog-actions">
       <lib-button
@@ -451,6 +457,7 @@
       [dropdownData]="categoryOptions()"
       [defaultText]="'Ohne Kategorie'"
       [width]="'100%'"
+      [panelWidth]="'content'"
       [(selectedValue)]="bulkCategoryId"></lib-dropdown-combobox>
     <div class="dialog-actions">
       <lib-button
